@@ -123,7 +123,7 @@ export class ShapeDefinition extends BasicSerializableObject {
         let layers = [];
         for (let i = 0; i < sourceLayers.length; ++i) {
             const text = sourceLayers[i];
-            assert(text.length === 8, "Invalid shape short key: " + key);
+            assert(text.length === 28, "Invalid shape short key: " + key);
 
             /** @type {ShapeLayer} */
             const quads = [null, null, null, null];
@@ -161,6 +161,7 @@ export class ShapeDefinition extends BasicSerializableObject {
         }
 
         const result = ShapeDefinition.isValidShortKeyInternal(key);
+        console.log(result);
         SHORT_KEY_CACHE.set(key, result);
         return result;
     }
@@ -176,7 +177,7 @@ export class ShapeDefinition extends BasicSerializableObject {
         let layers = [];
         for (let i = 0; i < sourceLayers.length; ++i) {
             const text = sourceLayers[i];
-            if (text.length !== 8) {
+            if (text.length < 28) {
                 return false;
             }
 
@@ -184,8 +185,14 @@ export class ShapeDefinition extends BasicSerializableObject {
             const quads = [null, null, null, null];
             let anyFilled = false;
             for (let quad = 0; quad < 4; ++quad) {
-                const shapeText = text[quad * 2 + 0];
-                const colorText = text[quad * 2 + 1];
+                const shapeText = text[quad * 10 + 0];
+                let colorText = "";
+                for (var j = 1; j < 10; j++) {
+                    const letter = text[quad * 10 + j];
+                    colorText = colorText + letter; 
+                }
+                //console.log(colorText);
+                //const colorText = text[quad * 2 + 1];
                 const subShape = enumShortcodeToSubShape[shapeText];
                 const color = enumShortcodeToColor[colorText];
 
@@ -201,7 +208,7 @@ export class ShapeDefinition extends BasicSerializableObject {
                     };
                     anyFilled = true;
                 } else if (shapeText === "-") {
-                    // Make sure color is empty then, too
+                    //Make sure color is empty then, too
                     if (colorText !== "-") {
                         return false;
                     }
@@ -213,7 +220,7 @@ export class ShapeDefinition extends BasicSerializableObject {
 
             if (!anyFilled) {
                 // Empty layer
-                return false;
+                return true;
             }
             layers.push(quads);
         }

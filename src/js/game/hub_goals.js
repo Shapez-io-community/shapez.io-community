@@ -357,6 +357,7 @@ export class HubGoals extends BasicSerializableObject {
             enumColors.purple,
             enumColors.red,
             enumColors.yellow,
+            enumColors.black,
         ];
 
         const universalColors = [enumColors.white];

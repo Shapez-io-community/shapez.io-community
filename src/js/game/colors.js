@@ -1,4 +1,25 @@
-/** @enum {string} */
+var colors = [];
+
+for (var r = 0; r < 2; r++) {
+    for (var g = 0; g < 2; g++) {
+        for (var b = 0; b < 2; b++) {
+            colors.push(fullColorHex(r * 100, g * 100, b * 100));
+        }
+    }   
+}
+
+//const enumColors = {};
+
+//for(const c of colors) {
+    //enumColors["#" + c] = c;
+//}
+
+//for(const c of ['red', 'blue', 'green', 'cyan', 'yellow', 'purple', 'white', 'uncolored']) {
+//    enumColors[c] = c;
+//}
+
+//console.log(enumColors);
+
 export const enumColors = {
     red: "red",
     green: "green",
@@ -50,7 +71,11 @@ export const enumColorsToHexCode = {
     // blue + green + red
     [enumColors.white]: "#ffffff",
 
+    // black + white
     [enumColors.uncolored]: "#aaaaaa",
+
+    // white + white
+    [enumColors.black]: "#000000",
 };
 
 const c = enumColors;
@@ -64,8 +89,6 @@ export const enumColorMixingResults = {
         [c.yellow]: c.yellow,
         [c.purple]: c.purple,
         [c.cyan]: c.white,
-
-        [c.white]: c.white,
     },
 
     // 0, 255, 0
@@ -75,8 +98,6 @@ export const enumColorMixingResults = {
         [c.yellow]: c.yellow,
         [c.purple]: c.white,
         [c.cyan]: c.cyan,
-
-        [c.white]: c.white,
     },
 
     // 0, 255, 0
@@ -84,8 +105,6 @@ export const enumColorMixingResults = {
         [c.yellow]: c.white,
         [c.purple]: c.purple,
         [c.cyan]: c.cyan,
-
-        [c.white]: c.white,
     },
 
     // 255, 255, 0
@@ -100,13 +119,14 @@ export const enumColorMixingResults = {
     },
 
     // 0, 255, 255
-    [c.cyan]: {},
+    [c.cyan]: {
+    },
 
     //// SPECIAL COLORS
 
     // 255, 255, 255
     [c.white]: {
-        // auto
+        //auto
     },
 
     // X, X, X
@@ -115,9 +135,35 @@ export const enumColorMixingResults = {
     },
 };
 
+var HexToRGB = function(hex) {
+    var aRgbHex = hex.match(/.{1,2}/g);
+    var aRgb = [
+        parseInt(aRgbHex[0], 16),
+        parseInt(aRgbHex[1], 16),
+        parseInt(aRgbHex[2], 16)
+    ];
+    return aRgb;
+}
+
+function rgbToHex(rgb) { 
+    var hex = Number(rgb).toString(16);
+    if (hex.length < 2) {
+         hex = "0" + hex;
+    }
+    return hex;
+}
+
+function fullColorHex(r,g,b) {
+    var red = rgbToHex(r);
+    var green = rgbToHex(g);
+    var blue = rgbToHex(b);
+    return red+green+blue;
+}
+
 // Create same color lookups
 for (const color in enumColors) {
-    enumColorMixingResults[color][color] = color;
+    enumColorMixingResults[color][color] = color;    
+    //enumColorMixingResults[color][undefined] = color; 
     enumColorMixingResults[color][c.white] = c.white;
     // Anything with uncolored is the same color
     enumColorMixingResults[color][c.uncolored] = color;

@@ -5,7 +5,7 @@ import { ShapeDefinition } from "./shape_definition";
 export const preparementShape = "CpRpCp--:SwSwSwSw";
 export const finalGameShape = "RuCw--Cw:----Ru--";
 export const rocketShape = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw";
-export const blueprintShape = "CbCbCbRb:CwCwCwCw";
+export const blueprintShape = "C000000255C000000255C000000255R000000255:C255255255C255255255C255255255C255255255";
 
 const fixedImprovements = [0.5, 0.5, 1, 1, 2, 1, 1];
 
@@ -46,7 +46,7 @@ export const UPGRADES = {
             required: [{ shape: "CuCuCuCu", amount: 60 }],
         },
         {
-            required: [{ shape: "--CuCu--", amount: 500 }],
+            required: [{ shape: "----------CuCu----------", amount: 500 }],
         },
         {
             required: [{ shape: "CpCpCpCp", amount: 1000 }],
