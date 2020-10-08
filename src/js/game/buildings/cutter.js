@@ -98,8 +98,8 @@ export class MetaCutterBuilding extends MetaBuilding {
         switch (variant) {
             case defaultBuildingVariant: {
                 entity.components.ItemEjector.setSlots([
-                    { pos: new Vector(0, 0), direction: enumDirection.top },
                     { pos: new Vector(1, 0), direction: enumDirection.top },
+                    { pos: new Vector(0, 0), direction: enumDirection.top },
                 ]);
                 entity.components.ItemProcessor.type = enumItemProcessorTypes.cutter;
                 break;

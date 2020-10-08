@@ -1,12 +1,14 @@
 import { globalConfig } from "../../core/config";
 import { Loader } from "../../core/loader";
 import { BaseItem } from "../base_item";
-import { enumColors } from "../colors";
+import { enumColors, enumColorsToHexCode } from "../colors";
 import { DisplayComponent } from "../components/display";
+import { MetaDisplayBuilding } from "../buildings/display";
 import { GameSystemWithFilter } from "../game_system_with_filter";
 import { isTrueItem } from "../items/boolean_item";
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 import { MapChunkView } from "../map_chunk_view";
+import { MetaAnalyzerBuilding } from "../buildings/analyzer";
 
 export class DisplaySystem extends GameSystemWithFilter {
     constructor(root) {
@@ -29,6 +31,7 @@ export class DisplaySystem extends GameSystemWithFilter {
      * @returns {BaseItem}
      */
     getDisplayItem(value) {
+        let V = value;
         if (!value) {
             return null;
         }
@@ -91,6 +94,44 @@ export class DisplaySystem extends GameSystemWithFilter {
                         30
                     );
                 }
+            }
+        }
+    }
+    /**
+     * Draws overlay of a given chunk
+     * @param {import("../../core/draw_utils").DrawParameters} parameters
+     * @param {MapChunkView} chunk
+     */
+    drawChunkOverlay(parameters, chunk) {
+        const contents = chunk.containedEntitiesByLayer.regular;
+        for (let i = 0; i < contents.length; ++i) {
+            const entity = contents[i];
+            if (!entity || !entity.components.Display) {
+                continue;
+            }
+
+            const pinsComp = entity.components.WiredPins;
+            const network = pinsComp.slots[0].linkedNetwork;
+
+            if (!network || !network.hasValue()) {
+                continue;
+            }
+
+            const value = this.getDisplayItem(network.currentValue);
+
+            if (!value) {
+                continue;
+            }
+
+            const origin = entity.components.StaticMapEntity.origin;
+            if (value instanceof ColorItem) {
+                parameters.context.fillStyle = enumColorsToHexCode[value.color];
+                parameters.context.fillRect(
+                    origin.x * globalConfig.tileSize,
+                    origin.y * globalConfig.tileSize,
+                    globalConfig.tileSize,
+                    globalConfig.tileSize
+                );
             }
         }
     }

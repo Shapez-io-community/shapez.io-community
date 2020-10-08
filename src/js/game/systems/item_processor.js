@@ -332,6 +332,7 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      */
     process_CUTTER(payload) {
         const inputItem = /** @type {ShapeItem} */ (payload.items[0].item);
+        //console.log(inputItem);
         assert(inputItem instanceof ShapeItem, "Input for cut is not a shape");
         const inputDefinition = inputItem.definition;
 

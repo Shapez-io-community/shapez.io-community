@@ -5,14 +5,17 @@ import { MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { DisplayComponent } from "../components/display";
 import { enumHubGoalRewards } from "../tutorial_goals";
+import { enumColors, enumColorsToHexCode } from "../colors";
 
 export class MetaDisplayBuilding extends MetaBuilding {
     constructor() {
         super("display");
+        this.SilhouetteColor = "#aaaaaa";
     }
 
     getSilhouetteColor() {
-        return "#aaaaaa";
+        //console.log(this.SilhouetteColor);
+        return this.SilhouetteColor;
     }
 
     /**

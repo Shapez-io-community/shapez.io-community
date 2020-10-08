@@ -5,11 +5,20 @@ import { ShapeDefinition } from "./shape_definition";
 export const preparementShape = "CpRpCp--:SwSwSwSw";
 export const finalGameShape = "RuCw--Cw:----Ru--";
 export const rocketShape = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw";
-export const blueprintShape = "C000000255C000000255C000000255R000000255:C255255255C255255255C255255255C255255255";
+export const blueprintShape = "CbCbCbRb:CwCwCwCw";
 
-const fixedImprovements = [0.5, 0.5, 1, 1, 2, 1, 1];
+const fixedImprovements = [];
+
+for (let i = 0; i < 6; i++) {
+    fixedImprovements.push(0.25);
+}
+
+for (let i = 0; i < 1; i++) {
+    fixedImprovements.push(0.5);
+}
 
 const numEndgameUpgrades = !IS_DEMO ? 20 - fixedImprovements.length - 1 : 0;
+console.log (numEndgameUpgrades);
 
 function generateEndgameUpgrades() {
     return new Array(numEndgameUpgrades).fill(null).map((_, i) => ({
@@ -22,8 +31,14 @@ function generateEndgameUpgrades() {
     }));
 }
 
-for (let i = 0; i < numEndgameUpgrades; ++i) {
-    fixedImprovements.push(0.1);
+if (numEndgameUpgrades != 0) {
+    for (let i = 0; i < 8; i++) {
+        fixedImprovements.push(0.5);
+    }
+
+    for (let i = 0; i < 4; i++) {
+        fixedImprovements.push(0.75);
+    }
 }
 
 /** @typedef {{
@@ -46,7 +61,7 @@ export const UPGRADES = {
             required: [{ shape: "CuCuCuCu", amount: 60 }],
         },
         {
-            required: [{ shape: "----------CuCu----------", amount: 500 }],
+            required: [{ shape: "--CuCu--", amount: 500 }],
         },
         {
             required: [{ shape: "CpCpCpCp", amount: 1000 }],

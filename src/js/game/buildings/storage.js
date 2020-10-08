@@ -10,7 +10,7 @@ import { MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 
-const storageSize = 5000;
+const storageSize = 5000000;
 
 export class MetaStorageBuilding extends MetaBuilding {
     constructor() {

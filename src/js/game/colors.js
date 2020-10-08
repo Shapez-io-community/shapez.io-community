@@ -1,202 +1,139 @@
+import { addSyntheticLeadingComment } from "typescript";
+
 var colors = [];
-
-for (var r = 0; r < 2; r++) {
-    for (var g = 0; g < 2; g++) {
-        for (var b = 0; b < 2; b++) {
-            colors.push(fullColorHex(r * 100, g * 100, b * 100));
-        }
-    }   
-}
-
-//const enumColors = {};
-
-//for(const c of colors) {
-    //enumColors["#" + c] = c;
-//}
-
-//for(const c of ['red', 'blue', 'green', 'cyan', 'yellow', 'purple', 'white', 'uncolored']) {
-//    enumColors[c] = c;
-//}
-
-//console.log(enumColors);
-
-export const enumColors = {
-    red: "red",
-    green: "green",
-    blue: "blue",
-
-    yellow: "yellow",
-    purple: "purple",
-    cyan: "cyan",
-
-    white: "white",
-    uncolored: "uncolored",
-};
-
-/** @enum {string} */
-export const enumColorToShortcode = {
-    [enumColors.red]: "r",
-    [enumColors.green]: "g",
-    [enumColors.blue]: "b",
-
-    [enumColors.yellow]: "y",
-    [enumColors.purple]: "p",
-    [enumColors.cyan]: "c",
-
-    [enumColors.white]: "w",
-    [enumColors.uncolored]: "u",
-};
-
-/** @enum {enumColors} */
-export const enumShortcodeToColor = {};
-for (const key in enumColorToShortcode) {
-    enumShortcodeToColor[enumColorToShortcode[key]] = key;
-}
-
-/** @enum {string} */
-export const enumColorsToHexCode = {
-    [enumColors.red]: "#ff666a",
-    [enumColors.green]: "#78ff66",
-    [enumColors.blue]: "#66a7ff",
-
-    // red + green
-    [enumColors.yellow]: "#fcf52a",
-
-    // red + blue
-    [enumColors.purple]: "#dd66ff",
-
-    // blue + green
-    [enumColors.cyan]: "#00fcff",
-
-    // blue + green + red
-    [enumColors.white]: "#ffffff",
-
-    // black + white
-    [enumColors.uncolored]: "#aaaaaa",
-
-    // white + white
-    [enumColors.black]: "#000000",
-};
-
-const c = enumColors;
-/** @enum {Object.<string, string>} */
-export const enumColorMixingResults = {
-    // 255, 0, 0
-    [c.red]: {
-        [c.green]: c.yellow,
-        [c.blue]: c.purple,
-
-        [c.yellow]: c.yellow,
-        [c.purple]: c.purple,
-        [c.cyan]: c.white,
-    },
-
-    // 0, 255, 0
-    [c.green]: {
-        [c.blue]: c.cyan,
-
-        [c.yellow]: c.yellow,
-        [c.purple]: c.white,
-        [c.cyan]: c.cyan,
-    },
-
-    // 0, 255, 0
-    [c.blue]: {
-        [c.yellow]: c.white,
-        [c.purple]: c.purple,
-        [c.cyan]: c.cyan,
-    },
-
-    // 255, 255, 0
-    [c.yellow]: {
-        [c.purple]: c.white,
-        [c.cyan]: c.white,
-    },
-
-    // 255, 0, 255
-    [c.purple]: {
-        [c.cyan]: c.white,
-    },
-
-    // 0, 255, 255
-    [c.cyan]: {
-    },
-
-    //// SPECIAL COLORS
-
-    // 255, 255, 255
-    [c.white]: {
-        //auto
-    },
-
-    // X, X, X
-    [c.uncolored]: {
-        // auto
-    },
-};
 
 var HexToRGB = function(hex) {
     var aRgbHex = hex.match(/.{1,2}/g);
-    var aRgb = [
-        parseInt(aRgbHex[0], 16),
-        parseInt(aRgbHex[1], 16),
-        parseInt(aRgbHex[2], 16)
-    ];
-    return aRgb;
+    var r = parseInt(aRgbHex[0], 16);
+    var g = parseInt(aRgbHex[1], 16);
+    var b = parseInt(aRgbHex[2], 16);
+    var R = r.toString();
+    var G = g.toString();
+    var B = b.toString();
+    while (R.length < 3){R = "0" + R};
+    while (G.length < 3){G = "0" + G};
+    while (B.length < 3){B = "0" + B};
+    return R + G + B;
 }
 
-function rgbToHex(rgb) { 
-    var hex = Number(rgb).toString(16);
+var rgbToHex = function(rgb) {
+    var r = colorToHex(rgb.slice(0, 3));
+    var g = colorToHex(rgb.slice(3, 6));
+    var b = colorToHex(rgb.slice(6, 9));
+    return r+g+b;
+}
+
+var RandGandBToHex = function(R, G, B) {
+    var r = colorToHex(R);
+    var g = colorToHex(G);
+    var b = colorToHex(B);
+    return r+g+b;
+}
+
+var colorToHex = function (color) { 
+    var hex = Number(color).toString(16);
     if (hex.length < 2) {
-         hex = "0" + hex;
+        hex = "0" + hex;
     }
     return hex;
 }
 
-function fullColorHex(r,g,b) {
-    var red = rgbToHex(r);
-    var green = rgbToHex(g);
-    var blue = rgbToHex(b);
-    return red+green+blue;
+var mixColors = function(color1, color2) {
+    var R1 = color1.slice(1, 4);
+    var G1 = color1.slice(4, 7);
+    var B1 = color1.slice(7, 10);
+    var c2 = color2.slice(1, 10);
 }
 
-// Create same color lookups
-for (const color in enumColors) {
-    enumColorMixingResults[color][color] = color;    
-    //enumColorMixingResults[color][undefined] = color; 
-    enumColorMixingResults[color][c.white] = c.white;
-    // Anything with uncolored is the same color
-    enumColorMixingResults[color][c.uncolored] = color;
+for (var R = 0; R < 2; R++) {
+    for (var G = 0; G < 2; G++) {
+        for (var B = 0; B < 2; B++) {
+            var color = RandGandBToHex(R * 100, G * 100, B * 100);
+            colors.push(color);
+        }
+    }   
 }
+
+export const enumColors = {};
+export const enumColorToShortcode = {};
+export const enumShortcodeToColor = {};
+export const enumColorsToHexCode = {}
+export const enumColorMixingResults = {};
+
+
+for(const c of colors) {
+    enumColors["#" + c] = c;
+}
+
+/** @enum {string} */
+for(const c of colors) {
+    enumColorToShortcode[c] = HexToRGB(c);
+}
+
+/** @enum {string} */
+for(const c of colors) {
+    enumColorsToHexCode[c] = ("#" + c);
+}
+
+/** @enum {enumColors} */
+for (const key in enumColorToShortcode) {
+    enumShortcodeToColor[enumColorToShortcode[key]] = key;
+}
+
+for (const c1 in enumColors) {
+    for (const c2 in enumColors) {
+        var resultColor = mixColors(c1, c2);
+        results[c2] = c3;
+        enumColorMixingResults[c1] = results;
+    }
+}
+
+//for (const color in enumColors) {
+//    if (color != "white") {
+//        enumColorMixingResults[color][color] = color;
+//        enumColorMixingResults[color][c.white] = c.white;
+//        enumColorMixingResults[color][c.black] = c.black;
+//    }  
+//    // Anything with uncolored is the same color
+//    enumColorMixingResults[color][c.uncolored] = color;
+//}
 
 // Create reverse lookup and check color mixing lookups
-for (const colorA in enumColorMixingResults) {
-    for (const colorB in enumColorMixingResults[colorA]) {
-        const resultColor = enumColorMixingResults[colorA][colorB];
-        if (!enumColorMixingResults[colorB]) {
-            enumColorMixingResults[colorB] = {
-                [colorA]: resultColor,
-            };
-        } else {
-            const existingResult = enumColorMixingResults[colorB][colorA];
-            if (existingResult && existingResult !== resultColor) {
-                assertAlways(
-                    false,
-                    "invalid color mixing configuration, " +
-                        colorA +
-                        " + " +
-                        colorB +
-                        " is " +
-                        resultColor +
-                        " but " +
-                        colorB +
-                        " + " +
-                        colorA +
-                        " is " +
-                        existingResult
-                );
-            }
-            enumColorMixingResults[colorB][colorA] = resultColor;
+//for (const colorA in enumColorMixingResults) {
+//    for (const colorB in enumColorMixingResults[colorA]) {
+//        const resultColor = enumColorMixingResults[colorA][colorB];
+//        if (!enumColorMixingResults[colorB]) {
+//            enumColorMixingResults[colorB] = {
+//                [colorA]: resultColor,
+//            };
+//        } else {
+//            const existingResult = enumColorMixingResults[colorB][colorA];
+//            if (existingResult && existingResult !== resultColor) {
+//                assertAlways(
+//                    false,
+//                    "invalid color mixing configuration, " +
+//                        colorA +
+//                        " + " +
+//                        colorB +
+//                        " is " +
+//                        resultColor +
+//                        " but " +
+//                        colorB +
+//                        " + " +
+//                        colorA +
+//                        " is " +
+//                        existingResult
+//                );
+//            }
+//            enumColorMixingResults[colorB][colorA] = resultColor;
+//        }
+//    }
+//}
+
+for (const colorA in enumColors) {
+    for (const colorB in enumColors) {
+        if (!enumColorMixingResults[colorA][colorB]) {
+            enumColorMixingResults[colorA][colorB] = mixColors(colorA, colorB);
         }
     }
 }
@@ -204,7 +141,7 @@ for (const colorA in enumColorMixingResults) {
 for (const colorA in enumColorMixingResults) {
     for (const colorB in enumColorMixingResults) {
         if (!enumColorMixingResults[colorA][colorB]) {
-            assertAlways(false, "Color mixing of", colorA, "with", colorB, "is not defined");
+            enumColorMixingResults[colorA][colorB] = mixColors(colorA, colorB);
         }
     }
 }
