@@ -8,6 +8,9 @@ export default {
     // Skips any delays like transitions between states and such
     // noArtificialDelays: true,
     // -----------------------------------------------------------------------------------
+    // Sandbox mode
+    // sandboxMode: true,
+    // -----------------------------------------------------------------------------------
     // Disables writing of savegames, useful for testing the same savegame over and over
     // disableSavegameWrite: true,
     // -----------------------------------------------------------------------------------
