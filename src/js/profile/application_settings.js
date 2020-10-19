@@ -20,6 +20,7 @@ export const enumCategories = {
     userInterface: "userInterface",
     performance: "performance",
     advanced: "advanced",
+    keybindings: "keybindings",
 };
 
 export const uiScales = [
