@@ -46,7 +46,7 @@ export class GameSystemWithFilter extends GameSystem {
         }
 
         // This is slow!
-        if (G_IS_DEV && !globalConfig.debug.disableSlowAsserts) {
+        if (globalConfig.debug.enableSlowAsserts) {
             assert(this.allEntities.indexOf(entity) < 0, "entity already in list: " + entity);
         }
 

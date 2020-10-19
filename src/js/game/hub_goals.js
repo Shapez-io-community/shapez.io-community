@@ -192,7 +192,7 @@ export class HubGoals extends BasicSerializableObject {
      * @param {enumHubGoalRewards} reward
      */
     isRewardUnlocked(reward) {
-        if (G_IS_DEV && globalConfig.debug.allBuildingsUnlocked) {
+        if (globalConfig.debug.allBuildingsUnlocked) {
             return true;
         }
         return !!this.gainedRewards[reward];
@@ -212,7 +212,7 @@ export class HubGoals extends BasicSerializableObject {
         // Check if we have enough for the next level
         if (
             this.getCurrentGoalDelivered() >= this.currentGoal.required ||
-            (G_IS_DEV && globalConfig.debug.rewardsInstant)
+            (globalConfig.debug.rewardsInstant)
         ) {
             if (!this.isEndOfDemoReached()) {
                 this.onGoalCompleted();
@@ -281,7 +281,7 @@ export class HubGoals extends BasicSerializableObject {
             return false;
         }
 
-        if (G_IS_DEV && globalConfig.debug.upgradesNoCost) {
+        if (globalConfig.debug.upgradesNoCost) {
             return true;
         }
 
@@ -328,7 +328,7 @@ export class HubGoals extends BasicSerializableObject {
             return false;
         }
 
-        if (G_IS_DEV && globalConfig.debug.upgradesNoCost) {
+        if (globalConfig.debug.upgradesNoCost) {
             // Dont take resources
         } else {
             for (let i = 0; i < tierData.required.length; ++i) {
