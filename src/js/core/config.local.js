@@ -1,14 +1,17 @@
 export default {
     // You can set any debug options here!
     // -----------------------------------------------------------------------------------
+    _sandboxMode: "Sandbox mode",
+    sandboxMode: false,
+    // -----------------------------------------------------------------------------------
+    _demoVersion: "Demo version",
+    demoVersion: false,
+    // -----------------------------------------------------------------------------------
     _fastGameEnter: "Quickly enters the game and skips the main menu - good for fast iterating",
     fastGameEnter: false,
     // -----------------------------------------------------------------------------------
     _noArtificialDelays: "Skips any delays like transitions between states and such",
     noArtificialDelays: false,
-    // -----------------------------------------------------------------------------------
-    _sandboxMode: "Sandbox mode",
-    sandboxMode: false,
     // -----------------------------------------------------------------------------------
     _disableSavegameWrite: "Disables writing of savegames, useful for testing the same savegame over and over",
     disableSavegameWrite: false,
@@ -110,6 +113,6 @@ export default {
     manualTickOnly: false,
     // -----------------------------------------------------------------------------------
     _enableSlowAsserts: "Enables slow asserts, useful for debugging performance",
-    disableSlowAsserts: false,
+    enableSlowAsserts: false,
     // -----------------------------------------------------------------------------------
 };

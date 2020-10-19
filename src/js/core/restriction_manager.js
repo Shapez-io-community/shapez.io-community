@@ -5,6 +5,7 @@ import { IS_MAC } from "./config";
 import { ExplainedResult } from "./explained_result";
 import { queryParamOptions } from "./query_parameters";
 import { ReadWriteProxy } from "./read_write_proxy";
+import { globalConfig } from "./config";
 
 export class RestrictionManager extends ReadWriteProxy {
     /**
@@ -84,7 +85,7 @@ export class RestrictionManager extends ReadWriteProxy {
             return false;
         }
 
-        if (queryParamOptions.fullVersion) {
+        if (queryParamOptions.fullVersion || !globalConfig.demoVersion) {
             // Full version is activated via flag
             return false;
         }

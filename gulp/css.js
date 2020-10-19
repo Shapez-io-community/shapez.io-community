@@ -83,7 +83,7 @@ function gulptasksCSS($, gulp, buildFolder, browserSync) {
 
     // Builds the css resources in prod (=minified)
     gulp.task("css.resources.prod", () => {
-        return resourcesTask({ cachebust: true, isProd: true });
+        return resourcesTask({ cachebust: false, isProd: true });
     });
 
     // Builds the css resources in prod (=minified), without cachebusting
@@ -116,7 +116,7 @@ function gulptasksCSS($, gulp, buildFolder, browserSync) {
 
     // Builds the css main in prod (=minified)
     gulp.task("css.main.prod", () => {
-        return mainTask({ cachebust: true, isProd: true });
+        return mainTask({ cachebust: false, isProd: true });
     });
 
     // Builds the css main in prod (=minified), without cachebusting
