@@ -32,6 +32,15 @@ export class BaseItem extends BasicSerializableObject {
      * Returns a string id of the item
      * @returns {string}
      */
+    getHash() {
+        abstract;
+        return "";
+    }
+
+    /**
+     * Returns a string id of the item
+     * @returns {string}
+     */
     getAsCopyableKey() {
         abstract;
         return "";
