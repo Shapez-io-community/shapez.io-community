@@ -61,7 +61,7 @@ export class Blueprint {
      * Returns the cost of this blueprint in shapes
      */
     getCost() {
-        if (G_IS_DEV && globalConfig.debug.blueprintsNoCost) {
+        if (globalConfig.debug.blueprintsNoCost) {
             return 0;
         }
         return findNiceIntegerValue(4 * Math.pow(this.entities.length, 1.1));

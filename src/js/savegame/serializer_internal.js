@@ -79,7 +79,7 @@ export class SerializerInternal {
     deserializeComponents(root, entity, data) {
         for (const componentId in data) {
             if (!entity.components[componentId]) {
-                if (G_IS_DEV && !globalConfig.debug.disableSlowAsserts) {
+                if (globalConfig.debug.enableSlowAsserts) {
                     // @ts-ignore
                     if (++window.componentWarningsShown < 100) {
                         logger.warn("Entity no longer has component:", componentId);

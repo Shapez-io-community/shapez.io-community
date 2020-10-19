@@ -189,7 +189,7 @@ export class MainMenuState extends GameState {
 
         const qs = this.htmlElement.querySelector.bind(this.htmlElement);
 
-        if (G_IS_DEV && globalConfig.debug.fastGameEnter) {
+        if (globalConfig.debug.fastGameEnter) {
             const games = this.app.savegameMgr.getSavegamesMetaData();
             if (games.length > 0 && globalConfig.debug.resumeGameOnFastEnter) {
                 this.resumeGame(games[0]);
