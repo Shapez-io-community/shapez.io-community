@@ -1,7 +1,3 @@
-import { IS_DEMO } from "../core/config";
-import { ShapeDefinition } from "./shape_definition";
-import { finalGameShape } from "./upgrades";
-
 /**
  * Don't forget to also update tutorial_goals_mappings.js as well as the translations!
  * @enum {string}
@@ -40,6 +36,7 @@ export const enumHubGoalRewards = {
     no_reward: "no_reward",
     no_reward_freeplay: "no_reward_freeplay",
 };
+<<<<<<< HEAD
 
 export const tutorialGoals = [
     // 1
@@ -266,3 +263,5 @@ if (G_IS_DEV) {
         }
     });
 }
+=======
+>>>>>>> master

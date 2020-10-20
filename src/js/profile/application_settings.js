@@ -6,8 +6,7 @@ import { ReadWriteProxy } from "../core/read_write_proxy";
 import { BoolSetting, EnumSetting, RangeSetting, BaseSetting } from "./setting_types";
 import { createLogger } from "../core/logging";
 import { ExplainedResult } from "../core/explained_result";
-import { THEMES, THEME, applyGameTheme } from "../game/theme";
-import { IS_DEMO } from "../core/config";
+import { THEMES, applyGameTheme } from "../game/theme";
 import { T } from "../translations";
 import { LANGUAGES } from "../languages";
 
@@ -45,25 +44,6 @@ export const uiScales = [
         size: 1.1,
     },
 ];
-
-export const setColorCount = [
-    {
-        id: "3^3",
-        count: 2,
-    },
-    {
-        id: "6^3",
-        count: 5,
-    },
-    {
-        id: "11^3",
-        count: 10,
-    },
-    {
-        id: "51^3",
-        count: 50,
-    },
-]
 
 export const scrollWheelSensitivities = [
     {
@@ -206,7 +186,9 @@ export const allApplicationSettings = [
                 app.platformWrapper.setFullscreen(value);
             }
         },
-        !IS_DEMO
+        /**
+         * @param {Application} app
+         */ app => app.restrictionMgr.getHasExtendedSettings()
     ),
 
     new BoolSetting(
@@ -234,7 +216,9 @@ export const allApplicationSettings = [
                 applyGameTheme(id);
                 document.documentElement.setAttribute("data-theme", id);
             },
-        enabled: !IS_DEMO,
+        enabledCb: /**
+         * @param {Application} app
+         */ app => app.restrictionMgr.getHasExtendedSettings(),
     }),
 
     new EnumSetting("autosaveInterval", {
@@ -243,19 +227,6 @@ export const allApplicationSettings = [
         textGetter: interval => T.settings.labels.autosaveInterval.intervals[interval.id],
         category: enumCategories.advanced,
         restartRequired: false,
-        changeCb:
-            /**
-             * @param {Application} app
-             */
-            (app, id) => null,
-    }),
-
-    new EnumSetting("setColorCount", {
-        options: setColorCount,
-        valueGetter: interval => interval.id,
-        textGetter: interval => T.settings.labels.setColorCount.intervals[interval.id],
-        category: enumCategories.advanced,
-        restartRequired: true,
         changeCb:
             /**
              * @param {Application} app
@@ -287,6 +258,7 @@ export const allApplicationSettings = [
 
     new BoolSetting("enableMousePan", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("alwaysMultiplace", enumCategories.advanced, (app, value) => {}),
+    new BoolSetting("zoomToCursor", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("clearCursorOnDeleteWhilePlacing", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("enableTunnelSmartplace", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("vignette", enumCategories.userInterface, (app, value) => {}),
@@ -295,6 +267,7 @@ export const allApplicationSettings = [
     new BoolSetting("rotationByBuilding", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("displayChunkBorders", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("pickMinerOnPatch", enumCategories.advanced, (app, value) => {}),
+    new RangeSetting("mapResourcesScale", enumCategories.advanced, () => null),
 
     new EnumSetting("refreshRate", {
         options: refreshRateOptions,
@@ -303,7 +276,9 @@ export const allApplicationSettings = [
         category: enumCategories.performance,
         restartRequired: false,
         changeCb: (app, id) => {},
-        enabled: !IS_DEMO,
+        enabledCb: /**
+         * @param {Application} app
+         */ app => app.restrictionMgr.getHasExtendedSettings(),
     }),
 
     new BoolSetting("lowQualityMapResources", enumCategories.performance, (app, value) => {}),
@@ -330,7 +305,6 @@ class SettingsStorage {
         this.movementSpeed = "regular";
         this.language = "auto-detect";
         this.autosaveInterval = "two_minutes";
-        this.setColorCount = "6^3";
 
         this.alwaysMultiplace = false;
         this.offerHints = true;
@@ -350,6 +324,8 @@ class SettingsStorage {
         this.disableTileGrid = false;
         this.lowQualityTextures = false;
         this.simplifiedBelts = false;
+        this.zoomToCursor = true;
+        this.mapResourcesScale = 0.5;
 
         /**
          * @type {Object.<string, number>}
@@ -388,7 +364,7 @@ export class ApplicationSettings extends ReadWriteProxy {
      * @returns {SettingsStorage}
      */
     getAllSettings() {
-        return this.getCurrentData().settings;
+        return this.currentData.settings;
     }
 
     /**
@@ -453,17 +429,6 @@ export class ApplicationSettings extends ReadWriteProxy {
         }
         logger.error("Unknown autosave interval id:", id);
         return 120;
-    }
-
-    getColorCount() {
-        const id = this.getAllSettings().setColorCount;
-        for (let i = 0; i < setColorCount.length; ++i) {
-            if (setColorCount[i].id === id) {
-                return setColorCount[i].count;
-            }
-        }
-        logger.error("Unknown color count:", id);
-        return 5;
     }
 
     getIsFullScreen() {
@@ -571,7 +536,7 @@ export class ApplicationSettings extends ReadWriteProxy {
     }
 
     getCurrentVersion() {
-        return 28;
+        return 30;
     }
 
     /** @param {{settings: SettingsStorage, version: number}} data */
@@ -705,8 +670,13 @@ export class ApplicationSettings extends ReadWriteProxy {
         }
 
         if (data.version < 29) {
-            data.settings.setColorCount = "6^3";
+            data.settings.zoomToCursor = true;
             data.version = 29;
+        }
+
+        if (data.version < 30) {
+            data.settings.mapResourcesScale = 0.5;
+            data.version = 30;
         }
 
         return ExplainedResult.good();

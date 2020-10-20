@@ -1,12 +1,11 @@
 import { ClickDetector } from "../../../core/click_detector";
-import { formatBigNumber, makeDiv, arrayDeleteValue } from "../../../core/utils";
-import { ShapeDefinition } from "../../shape_definition";
-import { BaseHUDPart } from "../base_hud_part";
-import { blueprintShape, UPGRADES } from "../../upgrades";
-import { enumHubGoalRewards } from "../../tutorial_goals";
-import { enumAnalyticsDataSource } from "../../production_analytics";
-import { T } from "../../../translations";
 import { globalConfig } from "../../../core/config";
+import { arrayDeleteValue, formatBigNumber, makeDiv } from "../../../core/utils";
+import { T } from "../../../translations";
+import { enumAnalyticsDataSource } from "../../production_analytics";
+import { ShapeDefinition } from "../../shape_definition";
+import { enumHubGoalRewards } from "../../tutorial_goals";
+import { BaseHUDPart } from "../base_hud_part";
 
 /**
  * Manages the pinned shapes on the left side of the screen
@@ -80,7 +79,7 @@ export class HUDPinnedShapes extends BaseHUDPart {
     updateShapesAfterUpgrade() {
         for (let i = 0; i < this.pinnedShapes.length; ++i) {
             const key = this.pinnedShapes[i];
-            if (key === blueprintShape) {
+            if (key === this.root.gameMode.getBlueprintShapeKey()) {
                 // Ignore blueprint shapes
                 continue;
             }
@@ -105,13 +104,14 @@ export class HUDPinnedShapes extends BaseHUDPart {
         if (key === this.root.hubGoals.currentGoal.definition.getHash()) {
             return this.root.hubGoals.currentGoal.required;
         }
-        if (key === blueprintShape) {
+        if (key === this.root.gameMode.getBlueprintShapeKey()) {
             return null;
         }
 
         // Check if this shape is required for any upgrade
-        for (const upgradeId in UPGRADES) {
-            const upgradeTiers = UPGRADES[upgradeId];
+        const upgrades = this.root.gameMode.getUpgrades();
+        for (const upgradeId in upgrades) {
+            const upgradeTiers = upgrades[upgradeId];
             const currentTier = this.root.hubGoals.getUpgradeLevel(upgradeId);
             const tierHandle = upgradeTiers[currentTier];
 
@@ -136,7 +136,10 @@ export class HUDPinnedShapes extends BaseHUDPart {
      * @param {string} key
      */
     isShapePinned(key) {
-        if (key === this.root.hubGoals.currentGoal.definition.getHash() || key === blueprintShape) {
+        if (
+            key === this.root.hubGoals.currentGoal.definition.getHash() ||
+            key === this.root.gameMode.getBlueprintShapeKey()
+        ) {
             // This is a "special" shape which is always pinned
             return true;
         }
@@ -176,7 +179,7 @@ export class HUDPinnedShapes extends BaseHUDPart {
         // Pin blueprint shape as well
         if (this.root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_blueprints)) {
             this.internalPinShape({
-                key: blueprintShape,
+                key: this.root.gameMode.getBlueprintShapeKey(),
                 canUnpin: false,
                 className: "blueprint",
             });
@@ -212,11 +215,11 @@ export class HUDPinnedShapes extends BaseHUDPart {
 
         let detector = null;
         if (canUnpin) {
-            element.classList.add("unpinable");
+            element.classList.add("removable");
             detector = new ClickDetector(element, {
                 consumeEvents: true,
                 preventDefault: true,
-                targetOnly: true,
+                targetOnly: false,
             });
             detector.click.add(() => this.unpinShape(key));
         } else {
@@ -289,6 +292,7 @@ export class HUDPinnedShapes extends BaseHUDPart {
      * @param {string} key
      */
     unpinShape(key) {
+        console.log("unpin", key);
         arrayDeleteValue(this.pinnedShapes, key);
         this.rerenderFull();
     }
@@ -304,7 +308,7 @@ export class HUDPinnedShapes extends BaseHUDPart {
             return;
         }
 
-        if (key === blueprintShape) {
+        if (key === this.root.gameMode.getBlueprintShapeKey()) {
             // Can not pin the blueprint shape
             return;
         }

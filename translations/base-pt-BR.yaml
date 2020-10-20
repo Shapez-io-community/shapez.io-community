@@ -174,12 +174,18 @@ dialogs:
             Failed to load your savegame:
 
     confirmSavegameDelete:
+<<<<<<< HEAD
         title: Confirm deletion
         text: >-
             Are you sure you want to delete the following game?<br><br>
             '<savegameName>' at level <savegameLevel><br><br>
             This can not be undone!
 
+=======
+        title: Confirmar exclusão
+        text: Tem certeza que deseja deletar o jogo a seguir?<br><br> '<savegameName>'
+            no nível <savegameLevel><br><br> Isso não pode ser revertido!
+>>>>>>> master
     savegameDeletionError:
         title: Failed to delete
         text: >-
@@ -269,6 +275,7 @@ dialogs:
         desc: You requested to export your base as a screenshot. Please note that this will be quite slow for a bigger base and could potentially crash your game!
 
     renameSavegame:
+<<<<<<< HEAD
         title: Rename Savegame
         desc: You can rename your savegame here.
 
@@ -276,6 +283,10 @@ dialogs:
         title: Performance Warning
         desc: You have placed a lot of buildings, this is just a friendly reminder that the game can not handle an endless number of buildings - try to keep your factories compact!
 
+=======
+        title: Renomear Save
+        desc: Você pode renomear seu save aqui.
+>>>>>>> master
 ingame:
     # This is shown in the top left corner and displays useful keybindings in
     # every situation
@@ -349,6 +360,7 @@ ingame:
 
     # The "Upgrades" window
     shop:
+<<<<<<< HEAD
         title: Upgrades
         buttonUnlock: Upgrade
 
@@ -362,6 +374,12 @@ ingame:
         maximumLevel: MAXIMUM LEVEL (Speed x<currentMult>)
 
     # The "Statistics" window
+=======
+        title: Melhorias
+        buttonUnlock: Melhorar
+        tier: Nível <x>
+        maximumLevel: NÍVEL MÁXIMO (Velocidade x<currentMult>)
+>>>>>>> master
     statistics:
         title: Statistics
         dataSources:
@@ -384,11 +402,17 @@ ingame:
 
     # Settings menu, when you press "ESC"
     settingsMenu:
+<<<<<<< HEAD
         playtime: Playtime
         buildingsPlaced: Buildings
         beltsPlaced: Belts
 
     # Bottom left tutorial hints
+=======
+        playtime: Tempo de Jogo
+        buildingsPlaced: Construções
+        beltsPlaced: Esteiras
+>>>>>>> master
     tutorialHints:
         title: Need help?
         showHint: Show hint
@@ -584,9 +608,16 @@ buildings:
             description: Colors the shapes on the left inputs with the color from the top input.
 
         quad:
+<<<<<<< HEAD
             name: Painter (Quad)
             description: Allows you to color each quadrant of the shape individually. Only slots with a <strong>truthy signal</strong> on the wires layer will be painted!
 
+=======
+            name: Pintor (Quádruplo)
+            description: Permite que você pinte cada quadrante da forma individualmente.
+                Apenas entradas com um <strong>sinal verdadeiro</strong> no
+                plano de fios serão pintadas!
+>>>>>>> master
     trash:
         default:
             name: &trash Trash
@@ -698,9 +729,18 @@ buildings:
 storyRewards:
     # Those are the rewards gained from completing the store
     reward_cutter_and_trash:
+<<<<<<< HEAD
         title: Cutting Shapes
         desc: You just unlocked the <strong>cutter</strong>, which cuts shapes in half from top to bottom <strong>regardless of its orientation</strong>!<br><br>Be sure to get rid of the waste, or otherwise <strong>it will clog and stall</strong> - For this purpose I have given you the <strong>trash</strong>, which destroys everything you put into it!
 
+=======
+        title: Cortando formas
+        desc: Você acabou de desbloquear o <strong>cortador</strong>, que corta formas
+            pela metade de cima para baixo <strong>independente de sua
+            orientação</strong>!<br><br>Lembre-se de se livrar do lixo, caso
+            contrário, <strong>a máquina irá entupir</strong> - Por isso eu te
+            dei o <strong>lixo</strong>, que destrói tudo que você coloca nele!
+>>>>>>> master
     reward_rotater:
         title: Rotating
         desc: The <strong>rotater</strong> has been unlocked! It rotates shapes clockwise by 90 degrees.
@@ -715,6 +755,7 @@ storyRewards:
         desc: The <strong>mixer</strong> has been unlocked - It mixes two colors using <strong>additive blending</strong>!
 
     reward_stacker:
+<<<<<<< HEAD
         title: Stacker
         desc: You can now combine shapes with the <strong>stacker</strong>! Both inputs are combined, and if they can be put next to each other, they will be <strong>fused</strong>. If not, the right input is <strong>stacked on top</strong> of the left input!
 
@@ -722,6 +763,18 @@ storyRewards:
         title: Balancer
         desc: The multifunctional <strong>balancer</strong> has been unlocked - It can be used to build bigger factories by <strong>splitting and merging items</strong> onto multiple belts!
 
+=======
+        title: Empilhador
+        desc: Agora você pode combinar formas com o <strong>empilhador</strong>! Ambas
+            as entradas são combinadas e, se puderem ser colocadas próximas uma
+            da outra, serão <strong>fundidas</strong>. Caso contrário, a entrada
+            direita é <strong>empilhada em cima</strong> da entrada esquerda!
+    reward_splitter:
+        title: Divisor
+        desc: Você desbloqueou uma variante <strong>divisora</strong> do
+            <strong>balanceador</strong> - Ela aceita uma entrada e a divide em
+            duas saídas!
+>>>>>>> master
     reward_tunnel:
         title: Tunnel
         desc: The <strong>tunnel</strong> has been unlocked - You can now tunnel items below belts and buildings with it!
@@ -764,6 +817,7 @@ storyRewards:
         desc: You have unlocked a variant of the <strong>painter</strong> - It works similar to the regular painter but processes <strong>two shapes at once</strong>, consuming just one color instead of two!
 
     reward_storage:
+<<<<<<< HEAD
         title: Storage
         desc: >-
             You have unlocked the <strong>storage</strong> building - It allows you to store items up to a given capacity!<br><br>
@@ -773,6 +827,54 @@ storyRewards:
         title: Blueprints
         desc: You can now <strong>copy and paste</strong> parts of your factory! Select an area (Hold CTRL, then drag with your mouse), and press 'C' to copy it.<br><br>Pasting it is <strong>not free</strong>, you need to produce <strong>blueprint shapes</strong> to afford it! (Those you just delivered).
 
+=======
+        title: Acúmulo de excesso
+        desc: You have unlocked the <strong>storage</strong> building - It allows you to
+            store items up to a given capacity!<br><br> It priorities the left
+            output, so you can also use it as an <strong>overflow gate</strong>!
+    reward_freeplay:
+        title: Modo Livre
+        desc: Você conseguiu! Você desbloqueou o <strong>modo livre</strong>! Isso
+            significa que formas agora são geradas
+            <strong>aleatóriamente</strong>!<br><br> Já que o HUB vai precisar
+            de uma entrada <strong>constante</strong> a partir de agora, eu
+            altamente recomendo que você construa uma máquina que entregue
+            automaticamente as formas pedidas!<br><br> O HUB emite a forma
+            pedida no plano dos fios, então tudo que você precisa fazer é
+            analizá-la e automaticamente configurar sua fábrica baseado nessa
+            análise.
+    reward_blueprints:
+        title: Projetos
+        desc: Agora você pode <strong>copiar e colar</strong> partes de sua fábrica!
+            Selecione uma área (mantenha pressionada a tecla CTRL e arraste com
+            o mouse) e pressione 'C' para copiá-la. <br><br>Colar <strong>não é
+            de graça</strong>, é necessário produzir <strong>formas do
+            projeto</strong> para pagar! (Aquelas que você acabou de entregar).
+    no_reward:
+        title: Próximo nível
+        desc: "Este nível não lhe deu nenhuma recompensa, mas em breve?! <br><br>PS:
+            Melhor não destruir sua fábrica existente - Você precisa de
+            <strong>todas</strong> essas formas posteriormente mais tarde para
+            <strong>desbloquear atualizações</strong>!"
+    no_reward_freeplay:
+        title: Próximo nível
+        desc: Parabéns! Aliás, mais conteúdo vindo na versão completa!
+    reward_balancer:
+        title: Balanceador
+        desc: The multifunctional <strong>balancer</strong> has been unlocked - It can
+            be used to build bigger factories by <strong>splitting and merging
+            items</strong> onto multiple belts!
+    reward_merger:
+        title: Unificador Compacto
+        desc: Você desbloqueou uma variante <strong>unificadora</strong> do
+            <strong>balanceador</strong> - Ele aceita duas entradas e as junta
+            em uma esteira!
+    reward_belt_reader:
+        title: Leitor de Esteira
+        desc: Você desbloqueou o <strong>leitor de esteira</strong>! Ele permite que
+            você meça a passagem de itens em uma esteira.<br><br>Espere até você
+            desbloquear os fios - ele se torna muito útil!
+>>>>>>> master
     reward_rotater_180:
         title: Rotater (180°)
         desc: You just unlocked the 180 degrees <strong>rotater</strong>! - It allows you to rotate a shape by 180 degress (Surprise! :D)
@@ -794,10 +896,17 @@ storyRewards:
 
     reward_display:
         title: Display
+<<<<<<< HEAD
         desc: >-
             You have unlocked the <strong>Display</strong> - Connect a signal on the wires layer to visualize it!<br><br>
             PS: Did you notice the belt reader and storage output their last read item? Try showing it on a display!
 
+=======
+        desc: "Você desbloqueou o <strong>Display</strong> - Conecte um sinal no plano
+            de fios para poder vê-lo!<br><br> PS: Você percebeu que ambos o
+            leitor de esteiras e o armazenamento emitem o último item lido?
+            Tente mostrar isso em um display!"
+>>>>>>> master
     reward_constant_signal:
         title: Constant Signal
         desc: >-
@@ -1029,10 +1138,25 @@ settings:
                 Does not render belt items except when hovering the belt to save performance. I do not recommend to play with this setting if you do not absolutely need the performance.
 
         enableMousePan:
+<<<<<<< HEAD
             title: Screen Edge Panning
             description: >-
                 Allows panning the map by moving the cursor to the edges of the screen. The scroll speed depends on the Movement Speed setting.
 
+=======
+            title: Habilitar Movimento com o Mouse
+            description: Permite mover o mapa ao mover o cursor para as bordas da tela. A
+                velocidade depende da configuração Velocidade de Movimento.
+        zoomToCursor:
+            title: Zoom towards Cursor
+            description: If activated the zoom will happen in the direction of your mouse
+                position, otherwise in the middle of the screen.
+        mapResourcesScale:
+            title: Map Resources Size
+            description: Controls the size of the shapes on the map overview (when zooming
+                out).
+    rangeSliderPercentage: <amount> %
+>>>>>>> master
 keybindings:
     title: Keybindings
     hint: >-
