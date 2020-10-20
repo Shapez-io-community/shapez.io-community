@@ -10,6 +10,7 @@ import { GameSystemWithFilter } from "../game_system_with_filter";
 import { BOOL_TRUE_SINGLETON, isTruthyItem } from "../items/boolean_item";
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 import { ShapeItem } from "../items/shape_item";
+import { rocketShape } from "../upgrades";
 
 /**
  * We need to allow queuing charges, otherwise the throughput will stall
@@ -285,6 +286,9 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
 
         // Track produced items
         for (let i = 0; i < outItems.length; ++i) {
+            if (outItems[i].item == undefined) {
+                break;
+            }
             if (!outItems[i].doNotTrack) {
                 this.root.signals.itemProduced.dispatch(outItems[i].item);
             }
@@ -332,7 +336,6 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      */
     process_CUTTER(payload) {
         const inputItem = /** @type {ShapeItem} */ (payload.items[0].item);
-        //console.log(inputItem);
         assert(inputItem instanceof ShapeItem, "Input for cut is not a shape");
         const inputDefinition = inputItem.definition;
 

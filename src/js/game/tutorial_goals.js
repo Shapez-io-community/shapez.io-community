@@ -45,7 +45,7 @@ export const tutorialGoals = [
     // 1
     // Circle
     {
-        shape: "CuCuCuCu", // belts t1
+        shape: "C(640000)C(640000)C(640000)C(640000)", // belts t1
         required: 30,
         reward: enumHubGoalRewards.reward_cutter_and_trash,
     },
@@ -53,7 +53,7 @@ export const tutorialGoals = [
     // 2
     // Cutter
     {
-        shape: "----CuCu", //
+        shape: "C(640000)C(640000)C(640000)C(640000)", //
         required: 40,
         reward: enumHubGoalRewards.no_reward,
     },
@@ -61,14 +61,14 @@ export const tutorialGoals = [
     // 3
     // Rectangle
     {
-        shape: "RuRuRuRu", // miners t1
+        shape: "C(640000)C(640000)C(640000)C(640000)", // miners t1
         required: 70,
         reward: enumHubGoalRewards.reward_balancer,
     },
 
     // 4
     {
-        shape: "RuRu----", // processors t2
+        shape: "C(640000)C(640000)C(640000)C(640000)", // processors t2
         required: 70,
         reward: enumHubGoalRewards.reward_rotater,
     },
@@ -76,14 +76,14 @@ export const tutorialGoals = [
     // 5
     // Rotater
     {
-        shape: "Cu----Cu", // belts t2
+        shape: "C(640000)C(640000)C(640000)C(640000)", // belts t2
         required: 170,
         reward: enumHubGoalRewards.reward_tunnel,
     },
 
     // 6
     {
-        shape: "Cu------", // miners t2
+        shape: "C(640000)C(640000)C(640000)C(640000)", // miners t2
         required: 270,
         reward: enumHubGoalRewards.reward_painter,
     },
@@ -91,14 +91,14 @@ export const tutorialGoals = [
     // 7
     // Painter
     {
-        shape: "CrCrCrCr", // unused
+        shape: "C(640000)C(640000)C(640000)C(640000)", // unused
         required: 300,
         reward: enumHubGoalRewards.reward_rotater_ccw,
     },
 
     // 8
     {
-        shape: "RbRb----", // painter t2
+        shape: "C(640000)C(640000)C(640000)C(640000)", // painter t2
         required: 480,
         reward: enumHubGoalRewards.reward_mixer,
     },
@@ -106,7 +106,7 @@ export const tutorialGoals = [
     // 9
     // Mixing (purple)
     {
-        shape: "CpCpCpCp", // belts t3
+        shape: "C(640000)C(640000)C(640000)C(640000)", // belts t3
         required: 600,
         reward: enumHubGoalRewards.reward_merger,
     },
@@ -114,7 +114,7 @@ export const tutorialGoals = [
     // 10
     // STACKER: Star shape + cyan
     {
-        shape: "ScScScSc", // miners t3
+        shape: "C(640000)C(640000)C(640000)C(640000)", // miners t3
         required: 800,
         reward: enumHubGoalRewards.reward_stacker,
     },
@@ -122,7 +122,7 @@ export const tutorialGoals = [
     // 11
     // Chainable miner
     {
-        shape: "CgScScCg", // processors t3
+        shape: "C(640000)C(640000)C(640000)C(640000)", // processors t3
         required: 1000,
         reward: enumHubGoalRewards.reward_miner_chainable,
     },
@@ -130,7 +130,7 @@ export const tutorialGoals = [
     // 12
     // Blueprints
     {
-        shape: "CbCbCbRb:CwCwCwCw",
+        shape: "C(640000)C(640000)C(640000)C(640000)",
         required: 1000,
         reward: enumHubGoalRewards.reward_blueprints,
     },
@@ -138,7 +138,7 @@ export const tutorialGoals = [
     // 13
     // Tunnel Tier 2
     {
-        shape: "RpRpRpRp:CwCwCwCw", // painting t3
+        shape: "C(640000)C(640000)C(640000)C(640000)", // painting t3
         required: 3800,
         reward: enumHubGoalRewards.reward_underground_belt_tier_2,
     },
@@ -147,7 +147,7 @@ export const tutorialGoals = [
     ...(IS_DEMO
         ? [
               {
-                  shape: "RpRpRpRp:CwCwCwCw",
+                  shape: "C(640000)C(640000)C(640000)C(640000)",
                   required: 0,
                   reward: enumHubGoalRewards.reward_demo_end,
               },
@@ -156,7 +156,7 @@ export const tutorialGoals = [
               // 14
               // Belt reader
               {
-                  shape: "--Cg----:--Cr----", // unused
+                  shape: "C(640000)C(640000)C(640000)C(640000)", // unused
                   required: 16, // Per second!
                   reward: enumHubGoalRewards.reward_belt_reader,
                   throughputOnly: true,
@@ -165,7 +165,7 @@ export const tutorialGoals = [
               // 15
               // Storage
               {
-                  shape: "SrSrSrSr:CyCyCyCy", // unused
+                  shape: "C(640000)C(640000)C(640000)C(640000)", // unused
                   required: 10000,
                   reward: enumHubGoalRewards.reward_storage,
               },
@@ -173,7 +173,7 @@ export const tutorialGoals = [
               // 16
               // Quad Cutter
               {
-                  shape: "SrSrSrSr:CyCyCyCy:SwSwSwSw", // belts t4 (two variants)
+                  shape: "C(640000)C(640000)C(640000)C(640000)", // belts t4 (two variants)
                   required: 6000,
                   reward: enumHubGoalRewards.reward_cutter_quad,
               },
@@ -181,7 +181,7 @@ export const tutorialGoals = [
               // 17
               // Double painter
               {
-                  shape: "CbRbRbCb:CwCwCwCw:WbWbWbWb", // miner t4 (two variants)
+                  shape: "C(640000)C(640000)C(640000)C(640000)", // miner t4 (two variants)
                   required: 20000,
                   reward: enumHubGoalRewards.reward_painter_double,
               },
@@ -189,7 +189,7 @@ export const tutorialGoals = [
               // 18
               // Rotater (180deg)
               {
-                  shape: "Sg----Sg:CgCgCgCg:--CyCy--", // unused
+                  shape: "C(640000)C(640000)C(640000)C(640000)", // unused
                   required: 20000,
                   reward: enumHubGoalRewards.reward_rotater_180,
               },
@@ -197,7 +197,7 @@ export const tutorialGoals = [
               // 19
               // Compact splitter
               {
-                  shape: "CpRpCp--:SwSwSwSw",
+                  shape: "C(640000)C(640000)C(640000)C(640000)",
                   required: 25000,
                   reward: enumHubGoalRewards.reward_splitter,
               },
@@ -213,7 +213,7 @@ export const tutorialGoals = [
               // 21
               // Filter
               {
-                  shape: "CrCwCrCw:CwCrCwCr:CrCwCrCw:CwCrCwCr",
+                  shape: "C(640000)C(640000)C(640000)C(640000)",
                   required: 25000,
                   reward: enumHubGoalRewards.reward_filter,
               },
@@ -221,7 +221,7 @@ export const tutorialGoals = [
               // 22
               // Constant signal
               {
-                  shape: "Cg----Cr:Cw----Cw:Sy------:Cy----Cy",
+                  shape: "C(640000)C(640000)C(640000)C(640000)",
                   required: 25000,
                   reward: enumHubGoalRewards.reward_constant_signal,
               },
@@ -229,28 +229,28 @@ export const tutorialGoals = [
               // 23
               // Display
               {
-                  shape: "CcSyCcSy:SyCcSyCc:CcSyCcSy",
+                  shape: "C(640000)C(640000)C(640000)C(640000)",
                   required: 25000,
                   reward: enumHubGoalRewards.reward_display,
               },
 
               // 24 Logic gates
               {
-                  shape: "CcRcCcRc:RwCwRwCw:Sr--Sw--:CyCyCyCy",
+                  shape: "C(640000)C(640000)C(640000)C(640000)",
                   required: 25000,
                   reward: enumHubGoalRewards.reward_logic_gates,
               },
 
               // 25 Virtual Processing
               {
-                  shape: "Rg--Rg--:CwRwCwRw:--Rg--Rg",
+                  shape: "C(640000)C(640000)C(640000)C(640000)",
                   required: 25000,
                   reward: enumHubGoalRewards.reward_virtual_processing,
               },
 
               // 26 Freeplay
               {
-                  shape: "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw",
+                  shape: "C(640000)C(640000)C(640000)C(640000)",
                   required: 50000,
                   reward: enumHubGoalRewards.reward_freeplay,
               },

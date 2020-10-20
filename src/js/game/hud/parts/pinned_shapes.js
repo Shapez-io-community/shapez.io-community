@@ -31,8 +31,6 @@ export class HUDPinnedShapes extends BaseHUDPart {
          *  element: HTMLElement,
          *  detector?: ClickDetector,
          *  infoDetector?: ClickDetector,
-         *  throughputOnly?: boolean
-         * }>}
          */
         this.handles = [];
     }

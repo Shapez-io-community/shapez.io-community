@@ -2,10 +2,10 @@ import { IS_DEMO } from "../core/config";
 import { findNiceIntegerValue } from "../core/utils";
 import { ShapeDefinition } from "./shape_definition";
 
-export const preparementShape = "CpRpCp--:SwSwSwSw";
-export const finalGameShape = "RuCw--Cw:----Ru--";
-export const rocketShape = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw";
-export const blueprintShape = "CbCbCbRb:CwCwCwCw";
+export const preparementShape = "C(640000)C(640000)C(640000)C(640000)";
+export const finalGameShape = "C(640000)C(640000)C(640000)C(640000)";
+export const rocketShape = "C(640000)C(640000)C(640000)C(640000)";
+export const blueprintShape = "C(640000)C(640000)C(640000)C(640000)";
 
 const fixedImprovements = [];
 
@@ -18,7 +18,6 @@ for (let i = 0; i < 1; i++) {
 }
 
 const numEndgameUpgrades = !IS_DEMO ? 20 - fixedImprovements.length - 1 : 0;
-console.log (numEndgameUpgrades);
 
 function generateEndgameUpgrades() {
     return new Array(numEndgameUpgrades).fill(null).map((_, i) => ({
@@ -58,19 +57,19 @@ if (numEndgameUpgrades != 0) {
 export const UPGRADES = {
     belt: [
         {
-            required: [{ shape: "CuCuCuCu", amount: 60 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 60 }],
         },
         {
-            required: [{ shape: "--CuCu--", amount: 500 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 500 }],
         },
         {
-            required: [{ shape: "CpCpCpCp", amount: 1000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 1000 }],
         },
         {
-            required: [{ shape: "SrSrSrSr:CyCyCyCy", amount: 6000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 6000 }],
         },
         {
-            required: [{ shape: "SrSrSrSr:CyCyCyCy:SwSwSwSw", amount: 25000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 25000 }],
         },
         {
             required: [{ shape: preparementShape, amount: 25000 }],
@@ -88,19 +87,19 @@ export const UPGRADES = {
 
     miner: [
         {
-            required: [{ shape: "RuRuRuRu", amount: 300 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 300 }],
         },
         {
-            required: [{ shape: "Cu------", amount: 800 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 800 }],
         },
         {
-            required: [{ shape: "ScScScSc", amount: 3500 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 3500 }],
         },
         {
-            required: [{ shape: "CwCwCwCw:WbWbWbWb", amount: 23000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 23000 }],
         },
         {
-            required: [{ shape: "CbRbRbCb:CwCwCwCw:WbWbWbWb", amount: 50000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 50000 }],
         },
         {
             required: [{ shape: preparementShape, amount: 25000 }],
@@ -118,19 +117,19 @@ export const UPGRADES = {
 
     processors: [
         {
-            required: [{ shape: "SuSuSuSu", amount: 500 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 500 }],
         },
         {
-            required: [{ shape: "RuRu----", amount: 600 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 600 }],
         },
         {
-            required: [{ shape: "CgScScCg", amount: 3500 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 3500 }],
         },
         {
-            required: [{ shape: "CwCrCwCr:SgSgSgSg", amount: 25000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 25000 }],
         },
         {
-            required: [{ shape: "WrRgWrRg:CwCrCwCr:SgSgSgSg", amount: 50000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 50000 }],
         },
         {
             required: [{ shape: preparementShape, amount: 25000 }],
@@ -148,19 +147,19 @@ export const UPGRADES = {
 
     painting: [
         {
-            required: [{ shape: "RbRb----", amount: 600 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 600 }],
         },
         {
-            required: [{ shape: "WrWrWrWr", amount: 3800 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 3800 }],
         },
         {
-            required: [{ shape: "RpRpRpRp:CwCwCwCw", amount: 6500 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 6500 }],
         },
         {
-            required: [{ shape: "WpWpWpWp:CwCwCwCw:WpWpWpWp", amount: 25000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 25000 }],
         },
         {
-            required: [{ shape: "WpWpWpWp:CwCwCwCw:WpWpWpWp:CwCwCwCw", amount: 50000 }],
+            required: [{ shape: "C(640000)C(640000)C(640000)C(640000)", amount: 50000 }],
         },
         {
             required: [{ shape: preparementShape, amount: 25000 }],

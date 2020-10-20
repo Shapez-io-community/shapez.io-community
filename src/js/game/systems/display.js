@@ -1,14 +1,17 @@
 import { globalConfig } from "../../core/config";
 import { Loader } from "../../core/loader";
 import { BaseItem } from "../base_item";
-import { enumColors, enumColorsToHexCode } from "../colors";
+import { enumColors, enumColorsToHexCode} from "../colors";
 import { DisplayComponent } from "../components/display";
-import { MetaDisplayBuilding } from "../buildings/display";
+import { Dimension } from "../buildings/display";
 import { GameSystemWithFilter } from "../game_system_with_filter";
 import { isTrueItem } from "../items/boolean_item";
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 import { MapChunkView } from "../map_chunk_view";
 import { MetaAnalyzerBuilding } from "../buildings/analyzer";
+import { THEME } from "../theme";
+import { Rectangle } from "../../core/rectangle";
+import { MetaBuilding } from "../meta_building";
 
 export class DisplaySystem extends GameSystemWithFilter {
     constructor(root) {
@@ -18,10 +21,10 @@ export class DisplaySystem extends GameSystemWithFilter {
         this.displaySprites = {};
 
         for (const colorId in enumColors) {
-            if (colorId === enumColors.uncolored) {
+            if (colorId === enumColors[969696]) {
                 continue;
             }
-            this.displaySprites[colorId] = Loader.getSprite("sprites/wires/display/" + colorId + ".png");
+            this.displaySprites[colorId] = null //Loader.getSprite("sprites/wires/display/" + colorId + ".png");
         }
     }
 
@@ -43,7 +46,7 @@ export class DisplaySystem extends GameSystemWithFilter {
 
             case "color": {
                 const item = /**@type {ColorItem} */ (value);
-                return item.color === enumColors.uncolored ? null : item;
+                return item.color === enumColors[969696] ? null : item;
             }
 
             case "shape": {
@@ -80,12 +83,9 @@ export class DisplaySystem extends GameSystemWithFilter {
 
                 const origin = entity.components.StaticMapEntity.origin;
                 if (value.getItemType() === "color") {
-                    this.displaySprites[/** @type {ColorItem} */ (value).color].drawCachedCentered(
-                        parameters,
-                        (origin.x + 0.5) * globalConfig.tileSize,
-                        (origin.y + 0.5) * globalConfig.tileSize,
-                        globalConfig.tileSize
-                    );
+                    const D_context = parameters.context;
+                    D_context.fillStyle = enumColorsToHexCode[value.getAsCopyableKey()];
+                    D_context.fillRect((origin.x + 0.5) * globalConfig.tileSize - 15 + Dimension.x / 2 - 0.5, (origin.y + 0.5) * globalConfig.tileSize - 15 + Dimension.y / 2, 30 * Dimension.x, 30 * Dimension.y - 0.5)
                 } else if (value.getItemType() === "shape") {
                     value.drawItemCenteredClipped(
                         (origin.x + 0.5) * globalConfig.tileSize,

@@ -1,6 +1,7 @@
 import { InputReceiver } from "../../../core/input_receiver";
 import { makeDiv, removeAllChildren } from "../../../core/utils";
 import { T } from "../../../translations";
+import { enumColorsToHexCode, HexCodeToRGBCode } from "../../colors";
 import { KeyActionMapper, KEYMAPPINGS } from "../../key_action_mapper";
 import { ShapeDefinition } from "../../shape_definition";
 import { BaseHUDPart } from "../base_hud_part";
@@ -108,7 +109,7 @@ export class HUDShapeViewer extends BaseHUDPart {
                         quadElem,
                         null,
                         ["colorLabel"],
-                        T.ingame.colors[contents.color]
+                        HexCodeToRGBCode[contents.color]
                     );
                 } else {
                     const emptyLabelElem = makeDiv(

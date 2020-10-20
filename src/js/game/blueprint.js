@@ -96,17 +96,28 @@ export class Blueprint {
         parameters.context.globalAlpha = 1;
     }
 
+    testColorObserver() {
+        for (var i = 0; i < this.entities.length; i++) {
+            if (this.entities[i].components.ColorObserver) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Rotates the blueprint clockwise
      */
     rotateCw() {
-        for (let i = 0; i < this.entities.length; ++i) {
-            const entity = this.entities[i];
-            const staticComp = entity.components.StaticMapEntity;
-
-            staticComp.rotation = (staticComp.rotation + 90) % 360;
-            staticComp.originalRotation = (staticComp.originalRotation + 90) % 360;
-            staticComp.origin = staticComp.origin.rotateFastMultipleOf90(90);
+        if (!this.testColorObserver()) {
+            for (let i = 0; i < this.entities.length; ++i) {
+                const entity = this.entities[i];
+                const staticComp = entity.components.StaticMapEntity;
+    
+                staticComp.rotation = (staticComp.rotation + 90) % 360;
+                staticComp.originalRotation = (staticComp.originalRotation + 90) % 360;
+                staticComp.origin = staticComp.origin.rotateFastMultipleOf90(90);
+            }
         }
     }
 

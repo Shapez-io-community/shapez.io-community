@@ -348,7 +348,13 @@ export class HubGoals extends BasicSerializableObject {
      * @param {RandomNumberGenerator} rng
      */
     generateRandomColorSet(rng, allowUncolored = false) {
-        const colorWheel = [
+        const colorWheel = []
+
+        for (var c in enumColors) {
+            colorWheel.push(c);
+        }
+
+        /* const colorWheel = [
             enumColors.red,
             enumColors.yellow,
             enumColors.green,
@@ -358,15 +364,9 @@ export class HubGoals extends BasicSerializableObject {
             enumColors.red,
             enumColors.yellow,
             enumColors.black,
-        ];
-
-        const universalColors = [enumColors.white];
-        if (allowUncolored) {
-            universalColors.push(enumColors.uncolored);
-        }
+        ]; */
         const index = rng.nextIntRangeInclusive(0, colorWheel.length - 3);
         const pickedColors = colorWheel.slice(index, index + 3);
-        pickedColors.push(rng.choice(universalColors));
         return pickedColors;
     }
 

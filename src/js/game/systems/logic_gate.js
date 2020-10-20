@@ -198,10 +198,10 @@ export class LogicGateSystem extends GameSystemWithFilter {
         const newDefinition = new ShapeDefinition({
             layers: [
                 [
-                    { subShape: topRightContent.subShape, color: enumColors.uncolored },
-                    { subShape: topRightContent.subShape, color: enumColors.uncolored },
-                    { subShape: topRightContent.subShape, color: enumColors.uncolored },
-                    { subShape: topRightContent.subShape, color: enumColors.uncolored },
+                    { subShape: topRightContent.subShape, color: enumColors[646464] },
+                    { subShape: topRightContent.subShape, color: enumColors[646464] },
+                    { subShape: topRightContent.subShape, color: enumColors[646464] },
+                    { subShape: topRightContent.subShape, color: enumColors[646464] },
                 ],
             ],
         });

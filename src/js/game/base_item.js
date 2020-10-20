@@ -1,3 +1,4 @@
+import { isConstructorDeclaration } from "typescript";
 import { globalConfig } from "../core/config";
 import { DrawParameters } from "../core/draw_parameters";
 import { BasicSerializableObject } from "../savegame/serialization";

@@ -5,7 +5,11 @@ import { MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { DisplayComponent } from "../components/display";
 import { enumHubGoalRewards } from "../tutorial_goals";
-import { enumColors, enumColorsToHexCode } from "../colors";
+
+const sizeX = 1;
+const sizeY = 1;
+
+export const Dimension = new Vector(sizeX, sizeY);
 
 export class MetaDisplayBuilding extends MetaBuilding {
     constructor() {
@@ -14,7 +18,6 @@ export class MetaDisplayBuilding extends MetaBuilding {
     }
 
     getSilhouetteColor() {
-        //console.log(this.SilhouetteColor);
         return this.SilhouetteColor;
     }
 
@@ -26,7 +29,7 @@ export class MetaDisplayBuilding extends MetaBuilding {
     }
 
     getDimensions() {
-        return new Vector(1, 1);
+        return Dimension;
     }
 
     getShowWiresLayerPreview() {
@@ -42,7 +45,7 @@ export class MetaDisplayBuilding extends MetaBuilding {
             new WiredPinsComponent({
                 slots: [
                     {
-                        pos: new Vector(0, 0),
+                        pos: new Vector(Math.floor((Dimension.x - 1) / 2), Dimension.y - 1),
                         direction: enumDirection.bottom,
                         type: enumPinSlotType.logicalAcceptor,
                     },

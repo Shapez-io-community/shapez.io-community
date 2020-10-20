@@ -26,9 +26,9 @@
 
         "resources": {
             "shape": "#eaebec",
-            "red": "#ffbfc1",
-            "green": "#cbffc4",
-            "blue": "#bfdaff"
+            "red": "undefined",
+            "green": "undefined",
+            "blue": "undefined"
         },
 
         "chunkOverview": {

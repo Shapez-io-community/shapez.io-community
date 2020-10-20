@@ -3,6 +3,7 @@ import { enumBalancerVariants, MetaBalancerBuilding } from "./buildings/balancer
 import { MetaConstantSignalBuilding } from "./buildings/constant_signal";
 import { enumCutterVariants, MetaCutterBuilding } from "./buildings/cutter";
 import { MetaDisplayBuilding } from "./buildings/display";
+//import { MetaColorObserverBuilding } from "./buildings/color_observer";
 import { MetaFilterBuilding } from "./buildings/filter";
 import { MetaLogicGateBuilding } from "./buildings/logic_gate";
 import { enumMinerVariants, MetaMinerBuilding } from "./buildings/miner";

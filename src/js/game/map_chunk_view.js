@@ -68,6 +68,7 @@ export class MapChunkView extends MapChunk {
         systems.staticMapEntities.drawChunk(parameters, this);
         systems.lever.drawChunk(parameters, this);
         systems.display.drawChunk(parameters, this);
+        systems.colorObserver.drawChunk(parameters, this);
         systems.storage.drawChunk(parameters, this);
         systems.itemProcessorOverlays.drawChunk(parameters, this);
     }
@@ -105,6 +106,7 @@ export class MapChunkView extends MapChunk {
 
         //this.root.systemMgr.systems.lever.drawChunkOverlay(parameters, this);
         this.root.systemMgr.systems.display.drawChunkOverlay(parameters, this);
+        //this.root.systemMgr.systems.color_observer.drawChunkOverlay(parameters, this);
         parameters.context.imageSmoothingEnabled = true;
 
         // Draw patch items

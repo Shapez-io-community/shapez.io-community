@@ -16,6 +16,7 @@ import { LogicGateComponent } from "./components/logic_gate";
 import { LeverComponent } from "./components/lever";
 import { WireTunnelComponent } from "./components/wire_tunnel";
 import { DisplayComponent } from "./components/display";
+import { ColorObserverComponent } from "./components/color_observer";
 import { BeltReaderComponent } from "./components/belt_reader";
 import { FilterComponent } from "./components/filter";
 import { ItemProducerComponent } from "./components/item_producer";
@@ -38,6 +39,7 @@ export function initComponentRegistry() {
     gComponentRegistry.register(LeverComponent);
     gComponentRegistry.register(WireTunnelComponent);
     gComponentRegistry.register(DisplayComponent);
+    gComponentRegistry.register(ColorObserverComponent);
     gComponentRegistry.register(BeltReaderComponent);
     gComponentRegistry.register(FilterComponent);
     gComponentRegistry.register(ItemProducerComponent);

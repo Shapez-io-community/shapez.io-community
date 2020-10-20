@@ -46,6 +46,25 @@ export const uiScales = [
     },
 ];
 
+export const setColorCount = [
+    {
+        id: "3^3",
+        count: 2,
+    },
+    {
+        id: "6^3",
+        count: 5,
+    },
+    {
+        id: "11^3",
+        count: 10,
+    },
+    {
+        id: "51^3",
+        count: 50,
+    },
+]
+
 export const scrollWheelSensitivities = [
     {
         id: "super_slow",
@@ -231,6 +250,19 @@ export const allApplicationSettings = [
             (app, id) => null,
     }),
 
+    new EnumSetting("setColorCount", {
+        options: setColorCount,
+        valueGetter: interval => interval.id,
+        textGetter: interval => T.settings.labels.setColorCount.intervals[interval.id],
+        category: enumCategories.advanced,
+        restartRequired: true,
+        changeCb:
+            /**
+             * @param {Application} app
+             */
+            (app, id) => null,
+    }),
+
     new EnumSetting("scrollWheelSensitivity", {
         options: scrollWheelSensitivities.sort((a, b) => a.scale - b.scale),
         valueGetter: scale => scale.id,
@@ -298,6 +330,7 @@ class SettingsStorage {
         this.movementSpeed = "regular";
         this.language = "auto-detect";
         this.autosaveInterval = "two_minutes";
+        this.setColorCount = "6^3";
 
         this.alwaysMultiplace = false;
         this.offerHints = true;
@@ -420,6 +453,17 @@ export class ApplicationSettings extends ReadWriteProxy {
         }
         logger.error("Unknown autosave interval id:", id);
         return 120;
+    }
+
+    getColorCount() {
+        const id = this.getAllSettings().setColorCount;
+        for (let i = 0; i < setColorCount.length; ++i) {
+            if (setColorCount[i].id === id) {
+                return setColorCount[i].count;
+            }
+        }
+        logger.error("Unknown color count:", id);
+        return 5;
     }
 
     getIsFullScreen() {
@@ -658,6 +702,11 @@ export class ApplicationSettings extends ReadWriteProxy {
         if (data.version < 28) {
             data.settings.enableMousePan = true;
             data.version = 28;
+        }
+
+        if (data.version < 29) {
+            data.settings.setColorCount = "6^3";
+            data.version = 29;
         }
 
         return ExplainedResult.good();

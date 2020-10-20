@@ -249,7 +249,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @param {[enumSubShape, enumSubShape, enumSubShape, enumSubShape]} subShapes
      * @returns {ShapeDefinition}
      */
-    getDefinitionFromSimpleShapes(subShapes, color = enumColors.uncolored) {
+    getDefinitionFromSimpleShapes(subShapes, color = enumColors[646464]) {
         const shapeLayer = /** @type {import("./shape_definition").ShapeLayer} */ (subShapes.map(
             subShape => ({ subShape, color })
         ));

@@ -57,7 +57,7 @@ export function createSimpleShape(layers) {
     layers.forEach(layer => {
         layer.forEach(item => {
             if (item) {
-                item.color = item.color || enumColors.uncolored;
+                item.color = item.color || enumColors[969696];
             }
         });
     });
@@ -70,7 +70,7 @@ export function createSimpleShape(layers) {
  */
 const SHORT_KEY_CACHE = new Map();
 
-var sourceNumber = 8;
+var sourceNumber = 9 * 4;
 
 export class ShapeDefinition extends BasicSerializableObject {
     static getId() {
@@ -125,14 +125,19 @@ export class ShapeDefinition extends BasicSerializableObject {
         let layers = [];
         for (let i = 0; i < sourceLayers.length; ++i) {
             const text = sourceLayers[i];
-            assert(text.length === 8, "Invalid shape short key: " + key);
+            assert(text.length === sourceNumber, "Invalid shape short key: " + key);
 
             /** @type {ShapeLayer} */
             const quads = [null, null, null, null];
             for (let quad = 0; quad < 4; ++quad) {
                 const shapeText = text[quad * sourceNumber / 4 + 0];
                 const subShape = enumShortcodeToSubShape[shapeText];
-                const color = enumShortcodeToColor[text[quad * sourceNumber / 4 + 1]];
+                let colorText = "";
+                for (var j = 2; j < sourceNumber / 4 - 1; j++) {
+                    const letter = text[quad * sourceNumber / 4 + j];
+                    colorText = colorText + letter;
+                }
+                const color = colorText;
                 if (subShape) {
                     assert(color, "Invalid shape short key:", key);
                     quads[quad] = {
@@ -161,9 +166,7 @@ export class ShapeDefinition extends BasicSerializableObject {
         if (SHORT_KEY_CACHE.has(key)) {
             return SHORT_KEY_CACHE.get(key);
         }
-
         const result = ShapeDefinition.isValidShortKeyInternal(key);
-        //console.log(result);
         SHORT_KEY_CACHE.set(key, result);
         return result;
     }
@@ -187,14 +190,12 @@ export class ShapeDefinition extends BasicSerializableObject {
             const quads = [null, null, null, null];
             let anyFilled = false;
             for (let quad = 0; quad < 4; ++quad) {
-                const shapeText = text[quad * sourceNumber / 4 + 0];
+                const shapeText = text[quad * sourceNumber / 4];
                 let colorText = "";
                 for (var j = 1; j < sourceNumber / 4; j++) {
                     const letter = text[quad * sourceNumber / 4 + j];
                     colorText = colorText + letter; 
                 }
-                //console.log(colorText);
-                //const colorText = text[quad * 2 + 1];
                 const subShape = enumShortcodeToSubShape[shapeText];
                 const color = enumShortcodeToColor[colorText];
 

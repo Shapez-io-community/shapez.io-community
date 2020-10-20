@@ -20,6 +20,7 @@ import { ConstantSignalSystem } from "./systems/constant_signal";
 import { LogicGateSystem } from "./systems/logic_gate";
 import { LeverSystem } from "./systems/lever";
 import { DisplaySystem } from "./systems/display";
+import { ColorObserverSystem } from "./systems/color_observer";
 import { ItemProcessorOverlaysSystem } from "./systems/item_processor_overlays";
 import { BeltReaderSystem } from "./systems/belt_reader";
 import { FilterSystem } from "./systems/filter";
@@ -87,6 +88,9 @@ export class GameSystemManager {
 
             /** @type {DisplaySystem} */
             display: null,
+
+            /** @type {ColorObserverSystem} */
+            colorObserver: null,
 
             /** @type {ItemProcessorOverlaysSystem} */
             itemProcessorOverlays: null,
@@ -162,6 +166,7 @@ export class GameSystemManager {
         add("beltReader", BeltReaderSystem);
 
         add("display", DisplaySystem);
+        add("colorObserver", ColorObserverSystem);
 
         add("itemProcessorOverlays", ItemProcessorOverlaysSystem);
 

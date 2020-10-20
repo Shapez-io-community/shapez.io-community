@@ -654,6 +654,11 @@ buildings:
             name: &display Display
             description: Connect a signal to show it on the display - It can be a shape, color or boolean.
 
+    color_observer:
+        default:
+            name: &color_observer Color Observer
+            description: Connect color signal to show what does it made of - It can help color mixing.
+
     reader:
         default:
             name: &reader Belt Reader
@@ -886,6 +891,17 @@ settings:
                 twenty_minutes: 20 Minutes
                 disabled: Disabled
 
+        setColorCount:
+            title: Color Count
+            description: >-
+                Controls how many color will be in your game. Decreasing the number may cause issues.
+
+            intervals:
+                3^3: 3^3 Color
+                6^3: 6^3 Color
+                11^3: 11^3 Color
+                51^3: 51^3 Color
+
         scrollWheelSensitivity:
             title: Zoom sensitivity
             description: >-
@@ -1091,6 +1107,7 @@ keybindings:
         filter: *filter
         wire_tunnel: *wire_tunnel
         display: *display
+        color_observer: *color_observer
         reader: *reader
         virtual_processor: *virtual_processor
         transistor: *transistor

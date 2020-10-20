@@ -4,7 +4,7 @@ import { RandomNumberGenerator } from "../core/rng";
 import { clamp, fastArrayDeleteValueIfContained, make2DUndefinedArray } from "../core/utils";
 import { Vector } from "../core/vector";
 import { BaseItem } from "./base_item";
-import { enumColors } from "./colors";
+import { enumColors, colorPalatte } from "./colors";
 import { Entity } from "./entity";
 import { COLOR_ITEM_SINGLETONS } from "./items/color_item";
 import { GameRoot } from "./root";
@@ -149,12 +149,13 @@ export class MapChunk {
                 }
             }
         }
-
+        //console.log(item);
         this.patches.push({
             pos: avgPos.divideScalar(patchesDrawn),
             item,
             size: patchSize,
         });
+        //console.table(this.patches);
     }
 
     /**
@@ -165,9 +166,9 @@ export class MapChunk {
      */
     internalGenerateColorPatch(rng, colorPatchSize, distanceToOriginInChunks) {
         // First, determine available colors
-        let availableColors = [enumColors.red, enumColors.green];
-        if (distanceToOriginInChunks > 2) {
-            availableColors.push(enumColors.blue);
+        let availableColors = [enumColors[colorPalatte[0]], enumColors[colorPalatte[1]]];
+        if (distanceToOriginInChunks > 3) {
+            availableColors.push(enumColors[colorPalatte[2]]);
         }
         this.internalGeneratePatch(rng, colorPatchSize, COLOR_ITEM_SINGLETONS[rng.choice(availableColors)]);
     }
@@ -298,27 +299,27 @@ export class MapChunk {
      */
     generatePredefined(rng) {
         if (this.x === 0 && this.y === 0) {
-            this.internalGeneratePatch(rng, 2, COLOR_ITEM_SINGLETONS[enumColors.red], 7, 7);
+            this.internalGeneratePatch(rng, 2, COLOR_ITEM_SINGLETONS[enumColors[colorPalatte[0]]], 7, 7);
             return true;
         }
         if (this.x === -1 && this.y === 0) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("CuCuCuCu");
+            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("C(969696)C(969696)C(969696)C(969696)");
             this.internalGeneratePatch(rng, 2, item, globalConfig.mapChunkSize - 9, 7);
             return true;
         }
         if (this.x === 0 && this.y === -1) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("RuRuRuRu");
+            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("R(969696)R(969696)R(969696)R(969696)");
             this.internalGeneratePatch(rng, 2, item, 5, globalConfig.mapChunkSize - 7);
             return true;
         }
 
         if (this.x === -1 && this.y === -1) {
-            this.internalGeneratePatch(rng, 2, COLOR_ITEM_SINGLETONS[enumColors.green]);
+            this.internalGeneratePatch(rng, 2, COLOR_ITEM_SINGLETONS[enumColors[colorPalatte[1]]]);
             return true;
         }
 
         if (this.x === 5 && this.y === -2) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("SuSuSuSu");
+            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("S(969696)S(969696)S(969696)S(969696)");
             this.internalGeneratePatch(rng, 2, item, 5, globalConfig.mapChunkSize - 7);
             return true;
         }

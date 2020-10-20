@@ -8,6 +8,7 @@ import { MetaComparatorBuilding } from "./buildings/comparator";
 import { MetaConstantSignalBuilding } from "./buildings/constant_signal";
 import { enumCutterVariants, MetaCutterBuilding } from "./buildings/cutter";
 import { MetaDisplayBuilding } from "./buildings/display";
+import { MetaColorObserverBuilding } from "./buildings/color_observer";
 import { MetaFilterBuilding } from "./buildings/filter";
 import { MetaHubBuilding } from "./buildings/hub";
 import { MetaItemProducerBuilding } from "./buildings/item_producer";
@@ -53,6 +54,7 @@ export function initMetaBuildingRegistry() {
     gMetaBuildingRegistry.register(MetaFilterBuilding);
     gMetaBuildingRegistry.register(MetaWireTunnelBuilding);
     gMetaBuildingRegistry.register(MetaDisplayBuilding);
+    gMetaBuildingRegistry.register(MetaColorObserverBuilding);
     gMetaBuildingRegistry.register(MetaVirtualProcessorBuilding);
     gMetaBuildingRegistry.register(MetaReaderBuilding);
     gMetaBuildingRegistry.register(MetaTransistorBuilding);
@@ -147,6 +149,9 @@ export function initMetaBuildingRegistry() {
 
     // Display
     registerBuildingVariant(40, MetaDisplayBuilding);
+
+    // Color Observer
+    registerBuildingVariant(41, MetaColorObserverBuilding);
 
     // Virtual Processor
     registerBuildingVariant(42, MetaVirtualProcessorBuilding);

@@ -36,6 +36,7 @@ import { GameRoot } from "./root";
 import { ShapeDefinitionManager } from "./shape_definition_manager";
 import { SoundProxy } from "./sound_proxy";
 import { GameTime } from "./time/game_time";
+import { updateColorCount } from "./colors";
 
 const logger = createLogger("ingame/core");
 
