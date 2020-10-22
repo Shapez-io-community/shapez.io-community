@@ -26,7 +26,7 @@ import { MetaTrashBuilding } from "./buildings/trash";
 import { enumUndergroundBeltVariants, MetaUndergroundBeltBuilding } from "./buildings/underground_belt";
 import { enumVirtualProcessorVariants, MetaVirtualProcessorBuilding } from "./buildings/virtual_processor";
 import { MetaWireBuilding } from "./buildings/wire";
-import { MetaWireTunnelBuilding } from "./buildings/wire_tunnel";
+import { MetaWireTunnelBuilding, enumWireTunnelVariants } from "./buildings/wire_tunnel";
 import { buildBuildingCodeCache, gBuildingVariants, registerBuildingVariant } from "./building_codes";
 import { enumWireVariant } from "./components/wire";
 import { KEYMAPPINGS } from "./key_action_mapper";
@@ -123,7 +123,13 @@ export function initMetaBuildingRegistry() {
     registerBuildingVariant(52, MetaWireBuilding, enumWireVariant.second, 0);
     registerBuildingVariant(53, MetaWireBuilding, enumWireVariant.second, 1);
     registerBuildingVariant(54, MetaWireBuilding, enumWireVariant.second, 2);
-    registerBuildingVariant(55, MetaWireBuilding, enumWireVariant.second, 3);
+	registerBuildingVariant(55, MetaWireBuilding, enumWireVariant.second, 3);
+	
+	//TODO: CHANGE BEFORE RELEASE
+    registerBuildingVariant(10000002, MetaWireBuilding, enumWireVariant.third, 0); //Temporary ID to avoid id collisions in development.
+    registerBuildingVariant(10000003, MetaWireBuilding, enumWireVariant.third, 1);
+    registerBuildingVariant(10000004, MetaWireBuilding, enumWireVariant.third, 2);
+    registerBuildingVariant(10000005, MetaWireBuilding, enumWireVariant.third, 3);
 
     // Constant signal
     registerBuildingVariant(31, MetaConstantSignalBuilding);
@@ -146,6 +152,9 @@ export function initMetaBuildingRegistry() {
 
     // Wire tunnel
     registerBuildingVariant(39, MetaWireTunnelBuilding);
+    registerBuildingVariant(10000006, MetaWireTunnelBuilding, enumWireTunnelVariants.Elbow);
+    registerBuildingVariant(10000007, MetaWireTunnelBuilding, enumWireTunnelVariants.Straight);
+    registerBuildingVariant(10000008, MetaWireTunnelBuilding, enumWireTunnelVariants.DoubleElbow);
 
     // Display
     registerBuildingVariant(40, MetaDisplayBuilding);
