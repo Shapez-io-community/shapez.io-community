@@ -1,5 +1,5 @@
 import { BaseItem } from "../base_item";
-import { enumColorMixingResults, enumColors } from "../colors";
+import { mixColors, enumColors } from "../colors";
 import {
     enumItemProcessorRequirements,
     enumItemProcessorTypes,
@@ -454,7 +454,7 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
         const color2 = item2.color;
 
         // Try finding mixer color, and if we can't mix it we simply return the same color
-        const mixedColor = enumColorMixingResults[color1][color2];
+        const mixedColor = mixColors(color1, color2);
         let resultColor = color1;
         if (mixedColor) {
             resultColor = mixedColor;

@@ -319,7 +319,7 @@ export class ShapeDefinition extends BasicSerializableObject {
 
             for (let quadrant = 0; quadrant < layer.length; ++quadrant) {
                 const item = layer[quadrant];
-                if (item) {
+                if (item && item.color) {
                     if (item.color.length > 6) {
                         const col = item.color.slice(1,7);
                     }

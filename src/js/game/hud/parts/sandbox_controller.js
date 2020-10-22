@@ -2,6 +2,7 @@ import { makeDiv } from "../../../core/utils";
 import { BaseHUDPart } from "../base_hud_part";
 import { DynamicDomAttach } from "../dynamic_dom_attach";
 import { enumNotificationType } from "./notifications";
+import { addColor } from "../../colors";
 
 export class HUDSandboxController extends BaseHUDPart {
     createElements(parent) {
@@ -48,6 +49,7 @@ export class HUDSandboxController extends BaseHUDPart {
                     <button class="styledButton giveBlueprints">Fill blueprint shapes</button>
                     <button class="styledButton maxOutAll">Max out upgrades</button>
                     <button class="styledButton maxOutEverything">Max out everything</button>
+                    <button class="styledButton resetEverything">Reset everything</button>
                 </div>
             </div>
         `
@@ -58,6 +60,8 @@ export class HUDSandboxController extends BaseHUDPart {
         bind(".giveBlueprints", this.giveBlueprints);
         bind(".maxOutAll", this.maxOutAll);
         bind(".maxOutEverything", this.maxOutEverything);
+        bind(".resetEverything", this.resetEverything);
+        
         bind(".levelToggle .minus", () => this.modifyLevel(-1));
         bind(".levelToggle .plus", () => this.modifyLevel(1));
 
@@ -101,6 +105,14 @@ export class HUDSandboxController extends BaseHUDPart {
         }
         this.root.hubGoals.storedShapes[shape] += 1e20;
         this.modifyLevel(1);
+    }
+
+    resetEverything() {
+        this.modifyUpgrade("belt", -1000);
+        this.modifyUpgrade("miner", -1000);
+        this.modifyUpgrade("processors", -1000);
+        this.modifyUpgrade("painting", -1000);
+        this.modifyLevel(-26);
     }
 
     modifyUpgrade(id, amount) {
