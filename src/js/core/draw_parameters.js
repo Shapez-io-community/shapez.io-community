@@ -19,6 +19,7 @@ export class DrawParameters {
         /** @type {number} */
         this.zoomLevel = zoomLevel;
 
+        // FIXME: Not really nice
         /** @type {GameRoot} */
         this.root = root;
     }

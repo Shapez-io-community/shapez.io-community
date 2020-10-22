@@ -193,9 +193,6 @@ export class GameLogic {
      * @param {enumDirection} param0.edge The edge to check for
      */
     computeWireEdgeStatus({ wireVariant, tile, edge }) {
-        /**
-         * @type {Vector}
-         */
         const offset = enumDirectionToVector[edge];
         const targetTile = tile.add(offset);
 
@@ -243,10 +240,10 @@ export class GameLogic {
 
         const targetStaticComp = targetEntity.components.StaticMapEntity;
 
-        // Check if its a tunnel
+        // Check if its a crossing
         const wireTunnelComp = targetEntity.components.WireTunnel;
         if (wireTunnelComp) {
-            return wireTunnelComp.CanConnectWorld(targetStaticComp, offset);
+            return true;
         }
 
         // Check if its a wire

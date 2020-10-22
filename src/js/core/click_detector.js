@@ -146,6 +146,8 @@ export class ClickDetector {
             this.touchend.removeAll();
             this.touchcancel.removeAll();
 
+            // TODO: Remove pointer captures
+
             this.element = null;
         }
     }

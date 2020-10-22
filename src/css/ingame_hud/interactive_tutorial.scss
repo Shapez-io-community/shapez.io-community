@@ -56,9 +56,8 @@
 
     .helperGif {
         @include S(margin-top, 5px);
-        @include S(width, 150px);
         @include S(height, 150px);
-        background: center center / cover no-repeat;
+        background: center center / contain no-repeat;
         transition: opacity 0.1s ease-out;
     }
 }
