@@ -782,12 +782,12 @@ storyRewards:
             For the beginning I unlocked you the <strong>Quad Painter</strong> - Connect the slots you would like to paint with on the wires layer!<br><br>
             To switch to the wires layer, press <strong>E</strong>.
 
-    reward_filter:
+    reward_filter_and_color_observer:
         title: >-
-            Item Filter
+            Item Filter & Color Observer
         desc: >-
-            You unlocked the <strong>Item Filter</strong>! It will route items either to the top or the right output depending on whether they match the signal from the wires layer or not.<br><br>
-            You can also pass in a boolean signal (1 or 0) to entirely activate or disable it.
+            You unlocked the <strong>Item Filter</strong> and <strong>Color Observer</strong>! Filter will route items either to the top or the right output depending on whether they match the signal from the wires layer or not.<br><br>
+            You can also pass in a boolean signal (1 or 0) to entirely activate or disable it. Color Observer will take color signal and give out what does it made of! The numbers on the screens are rgb code of the color signal. 
 
     reward_display:
         title: Display

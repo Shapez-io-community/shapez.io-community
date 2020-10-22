@@ -38,7 +38,7 @@ export class ColorObserverSystem extends GameSystemWithFilter {
 
             case "color": {
                 const item = /**@type {ColorItem} */ (value);
-                return item.color === enumColors[969696] ? null : item;
+                return item
             }
 
             case "shape": {
@@ -50,37 +50,30 @@ export class ColorObserverSystem extends GameSystemWithFilter {
         }
     }
 
-    IsItDarkOrNot(hex) {
-        var c = hex.substring(1);    // strip #
-        var rgb = parseInt(c, 16);   // convert rrggbb to decimal
-        var r = (rgb >> 16) & 0xff;  // extract red
-        var g = (rgb >>  8) & 0xff;  // extract green
-        var b = (rgb >>  0) & 0xff;  // extract blue
+    DrawDisplayers(ctx, x, y, position, hex, a) {
+        const color = HexCodeToRGBCode[hex];
+        ctx.textAlign = "center";
+        var text = "";
 
-        var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-
-        if (luma < 40) {
-            return true;
+        if (hex == "aaaaaa") {
+            text = "uncolored";
+            this.drawStroked(ctx, text, x + position + 15, y + 20, 64);  
+        } else {
+            text = color.slice(4 * a + 1, 4 * a + 4);
+            ctx.fillStyle = enumColorsToHexCode[hex];    
+            ctx.fillRect(x + position, y, 30, 30);
+            this.drawStroked(ctx, text, x + position + 15, y + 20, 32);    
         }
     }
 
-    DrawDisplayers(ctx, x, y, position, hex, a) {
-        const color = HexCodeToRGBCode[hex];
-        const text = color.slice(4 * a + 1, 4 * a + 4);
-        ctx.fillStyle = enumColorsToHexCode[hex];
-        ctx.fillRect(x + position, y, 30, 30);
-        ctx.textAlign = "center";
-        this.drawStroked(ctx, text, x + position + 15, y + 20);
-    }
-
-    drawStroked(ctx, text, x, y) {
+    drawStroked(ctx, text, x, y, width) {
         ctx.font = '15px Sans-serif';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 1;
         ctx.miterLimit=2
-        ctx.strokeText(text, x, y, 32);
+        ctx.strokeText(text, x, y, width);
         ctx.fillStyle = 'white';
-        ctx.fillText(text, x, y, 32);
+        ctx.fillText(text, x, y, width);
     }
 
     /**
@@ -94,12 +87,14 @@ export class ColorObserverSystem extends GameSystemWithFilter {
             const entity = contents[i];
             if (entity && entity.components.ColorObserver) {
                 const pinsComp = entity.components.WiredPins;
-                const network = pinsComp.slots[0].linkedNetwork;
+                const network = pinsComp.slots[3].linkedNetwork;
 
                 if (!network || !network.hasValue()) {
+                    pinsComp.slots[0].value = null;
+                    pinsComp.slots[1].value = null;
+                    pinsComp.slots[2].value = null;
                     continue;
                 }
-
                 const value = this.getDisplayItem(network.currentValue);
 
                 if (!value) {
@@ -111,9 +106,16 @@ export class ColorObserverSystem extends GameSystemWithFilter {
                     const color = value.getAsCopyableKey();
                     const GeneralX = (origin.x + 0.5) * globalConfig.tileSize - 15;
                     const GeneralY = (origin.y + 0.5) * globalConfig.tileSize - 15;
-                    this.DrawDisplayers(parameters.context, GeneralX, GeneralY, 1.5, color.slice(0,2) + "0000", 0);
-                    this.DrawDisplayers(parameters.context, GeneralX, GeneralY, 32, "00" + color.slice(2,4) + "00", 1);
-                    this.DrawDisplayers(parameters.context, GeneralX, GeneralY, 62.5, "0000" + color.slice(4,6), 2);
+                    if (color == "aaaaaa") {
+                        this.DrawDisplayers(parameters.context, GeneralX, GeneralY, 32, color, 0);
+                    } else if (color != undefined){
+                        this.DrawDisplayers(parameters.context, GeneralX, GeneralY, 1.5, color.slice(0,2) + "0000", 0);
+                        this.DrawDisplayers(parameters.context, GeneralX, GeneralY, 32, "00" + color.slice(2,4) + "00", 1);
+                        this.DrawDisplayers(parameters.context, GeneralX, GeneralY, 62.5, "0000" + color.slice(4,6), 2);
+                        pinsComp.slots[0].value = COLOR_ITEM_SINGLETONS[color.slice(0,2) + "0000"];
+                        pinsComp.slots[1].value = COLOR_ITEM_SINGLETONS["00" + color.slice(2,4) + "00"];
+                        pinsComp.slots[2].value = COLOR_ITEM_SINGLETONS["0000" + color.slice(4,6)];
+                    }
                 }
             }
         }

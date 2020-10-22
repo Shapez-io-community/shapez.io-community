@@ -1,5 +1,15 @@
 export const CHANGELOG = [
     {
+        version: "1.2.1",
+        date: "22.10.2020",
+        entries: [
+            "210 new ColorZ!",
+            "1 New building.",
+            "Now you can see displays' signal when zoomed out.",
+            "Sandbox controller now has full everything button that gives you so many bluprints, maxes every upgrade and levels you up 26 level.",
+        ],
+    },
+    {
         version: "1.2.0",
         date: "09.10.2020",
         entries: [

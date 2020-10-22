@@ -21,7 +21,7 @@ export class DisplaySystem extends GameSystemWithFilter {
         this.displaySprites = {};
 
         for (const colorId in enumColors) {
-            if (colorId === enumColors[969696]) {
+            if (colorId === enumColors["aaaaaa"]) {
                 continue;
             }
             this.displaySprites[colorId] = null //Loader.getSprite("sprites/wires/display/" + colorId + ".png");
@@ -46,7 +46,7 @@ export class DisplaySystem extends GameSystemWithFilter {
 
             case "color": {
                 const item = /**@type {ColorItem} */ (value);
-                return item.color === enumColors[969696] ? null : item;
+                return item.color === enumColors["aaaaaa"] ? null : item;
             }
 
             case "shape": {

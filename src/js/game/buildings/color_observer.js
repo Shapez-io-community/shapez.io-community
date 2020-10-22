@@ -24,7 +24,7 @@ export class MetaColorObserverBuilding extends MetaBuilding {
      * @param {GameRoot} root
      */
     getIsUnlocked(root) {
-        return true //root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_display);
+        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_filter_and_color_observer);
     }
 
     getDimensions() {
@@ -43,6 +43,21 @@ export class MetaColorObserverBuilding extends MetaBuilding {
         entity.addComponent(
             new WiredPinsComponent({
                 slots: [
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.top,
+                        type: enumPinSlotType.logicalEjector,
+                    },
+                    {
+                        pos: new Vector(1, 0),
+                        direction: enumDirection.top,
+                        type: enumPinSlotType.logicalEjector,
+                    },
+                    {
+                        pos: new Vector(2, 0),
+                        direction: enumDirection.top,
+                        type: enumPinSlotType.logicalEjector,
+                    },
                     {
                         pos: new Vector(1, 0),
                         direction: enumDirection.bottom,

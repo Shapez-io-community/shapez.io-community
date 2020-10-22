@@ -190,14 +190,14 @@ export class LogicGateSystem extends GameSystemWithFilter {
         if (!topRightContent || topRightContent.subShape === null) {
             return [null, null];
         }
-
+        
         const newDefinition = new ShapeDefinition({
             layers: [
                 [
-                    { subShape: topRightContent.subShape, color: enumColors[646464] },
-                    { subShape: topRightContent.subShape, color: enumColors[646464] },
-                    { subShape: topRightContent.subShape, color: enumColors[646464] },
-                    { subShape: topRightContent.subShape, color: enumColors[646464] },
+                    { subShape: topRightContent.subShape, color: enumColors["aaaaaa"] },
+                    { subShape: topRightContent.subShape, color: enumColors["aaaaaa"] },
+                    { subShape: topRightContent.subShape, color: enumColors["aaaaaa"] },
+                    { subShape: topRightContent.subShape, color: enumColors["aaaaaa"] },
                 ],
             ],
         });

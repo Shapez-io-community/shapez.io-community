@@ -149,13 +149,11 @@ export class MapChunk {
                 }
             }
         }
-        //console.log(item);
         this.patches.push({
             pos: avgPos.divideScalar(patchesDrawn),
             item,
             size: patchSize,
         });
-        //console.table(this.patches);
     }
 
     /**
@@ -169,6 +167,9 @@ export class MapChunk {
         let availableColors = [enumColors[colorPalatte[0]], enumColors[colorPalatte[1]]];
         if (distanceToOriginInChunks > 3) {
             availableColors.push(enumColors[colorPalatte[2]]);
+        }
+        if (distanceToOriginInChunks > 5) {
+            availableColors.push(enumColors[colorPalatte[3]]);
         }
         this.internalGeneratePatch(rng, colorPatchSize, COLOR_ITEM_SINGLETONS[rng.choice(availableColors)]);
     }
@@ -303,12 +304,12 @@ export class MapChunk {
             return true;
         }
         if (this.x === -1 && this.y === 0) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("C(969696)C(969696)C(969696)C(969696)");
+            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("C(aaaaaa)C(aaaaaa)C(aaaaaa)C(aaaaaa)");
             this.internalGeneratePatch(rng, 2, item, globalConfig.mapChunkSize - 9, 7);
             return true;
         }
         if (this.x === 0 && this.y === -1) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("R(969696)R(969696)R(969696)R(969696)");
+            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("R(aaaaaa)R(aaaaaa)R(aaaaaa)R(aaaaaa)");
             this.internalGeneratePatch(rng, 2, item, 5, globalConfig.mapChunkSize - 7);
             return true;
         }
@@ -319,7 +320,7 @@ export class MapChunk {
         }
 
         if (this.x === 5 && this.y === -2) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("S(969696)S(969696)S(969696)S(969696)");
+            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("S(aaaaaa)S(aaaaaa)S(aaaaaa)S(aaaaaa)");
             this.internalGeneratePatch(rng, 2, item, 5, globalConfig.mapChunkSize - 7);
             return true;
         }

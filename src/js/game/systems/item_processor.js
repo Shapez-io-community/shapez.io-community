@@ -10,7 +10,6 @@ import { GameSystemWithFilter } from "../game_system_with_filter";
 import { BOOL_TRUE_SINGLETON, isTruthyItem } from "../items/boolean_item";
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 import { ShapeItem } from "../items/shape_item";
-import { rocketShape } from "../upgrades";
 
 /**
  * We need to allow queuing charges, otherwise the throughput will stall

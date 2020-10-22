@@ -1,6 +1,6 @@
 import { findNiceIntegerValue } from "../../core/utils";
 import { GameMode } from "../game_mode";
-import { ShapeDefinition } from "../shape_definition";
+import { fixKey, ShapeDefinition } from "../shape_definition";
 import { enumHubGoalRewards } from "../tutorial_goals";
 
 const rocketShape = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw";
@@ -45,7 +45,7 @@ function generateUpgrades(limitedVersion = false) {
     const upgrades = {
         belt: [
             {
-                required: [{ shape: "CuCuCuCu", amount: 60 }],
+                required: [{ shape: "CuCuCuCu", amount: 30 }],
             },
             {
                 required: [{ shape: "--CuCu--", amount: 500 }],
@@ -164,11 +164,23 @@ function generateUpgrades(limitedVersion = false) {
         ],
     };
 
+    for (const upgradeId in upgrades) {
+        const upgradeTiers = upgrades[upgradeId];
+        for (let i = 0; i < upgradeTiers.length; i++) {
+            const tierHandle = upgradeTiers[i];
+            const originalRequired = tierHandle.required.slice();
+            for (const req in originalRequired) {
+                originalRequired[req].shape = fixKey(originalRequired[req].shape);
+            }
+        }
+    }
+
     // Automatically generate tier levels
     for (const upgradeId in upgrades) {
         const upgradeTiers = upgrades[upgradeId];
 
         let currentTierRequirements = [];
+        //console.log(currentTierRequirements);
         for (let i = 0; i < upgradeTiers.length; ++i) {
             const tierHandle = upgradeTiers[i];
             tierHandle.improvement = fixedImprovements[i];
@@ -334,7 +346,7 @@ export function generateLevelDefinitions(limitedVersion = false) {
                   // Belt reader
                   {
                       shape: "--Cg----:--Cr----", // unused
-                      required: 16, // Per second!
+                      required: 8, // Per second!
                       reward: enumHubGoalRewards.reward_belt_reader,
                       throughputOnly: true,
                   },
@@ -392,7 +404,7 @@ export function generateLevelDefinitions(limitedVersion = false) {
                   {
                       shape: "CrCwCrCw:CwCrCwCr:CrCwCrCw:CwCrCwCr",
                       required: 25000,
-                      reward: enumHubGoalRewards.reward_filter,
+                      reward: enumHubGoalRewards.reward_filter_and_color_observer,
                   },
 
                   // 22
@@ -433,6 +445,11 @@ export function generateLevelDefinitions(limitedVersion = false) {
                   },
               ]),
     ];
+
+    for (const levelId in levelDefinitions) {
+        const levelTiers = levelDefinitions[levelId];
+        levelTiers.shape = fixKey(levelTiers.shape);
+    }
 
     if (G_IS_DEV) {
         levelDefinitions.forEach(({ shape }) => {

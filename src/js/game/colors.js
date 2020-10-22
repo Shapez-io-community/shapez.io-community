@@ -1,5 +1,3 @@
-import { addSyntheticLeadingComment } from "typescript";
-
 var colors = [];
 
 var HexToRGB = function(hex) {
@@ -92,8 +90,9 @@ var hexcode = colorToHex(colorMultiplier);
 var red = hexcode + "0000"
 var green = "00" + hexcode + "00";
 var blue = "0000" + hexcode;
+var black = "000000";
 
-export var colorPalatte = [red, green, blue];
+export var colorPalatte = [red, green, blue, black];
 
 for (var R = 0; R < colorCount + 1; R++) {
     for (var G = 0; G < colorCount + 1; G++) {
@@ -106,8 +105,9 @@ for (var R = 0; R < colorCount + 1; R++) {
     }   
 }
 
+colors.push("aaaaaa");
+
 export const enumColors = {};
-export const enumColorToShortcode = {};
 export const enumShortcodeToColor = {};
 export const enumColorsToHexCode = {}
 export const enumColorMixingResults = {};
@@ -119,9 +119,7 @@ for(const c of colors) {
 }
 
 /** @enum {string} */
-for(const c of colors) {
-    enumColorToShortcode[c] = c;
-}
+export const enumColorToShortcode = enumColors;
 
 /** @enum {string} */
 for(const c of colors) {
@@ -137,12 +135,23 @@ for (const c of colors) {
     HexCodeToRGBCode[c] = HexToReadableRGB(enumColorsToHexCode[c]);
 }
 
+export const oldShortCodeToNewShortCode = {
+    r: "(fa6464)",
+    g: "(64fa64)",
+    b: "(6496fa)",
+    y: "(fafa32)",
+    c: "(00fafa)",
+    p: "(c864fa)",
+    w: "(fafafa)",
+    u: "(aaaaaa)"
+}
+
 for (const c1 in enumColors) {
     const result = {};
     for (const c2 in enumColors) {
-        if (c1 == "969696") {
+        if (c1 == "aaaaaa") {
             result[c2] = c2;
-        } else if (c2 == "969696") {
+        } else if (c2 == "aaaaaa") {
             result[c2] = c1;
         } else {
             var r_color = mixColors(c1, c2);

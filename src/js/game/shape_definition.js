@@ -4,7 +4,7 @@ import { smoothenDpi } from "../core/dpi_manager";
 import { DrawParameters } from "../core/draw_parameters";
 import { Vector } from "../core/vector";
 import { BasicSerializableObject, types } from "../savegame/serialization";
-import { enumColors, enumColorsToHexCode, enumColorToShortcode, enumShortcodeToColor } from "./colors";
+import { enumColors, enumColorsToHexCode, oldShortCodeToNewShortCode, enumShortcodeToColor } from "./colors";
 import { THEME } from "./theme";
 
 /**
@@ -57,7 +57,7 @@ export function createSimpleShape(layers) {
     layers.forEach(layer => {
         layer.forEach(item => {
             if (item) {
-                item.color = item.color || enumColors[969696];
+                item.color = item.color || enumColors["aaaaaa"];
             }
         });
     });
@@ -70,7 +70,39 @@ export function createSimpleShape(layers) {
  */
 const SHORT_KEY_CACHE = new Map();
 
-var sourceNumber = 9 * 4;
+let sourceNumber = 9 * 4;
+
+export let fixKey = function(key) {
+    const sourceLayers = key.split(":");
+    let text = "";
+    for (let i = 0; i < sourceLayers.length; i++) {
+        let layertext = sourceLayers[i];
+        if (layertext.length != sourceNumber) {
+            const quads = [null, null, null, null];
+            for (let quad = 0; quad < 4; quad++) {
+                const shapeText = layertext[quad * layertext.length / 4 + 0];
+                const subShape = enumShortcodeToSubShape[shapeText];
+                let colorText = "";
+                for (let j = 1; j < layertext.length / 4; j++) {
+                    let letter = layertext[quad * layertext.length / 4 + j];
+                    if (letter.length == 1 && letter != "-") {
+                        letter = oldShortCodeToNewShortCode[letter];
+                    } else if (letter == "-") {
+                        letter = "--------";
+                    }
+                    colorText += letter;
+                }
+                text += shapeText + colorText;
+            }
+            if (i != sourceLayers.length - 1) {
+                text += ":";
+            }
+        } else {
+            return key;
+        }
+    }
+    return text;
+}
 
 export class ShapeDefinition extends BasicSerializableObject {
     static getId() {
@@ -123,21 +155,39 @@ export class ShapeDefinition extends BasicSerializableObject {
     static fromShortKey(key) {
         const sourceLayers = key.split(":");
         let layers = [];
-        for (let i = 0; i < sourceLayers.length; ++i) {
-            const text = sourceLayers[i];
-            assert(text.length === sourceNumber, "Invalid shape short key: " + key);
+        for (let i = 0; i < sourceLayers.length; i++) {
+            var text = sourceLayers[i];
+            var itemText = "";
+
+            for (let quad = 0; quad < 4; ++quad) {
+                var colorText = "";
+                const shapeText = text[quad * text.length / 4 + 0];
+                for (let j = 1; j < text.length / 4; j++) {
+                    const letter = text[quad * text.length / 4 + j];
+                    colorText += letter;
+                }
+                if (colorText.length < 8) {
+                    colorText = "(" + colorText + ")";
+                }
+                itemText = itemText + shapeText + colorText;
+            }
+
+            assert(itemText.length === sourceNumber, "Invalid shape short key: " + key);
 
             /** @type {ShapeLayer} */
             const quads = [null, null, null, null];
-            for (let quad = 0; quad < 4; ++quad) {
-                const shapeText = text[quad * sourceNumber / 4 + 0];
+            for (let quad = 0; quad < 4; quad++) {
+                const shapeText = itemText[quad * sourceNumber / 4 + 0];
                 const subShape = enumShortcodeToSubShape[shapeText];
                 let colorText = "";
-                for (var j = 2; j < sourceNumber / 4 - 1; j++) {
-                    const letter = text[quad * sourceNumber / 4 + j];
-                    colorText = colorText + letter;
+                for (var j = 1; j < sourceNumber / 4; j++) {
+                    const letter = itemText[quad * sourceNumber / 4 + j];
+                    colorText += letter;
                 }
-                const color = colorText;
+                if (colorText.length >= 6) {
+                    colorText = colorText.slice(1,7);
+                }
+                var color = colorText;
                 if (subShape) {
                     assert(color, "Invalid shape short key:", key);
                     quads[quad] = {
@@ -194,7 +244,10 @@ export class ShapeDefinition extends BasicSerializableObject {
                 let colorText = "";
                 for (var j = 1; j < sourceNumber / 4; j++) {
                     const letter = text[quad * sourceNumber / 4 + j];
-                    colorText = colorText + letter; 
+                    colorText = colorText + letter;
+                }
+                if (colorText.length >= 6) {
+                    colorText = colorText.slice(1,7);
                 }
                 const subShape = enumShortcodeToSubShape[shapeText];
                 const color = enumShortcodeToColor[colorText];
@@ -212,7 +265,7 @@ export class ShapeDefinition extends BasicSerializableObject {
                     anyFilled = true;
                 } else if (shapeText === "-") {
                     //Make sure color is empty then, too
-                    if (colorText !== "-") {
+                    if (colorText !== "------") {
                         return false;
                     }
                 } else {
@@ -267,9 +320,13 @@ export class ShapeDefinition extends BasicSerializableObject {
             for (let quadrant = 0; quadrant < layer.length; ++quadrant) {
                 const item = layer[quadrant];
                 if (item) {
-                    id += enumSubShapeToShortcode[item.subShape] + enumColorToShortcode[item.color];
+                    if (item.color.length > 6) {
+                        const col = item.color.slice(1,7);
+                    }
+
+                    id += enumSubShapeToShortcode[item.subShape] + "(" + item.color + ")";
                 } else {
-                    id += "--";
+                    id += "---------";
                 }
             }
 

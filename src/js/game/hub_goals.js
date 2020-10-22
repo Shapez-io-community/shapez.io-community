@@ -369,19 +369,13 @@ export class HubGoals extends BasicSerializableObject {
             enumColors.purple,
             enumColors.red,
             enumColors.yellow,
-<<<<<<< HEAD
-            enumColors.black,
-        ]; */
-        const index = rng.nextIntRangeInclusive(0, colorWheel.length - 3);
-=======
-        ];
+        ];*/
 
         const universalColors = [enumColors.white];
         if (allowUncolored) {
             universalColors.push(enumColors.uncolored);
         }
         const index = rng.nextIntRange(0, colorWheel.length - 2);
->>>>>>> master
         const pickedColors = colorWheel.slice(index, index + 3);
         return pickedColors;
     }
@@ -470,7 +464,6 @@ export class HubGoals extends BasicSerializableObject {
 
             layers.push(layer);
         }
-
         const definition = new ShapeDefinition({ layers });
         return this.root.shapeDefinitionMgr.registerOrReturnHandle(definition);
     }
