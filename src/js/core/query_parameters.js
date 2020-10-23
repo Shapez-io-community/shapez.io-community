@@ -5,6 +5,7 @@ export let queryParamOptions = {
     embedProvider: null,
     fullVersion: false,
     sandboxMode: false,
+    password: null,
 };
 
 if (options.embed) {
@@ -19,4 +20,9 @@ if (options.fullVersion && !G_IS_RELEASE) {
 // Allow testing full version outside of standalone
 if (options.sandboxMode && !G_IS_RELEASE) {
     queryParamOptions.sandboxMode = true;
+}
+
+// Allow testing full version outside of standalone
+if(options.password && !G_IS_RELEASE) {
+    queryParamOptions.password = options.password;
 }

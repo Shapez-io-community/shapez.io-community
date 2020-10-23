@@ -87,6 +87,17 @@ let app = null;
 
 function bootApp() {
     logger.log("Page Loaded");
+    if (queryParamOptions.password == null || queryParamOptions.password != "ShrimpGutShrimpKuul") {
+        if (window.confirm("Either no or Wrong password Provided. Are you looking for Shapez.io?")) {
+            window.location.href = "https://shapez.io";
+        } else {
+            const password = window.prompt("Please Enter Password:");
+            if (password != "ShrimpGutShrimpKuul") {
+                window.alert("Wrong Password!");
+                return;
+            }
+        }
+    }
     app = new Application();
     app.boot();
 }
