@@ -1,7 +1,7 @@
 const queryString = require("query-string");
 const options = queryString.parse(location.search);
 
-export let queryParamOptions = {
+let queryParamOptions = {
     embedProvider: null,
     fullVersion: false,
     sandboxMode: false,
