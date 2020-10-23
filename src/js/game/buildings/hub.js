@@ -33,7 +33,7 @@ export class MetaHubBuilding extends MetaBuilding {
     }
 
     getIsRemovable() {
-        return true;
+        return false;
     }
 
     /**

@@ -26,7 +26,7 @@ export class MetaMixerBuilding extends MetaBuilding {
      * @param {GameRoot} root
      */
     getIsUnlocked(root) {
-        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_mixer);
+        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_painter_and_mixer);
     }
 
     /**

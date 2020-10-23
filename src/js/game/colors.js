@@ -2,23 +2,13 @@ var colors = [];
 
 var HexToRGB = function(hex) {
     var aRgbHex = hex.match(/.{1,2}/g);
-    var r = parseInt(aRgbHex[0], 16);
-    var g = parseInt(aRgbHex[1], 16);
-    var b = parseInt(aRgbHex[2], 16);
-    var R = r.toString();
-    var G = g.toString();
-    var B = b.toString();
+    var R = parseInt(aRgbHex[0], 16).toString();
+    var G = parseInt(aRgbHex[1], 16).toString();
+    var B = parseInt(aRgbHex[2], 16).toString();
     while (R.length < 3){R = "0" + R};
     while (G.length < 3){G = "0" + G};
     while (B.length < 3){B = "0" + B};
     return R + G + B;
-}
-
-var rgbToHex = function(rgb) {
-    var r = colorToHex(rgb.slice(0, 3));
-    var g = colorToHex(rgb.slice(3, 6));
-    var b = colorToHex(rgb.slice(6, 9));
-    return r+g+b;
 }
 
 var RandGandBToHex = function(R, G, B) {
@@ -36,11 +26,11 @@ var colorToHex = function (color) {
     return hex;
 }
 
-var HexToReadableRGB = function (hex) {
-    var RGB = HexToRGB(hex.slice(1));
-    var R = RGB.slice(0,3);
-    var G = RGB.slice(3,6);
-    var B = RGB.slice(6,9);
+export const HexToReadableRGB = function (hex) {
+    const RGB = HexToRGB(hex);
+    const R = RGB.slice(0,3);
+    const G = RGB.slice(3,6);
+    const B = RGB.slice(6,9);
     return "(" + R + "," + G + "," + B + ")"
 }
 
@@ -104,21 +94,11 @@ for (var R = 0; R < colorCount + 1; R++) {
     }   
 }
 
-if (colorCount >= 20) {
+if (colorCount < 20) {
     colors.push("aaaaaa");
 }
 
-
-/* colors.push(red);
-colors.push(green);
-colors.push(blue);
-colors.push(black); */
-
 export const enumColors = {};
-export const enumShortcodeToColor = {};
-export const enumColorsToHexCode = {}
-export const HexCodeToRGBCode = {};
-export const enumColorsToR_G_B = {};
 
 
 export const oldShortCodeToNewShortCode = {
@@ -134,21 +114,4 @@ export const oldShortCodeToNewShortCode = {
 
 for(const c of colors) {
     enumColors[c] = c;
-}
-
-/** @enum {string} */
-export const enumColorToShortcode = enumColors;
-
-/** @enum {string} */
-for(const c of colors) {
-    enumColorsToHexCode[c] = ("#" + c);
-}
-
-/** @enum {enumColors} */
-for (const key in enumColorToShortcode) {
-    enumShortcodeToColor[enumColorToShortcode[key]] = key;
-}
-
-for (const c of colors) {
-    HexCodeToRGBCode[c] = HexToReadableRGB(enumColorsToHexCode[c]);
 }

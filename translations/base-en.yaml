@@ -702,11 +702,11 @@ storyRewards:
         title: Rotating
         desc: The <strong>rotater</strong> has been unlocked! It rotates shapes clockwise by 90 degrees.
 
-    reward_painter:
-        title: Painting
+    reward_painter_and_mixer:
+        title: Painting & Color Mixing
         desc: >-
-            The <strong>painter</strong> has been unlocked - Extract some color veins (just as you do with shapes) and combine it with a shape in the painter to color them!<br><br>PS: If you are colorblind, there is a <strong>colorblind mode</strong> in the settings!
-
+            The <strong>painter</strong> and <strong>color mixer</strong> has been unlocked - Extract some color veins (just as you do with shapes) and combine it with a shape in the painter to color them!<br><br>PS: If you are colorblind, there is a <strong>colorblind mode</strong> in the settings!<br><br>
+            And the <strong>mixer</strong> has been unlocked - It mixes two colors using <strong>additive blending</strong>!
     reward_mixer:
         title: Color Mixing
         desc: The <strong>mixer</strong> has been unlocked - It mixes two colors using <strong>additive blending</strong>!

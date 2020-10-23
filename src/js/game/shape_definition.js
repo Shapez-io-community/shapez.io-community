@@ -4,7 +4,7 @@ import { smoothenDpi } from "../core/dpi_manager";
 import { DrawParameters } from "../core/draw_parameters";
 import { Vector } from "../core/vector";
 import { BasicSerializableObject, types } from "../savegame/serialization";
-import { enumColors, enumColorsToHexCode, oldShortCodeToNewShortCode, enumShortcodeToColor } from "./colors";
+import { enumColors, oldShortCodeToNewShortCode } from "./colors";
 import { THEME } from "./theme";
 
 /**
@@ -250,7 +250,7 @@ export class ShapeDefinition extends BasicSerializableObject {
                     colorText = colorText.slice(1,7);
                 }
                 const subShape = enumShortcodeToSubShape[shapeText];
-                const color = enumShortcodeToColor[colorText];
+                const color = colorText;
 
                 // Valid shape
                 if (subShape) {
@@ -429,7 +429,7 @@ export class ShapeDefinition extends BasicSerializableObject {
                 context.translate(centerQuadrantX, centerQuadrantY);
                 context.rotate(rotation);
 
-                context.fillStyle = enumColorsToHexCode[color];
+                context.fillStyle = "#" + color;
                 context.strokeStyle = THEME.items.outline;
                 context.lineWidth = THEME.items.outlineWidth;
 

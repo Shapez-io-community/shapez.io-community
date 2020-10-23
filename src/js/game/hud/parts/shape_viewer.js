@@ -1,7 +1,7 @@
 import { InputReceiver } from "../../../core/input_receiver";
 import { makeDiv, removeAllChildren } from "../../../core/utils";
 import { T } from "../../../translations";
-import { enumColorsToHexCode, HexCodeToRGBCode } from "../../colors";
+import { HexToReadableRGB } from "../../colors";
 import { KeyActionMapper, KEYMAPPINGS } from "../../key_action_mapper";
 import { ShapeDefinition } from "../../shape_definition";
 import { BaseHUDPart } from "../base_hud_part";
@@ -104,19 +104,26 @@ export class HUDShapeViewer extends BaseHUDPart {
                 const quadElem = makeDiv(layerElem, null, ["quad", "quad-" + quad]);
 
                 const contents = layers[i][quad];
-                if (contents) {
+                if (contents && contents.color != "aaaaaa") {
                     const colorLabelElem = makeDiv(
                         quadElem,
                         null,
                         ["colorLabel"],
-                        HexCodeToRGBCode[contents.color]
+                        HexToReadableRGB(contents.color)
+                    );
+                } else if (!contents){
+                    const emptyLabelElem = makeDiv(
+                        quadElem,
+                        null,
+                        ["emptyLabel"],
+                        T.ingame.shapeViewer.empty
                     );
                 } else {
                     const emptyLabelElem = makeDiv(
                         quadElem,
                         null,
                         ["emptyLabel"],
-                        T.ingame.shapeViewer.empty
+                        "uncolored"
                     );
                 }
             }

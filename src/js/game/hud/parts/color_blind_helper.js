@@ -7,7 +7,7 @@ import { DrawParameters } from "../../../core/draw_parameters";
 import { THEME } from "../../theme";
 import { globalConfig } from "../../../core/config";
 //import { T } from "../../../translations";
-import {HexCodeToRGBCode} from "../../../game/colors"
+import { HexToReadableRGB } from "../../../game/colors"
 
 export class HUDColorBlindHelper extends BaseHUDPart {
     createElements(parent) {
@@ -25,7 +25,7 @@ export class HUDColorBlindHelper extends BaseHUDPart {
     onColorBelowTileChanged(color) {
         this.belowTileIndicator.classList.toggle("visible", !!color);
         if (color) {
-            this.belowTileIndicator.innerText = HexCodeToRGBCode[color];
+            this.belowTileIndicator.innerText = HexToReadableRGB(color);
         }
     }
 

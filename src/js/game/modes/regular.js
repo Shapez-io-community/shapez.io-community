@@ -274,7 +274,7 @@ export function generateLevelDefinitions(limitedVersion = false) {
         {
             shape: "Cu------", // miners t2
             required: 270,
-            reward: enumHubGoalRewards.reward_painter,
+            reward: enumHubGoalRewards.reward_painter_and_mixer,
         },
 
         // 7
@@ -289,7 +289,7 @@ export function generateLevelDefinitions(limitedVersion = false) {
         {
             shape: "RbRb----", // painter t2
             required: 480,
-            reward: enumHubGoalRewards.reward_mixer,
+            reward: enumHubGoalRewards.no_reward,
         },
 
         // 9

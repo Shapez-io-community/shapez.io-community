@@ -1,17 +1,10 @@
 import { globalConfig } from "../../core/config";
-import { Loader } from "../../core/loader";
 import { BaseItem } from "../base_item";
-import { enumColors, enumColorsToHexCode} from "../colors";
 import { ColorObserverComponent } from "../components/color_observer";
-import { MetaColorObserverBuilding } from "../buildings/color_observer";
 import { GameSystemWithFilter } from "../game_system_with_filter";
-import { isTrueItem } from "../items/boolean_item";
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 import { MapChunkView } from "../map_chunk_view";
-import { MetaAnalyzerBuilding } from "../buildings/analyzer";
-import { THEME } from "../theme";
-import { Rectangle } from "../../core/rectangle";
-import { HexCodeToRGBCode } from "../colors"
+import { HexToReadableRGB } from "../colors"
 
 export class ColorObserverSystem extends GameSystemWithFilter {
     constructor(root) {
@@ -51,7 +44,7 @@ export class ColorObserverSystem extends GameSystemWithFilter {
     }
 
     DrawDisplayers(ctx, x, y, position, hex, a) {
-        const color = HexCodeToRGBCode[hex];
+        const color = HexToReadableRGB(hex);
         ctx.textAlign = "center";
         var text = "";
 
@@ -60,7 +53,7 @@ export class ColorObserverSystem extends GameSystemWithFilter {
             this.drawStroked(ctx, text, x + position + 15, y + 20, 64);  
         } else {
             text = color.slice(4 * a + 1, 4 * a + 4);
-            ctx.fillStyle = enumColorsToHexCode[hex];    
+            ctx.fillStyle = "#" + hex;    
             ctx.fillRect(x + position, y, 30, 30);
             this.drawStroked(ctx, text, x + position + 15, y + 20, 32);    
         }
@@ -148,7 +141,7 @@ export class ColorObserverSystem extends GameSystemWithFilter {
 
             const origin = entity.components.StaticMapEntity.origin;
             if (value instanceof ColorItem) {
-                parameters.context.fillStyle = enumColorsToHexCode[value.color];
+                parameters.context.fillStyle = "#" + value.color;
                 parameters.context.fillRect(
                     origin.x * globalConfig.tileSize,
                     origin.y * globalConfig.tileSize,

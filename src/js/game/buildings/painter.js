@@ -81,7 +81,7 @@ export class MetaPainterBuilding extends MetaBuilding {
      * @param {GameRoot} root
      */
     getIsUnlocked(root) {
-        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_painter);
+        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_painter_and_mixer);
     }
 
     /**
