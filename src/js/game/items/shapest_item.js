@@ -4,16 +4,24 @@ import { BaseItem } from "../base_item";
 import { ShapeDefinition } from "../shape_definition";
 import { THEME } from "../theme";
 import { globalConfig } from "../../core/config";
-import { smoothenDpi } from "../core/dpi_manager";
+import { smoothenDpi } from "../../core/dpi_manager";
+import { enumColors, enumColorsToHexCode, enumColorToShortcode, enumShortcodeToColor } from "../colors";
 
 export class ShapestItem extends BaseItem {
     static getId() {
         return "shapest";
     }
 
-
     static getSchema() {
         return types.string;
+    }
+
+    static isValidShortKey(code) {
+        return !code.split(':').find(e => !ShapestLayer.isValidKey(e));
+    }
+
+    static fromShortKey(code) {
+        return new ShapestItem(code);
     }
 
     serialize() {
@@ -76,6 +84,16 @@ export class ShapestItem extends BaseItem {
     }
 
     /**
+     * @param {number} x
+     * @param {number} y
+     * @param {DrawParameters} parameters
+     * @param {number=} diameter
+     */
+    drawItemCenteredImpl(x, y, parameters, diameter = globalConfig.defaultItemDiameter) {
+        this.drawCentered(x, y, parameters, diameter);
+    }
+
+    /**
      * Draws the shape definition
      * @param {number} x
      * @param {number} y
@@ -118,104 +136,278 @@ export class ShapestItem extends BaseItem {
         context.beginCircle(0, 0, quadrantSize * 1.15);
         context.fill();
 
-        for (let layerIndex = 0; layerIndex < this.layers.length; ++layerIndex) {
-            const quadrants = this.layers[layerIndex];
+        let layers = this.hash.split(':').map(ShapestLayer.create);
 
-            const layerScale = Math.max(0.1, 0.9 - layerIndex * 0.22);
+        for (let layer of layers) {
+            context.save();
 
-            for (let quadrantIndex = 0; quadrantIndex < 4; ++quadrantIndex) {
-                if (!quadrants[quadrantIndex]) {
-                    continue;
-                }
-                const { subShape, color } = quadrants[quadrantIndex];
+            context.strokeStyle = THEME.items.outline;
+            context.lineWidth = THEME.items.outlineWidth;
+            context.miterLimit = 2;
+            context.textAlign = "center";
+            context.textBaseline = "middle";
 
-                const quadrantPos = arrayQuadrantIndexToOffset[quadrantIndex];
-                const centerQuadrantX = quadrantPos.x * quadrantHalfSize;
-                const centerQuadrantY = quadrantPos.y * quadrantHalfSize;
+            layer.draw(context)
 
-                const rotation = Math.radians(quadrantIndex * 90);
-
-                context.translate(centerQuadrantX, centerQuadrantY);
-                context.rotate(rotation);
-
-                context.fillStyle = enumColorsToHexCode[color];
-                context.strokeStyle = THEME.items.outline;
-                context.lineWidth = THEME.items.outlineWidth;
-
-                const insetPadding = 0.0;
-
-                switch (subShape) {
-                    case enumSubShape.rect: {
-                        context.beginPath();
-                        const dims = quadrantSize * layerScale;
-                        context.rect(
-                            insetPadding + -quadrantHalfSize,
-                            -insetPadding + quadrantHalfSize - dims,
-                            dims,
-                            dims
-                        );
-
-                        break;
-                    }
-                    case enumSubShape.star: {
-                        context.beginPath();
-                        const dims = quadrantSize * layerScale;
-
-                        let originX = insetPadding - quadrantHalfSize;
-                        let originY = -insetPadding + quadrantHalfSize - dims;
-
-                        const moveInwards = dims * 0.4;
-                        context.moveTo(originX, originY + moveInwards);
-                        context.lineTo(originX + dims, originY);
-                        context.lineTo(originX + dims - moveInwards, originY + dims);
-                        context.lineTo(originX, originY + dims);
-                        context.closePath();
-                        break;
-                    }
-
-                    case enumSubShape.windmill: {
-                        context.beginPath();
-                        const dims = quadrantSize * layerScale;
-
-                        let originX = insetPadding - quadrantHalfSize;
-                        let originY = -insetPadding + quadrantHalfSize - dims;
-                        const moveInwards = dims * 0.4;
-                        context.moveTo(originX, originY + moveInwards);
-                        context.lineTo(originX + dims, originY);
-                        context.lineTo(originX + dims, originY + dims);
-                        context.lineTo(originX, originY + dims);
-                        context.closePath();
-                        break;
-                    }
-
-                    case enumSubShape.circle: {
-                        context.beginPath();
-                        context.moveTo(insetPadding + -quadrantHalfSize, -insetPadding + quadrantHalfSize);
-                        context.arc(
-                            insetPadding + -quadrantHalfSize,
-                            -insetPadding + quadrantHalfSize,
-                            quadrantSize * layerScale,
-                            -Math.PI * 0.5,
-                            0
-                        );
-                        context.closePath();
-                        break;
-                    }
-
-                    default: {
-                        assertAlways(false, "Unkown sub shape: " + subShape);
-                    }
-                }
-
-                context.fill();
-                context.stroke();
-
-                context.rotate(-rotation);
-                context.translate(-centerQuadrantX, -centerQuadrantY);
-            }
+            context.restore();
         }
     }
 }
 
 
+// /**
+// * @typedef {{
+// *   app: string,
+// *   version: string,
+// *   image: string,
+// *   format: string,
+// *   size: Size,
+// *   scale: string,
+// *   smartupdate: string
+// * }} ShapestQuad
+// */
 
+
+class ShapestLayer {
+    /**
+     * @param {string} hash
+     * paran {number} layer
+     */
+    constructor(hash, layer) {
+        this.hash = hash;
+        this.layer = layer;
+    }
+
+    static layerHash() {
+        abstract;
+        return "";
+    }
+
+    toString() {
+        return `${this.hash}`;
+    }
+
+    get scale() {
+        return Math.max(1, 9 - this.layer * 2.2);
+    }
+
+    static create(hash, layer) {
+        switch (hash[0]) {
+            case "n": return new NumberLayer(hash, layer);
+            case "t": return new TextLayer(hash, layer);
+            case "e": return new EmojiLayer(hash, layer);
+            case "4": return new Shape4Layer(hash, layer);
+            case "6": return new Shape6Layer(hash, layer);
+        }
+        throw 0;
+    }
+
+    static isValidKey(hash) {
+        switch (hash[0]) {
+            case "n": return NumberLayer.isValidKey(hash);
+            case "t": return TextLayer.isValidKey(hash);
+            case "e": return EmojiLayer.isValidKey(hash);
+            case "4": return Shape4Layer.isValidKey(hash);
+            case "6": return Shape6Layer.isValidKey(hash);
+        }
+        return false;
+    }
+
+    draw(context) { abstract; }
+    do_paint(clr) { abstract; }
+    do_rotate(rot) { abstract; }
+    can_fall_through(layer) { abstract; }
+    can_stack_with(layer) { abstract; }
+    do_stack_with(layer) { abstract; }
+
+}
+
+// n123
+class NumberLayer extends ShapestLayer {
+    static layerHash() {
+        return "n";
+    }
+
+    static isValidKey(hash) {
+        return hash[0] == this.layerHash() && Number.isInteger(+hash.slice(2));
+    }
+
+    get color() {
+        return enumColorsToHexCode[enumShortcodeToColor[this.hash[1]]];
+    }
+
+    get value() {
+        return +this.hash.slice(2);
+    }
+
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw(ctx) {
+
+        ctx.fillStyle = this.color;
+
+        ctx.font = `${this.scale}px Sans-serif`;
+
+        ctx.strokeText(this.value + '', 0, 0, 20);
+        ctx.fillText(this.value + '', 0, 0, 20);
+
+    }    
+
+}
+
+// twqwerty
+class TextLayer extends ShapestLayer {
+    static layerHash() {
+        return "t";
+    }
+
+    static isValidKey(hash) {
+        return hash[0] == this.layerHash() && hash.length >= 3;
+    }
+
+    get color() {
+        return enumColorsToHexCode[enumShortcodeToColor[this.hash[1]]];
+    }
+
+    get value() {
+        return this.hash.slice(2);
+    }
+
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw(ctx) {
+
+        ctx.fillStyle = this.color;
+
+        ctx.font = `${this.scale}px Sans-serif`;
+
+        ctx.strokeText(this.value, 0, 0, 20);
+        ctx.fillText(this.value, 0, 0, 20);
+
+    }
+
+}
+
+// e💩
+class EmojiLayer extends ShapestLayer {
+    static layerHash() {
+        return "e";
+    }
+
+    static isValidKey(hash) {
+        return hash[0] == this.layerHash() && hash.length >= 2;
+    }
+
+    get value() {
+        return this.hash.slice(1);
+    }
+
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw(ctx) {
+
+        ctx.fillStyle = "white";
+        ctx.font = `${this.scale}px Sans-serif`;
+
+        ctx.strokeText(this.value, 0, 0, 20);
+        ctx.fillText(this.value, 0, 0, 20);
+
+    }
+
+}
+
+const shape4svg = {
+    R: "M 0 0 v 1 h 1 v -1 z",
+    C: "M 0 0 l 1 0 a 1 1 0 0 1 -1 1 z ",
+    S: "M 0 0 L 0 0.6 1 1 0.6 0 z",
+    W: "M 0 0 L 0 0.6 1 1 1 0 z",
+    "-": "M 0 0",
+}
+
+// 4CwCrCgCb
+class Shape4Layer extends ShapestLayer {
+    static layerHash() {
+        return "4";
+    }
+
+    static isValidKey(hash) {
+        return hash[0] == this.layerHash() && hash.length == 4 * 2 + 1;
+    }
+
+    color(i) {
+        return enumColorsToHexCode[enumShortcodeToColor[this.hash[2 + 2 * i]]];
+    }
+
+    shape(i) {
+        return this.hash[1 + 2 * i];
+    }
+
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw(ctx) {
+
+        ctx.scale(this.scale, this.scale);
+        ctx.lineWidth /= this.scale;
+
+        for (let i = 0; i < 4; i++) {
+            let p = new Path2D(shape4svg[this.shape(i)]);
+            ctx.fillStyle = this.color(i);
+            ctx.fill(p);
+            ctx.stroke(p);
+            ctx.rotate(Math.PI / 2);
+        }
+
+    }
+
+}
+
+const shape6svg = {
+    R: `M 0 0 L 1 0 1 ${ Math.sin(Math.PI / 6) / Math.cos(Math.PI / 6) } ${ Math.cos(Math.PI / 3) } ${ Math.sin(Math.PI / 3) } Z`,
+    C: "M 0 0 l 1 0 a 1 1 0 0 1 -1 1 z ",
+    S: "M 0 0 L 0 0.6 1 1 0.6 0 z",
+    W: "M 0 0 L 0 0.6 1 1 1 0 z",
+    "-": "M 0 0",
+}
+
+// 6CwCrCgCbRcRy
+class Shape6Layer extends ShapestLayer {
+    static layerHash() {
+        return "6";
+    }
+
+    static isValidKey(hash) {
+        return hash[0] == this.layerHash() && hash.length == 6 * 2 + 1;
+    }
+
+    color(i) {
+        return enumColorsToHexCode[enumShortcodeToColor[this.hash[2 + 2 * i]]];
+    }
+
+    shape(i) {
+        return this.hash[1 + 2 * i];
+    }
+
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw(ctx) {
+
+        ctx.scale(this.scale, this.scale);
+        ctx.lineWidth /= this.scale;
+        ctx.rotate(-Math.PI / 2)
+
+        for (let i = 0; i < 6; i++) {
+            let p = new Path2D(shape6svg[this.shape(i)]);
+            ctx.fillStyle = this.color(i);
+            ctx.fill(p);
+            ctx.stroke(p);
+            ctx.rotate(Math.PI / 3);
+        }
+
+    }
+
+}
