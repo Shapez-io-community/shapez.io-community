@@ -279,7 +279,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
      */
     tryRotate() {
         const selectedBuilding = this.currentMetaBuilding.get();
-        if (selectedBuilding) {
+        if (selectedBuilding && selectedBuilding.getIsRotateable()) {
             if (this.root.keyMapper.getBinding(KEYMAPPINGS.placement.rotateInverseModifier).pressed) {
                 this.currentBaseRotation = (this.currentBaseRotation + 270) % 360;
             } else {

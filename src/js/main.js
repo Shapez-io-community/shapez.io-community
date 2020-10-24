@@ -10,6 +10,8 @@ import { initDrawUtils } from "./core/draw_utils";
 import { initItemRegistry } from "./game/item_registry";
 import { initMetaBuildingRegistry } from "./game/meta_building_registry";
 import { initGameSpeedRegistry } from "./game/game_speed_registry";
+import { queryParamOptions } from "./core/query_parameters";
+import { RandomNumberGenerator } from "./core/rng";
 
 const logger = createLogger("main");
 
@@ -87,17 +89,6 @@ let app = null;
 
 function bootApp() {
     logger.log("Page Loaded");
-    if (queryParamOptions.password == null || queryParamOptions.password != "ShrimpGutShrimpKuul") {
-        if (window.confirm("Either no or Wrong password Provided. Are you looking for Shapez.io?")) {
-            window.location.href = "https://shapez.io";
-        } else {
-            const password = window.prompt("Please Enter Password:");
-            if (password != "ShrimpGutShrimpKuul") {
-                window.alert("Wrong Password!");
-                return;
-            }
-        }
-    }
     app = new Application();
     app.boot();
 }

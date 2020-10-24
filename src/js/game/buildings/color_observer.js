@@ -5,6 +5,7 @@ import { MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { ColorObserverComponent } from "../components/color_observer";
 import { enumHubGoalRewards } from "../tutorial_goals";
+import { RandomNumberGenerator } from "../../core/rng";
 
 export class MetaColorObserverBuilding extends MetaBuilding {
     constructor() {
@@ -13,7 +14,7 @@ export class MetaColorObserverBuilding extends MetaBuilding {
     }
 
     getIsRotateable() {
-        return false;
+        return true;
     }
 
     getSilhouetteColor() {
