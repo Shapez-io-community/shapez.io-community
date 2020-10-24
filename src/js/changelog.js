@@ -1,5 +1,12 @@
 export const CHANGELOG = [
     {
+        version: "ColorZ-ShrimpEdition Version 1.1",
+        date: " 24.10.2020",
+        entries: [
+            "Color Observer is Rotateable.",
+        ],
+    },
+    {
         version: "ColorZ-ShrimpEdition Version 1.0",
         date: " 22.10.2020",
         entries: [
