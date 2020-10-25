@@ -10,6 +10,7 @@ import { GameSystemWithFilter } from "../game_system_with_filter";
 import { BOOL_TRUE_SINGLETON, isTruthyItem } from "../items/boolean_item";
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 import { ShapeItem } from "../items/shape_item";
+import { ShapestItem, ShapestItemDefinition } from "../items/shapest_item";
 
 /**
  * We need to allow queuing charges, otherwise the throughput will stall
@@ -415,18 +416,14 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      * @param {ProcessorImplementationPayload} payload
      */
     process_STACKER(payload) {
-        const lowerItem = /** @type {ShapeItem} */ (payload.itemsBySlot[0]);
-        const upperItem = /** @type {ShapeItem} */ (payload.itemsBySlot[1]);
+        const lowerItem = /** @type {ShapestItem} */ (payload.itemsBySlot[0]);
+        const upperItem = /** @type {ShapestItem} */ (payload.itemsBySlot[1]);
 
         assert(lowerItem instanceof ShapeItem, "Input for lower stack is not a shape");
         assert(upperItem instanceof ShapeItem, "Input for upper stack is not a shape");
 
-        const stackedDefinition = this.root.shapeDefinitionMgr.shapeActionStack(
-            lowerItem.definition,
-            upperItem.definition
-        );
         payload.outItems.push({
-            item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(stackedDefinition),
+            item: ShapestItemDefinition.do_stack(lowerItem.hash, upperItem.hash),
         });
     }
 
