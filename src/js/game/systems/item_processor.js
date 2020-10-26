@@ -1,5 +1,5 @@
 import { BaseItem } from "../base_item";
-import { enumColorMixingResults, enumColors } from "../colors";
+import { enumColorMixingResults, enumColors, enumColorToShortcode } from "../colors";
 import {
     enumItemProcessorRequirements,
     enumItemProcessorTypes,
@@ -332,21 +332,18 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      * @param {ProcessorImplementationPayload} payload
      */
     process_CUTTER(payload) {
-        const inputItem = /** @type {ShapeItem} */ (payload.items[0].item);
-        assert(inputItem instanceof ShapeItem, "Input for cut is not a shape");
-        const inputDefinition = inputItem.definition;
+        const inputItem = /** @type {ShapestItem} */ (payload.items[0].item);
+        assert(inputItem instanceof ShapestItem, "Input for cut is not a shape");
 
-        const cutDefinitions = this.root.shapeDefinitionMgr.shapeActionCutHalf(inputDefinition);
-
-        for (let i = 0; i < cutDefinitions.length; ++i) {
-            const definition = cutDefinitions[i];
-            if (!definition.isEntirelyEmpty()) {
-                payload.outItems.push({
-                    item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(definition),
-                    requiredSlot: i,
-                });
-            }
-        }
+        let result = ShapestItemDefinition.do_cut2(inputItem.getHash())
+        result[0] && payload.outItems.push({
+            item: result[0],
+            requiredSlot: 0,
+        });
+        result[1] && payload.outItems.push({
+            item: result[1],
+            requiredSlot: 1,
+        });
     }
 
     /**
@@ -374,13 +371,11 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      * @param {ProcessorImplementationPayload} payload
      */
     process_ROTATER(payload) {
-        const inputItem = /** @type {ShapeItem} */ (payload.items[0].item);
-        assert(inputItem instanceof ShapeItem, "Input for rotation is not a shape");
-        const inputDefinition = inputItem.definition;
+        const inputItem = /** @type {ShapestItem} */ (payload.items[0].item);
+        assert(inputItem instanceof ShapestItem, "Input for rotation is not a shape");
 
-        const rotatedDefinition = this.root.shapeDefinitionMgr.shapeActionRotateCW(inputDefinition);
         payload.outItems.push({
-            item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinition),
+            item: ShapestItemDefinition.do_rotate(inputItem.getHash(), 1),
         });
     }
 
@@ -388,13 +383,11 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      * @param {ProcessorImplementationPayload} payload
      */
     process_ROTATER_CCW(payload) {
-        const inputItem = /** @type {ShapeItem} */ (payload.items[0].item);
-        assert(inputItem instanceof ShapeItem, "Input for rotation is not a shape");
-        const inputDefinition = inputItem.definition;
+        const inputItem = /** @type {ShapestItem} */ (payload.items[0].item);
+        assert(inputItem instanceof ShapestItem, "Input for rotation is not a shape");
 
-        const rotatedDefinition = this.root.shapeDefinitionMgr.shapeActionRotateCCW(inputDefinition);
         payload.outItems.push({
-            item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinition),
+            item: ShapestItemDefinition.do_rotate(inputItem.getHash(), -1),
         });
     }
 
@@ -402,13 +395,11 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      * @param {ProcessorImplementationPayload} payload
      */
     process_ROTATER_180(payload) {
-        const inputItem = /** @type {ShapeItem} */ (payload.items[0].item);
-        assert(inputItem instanceof ShapeItem, "Input for rotation is not a shape");
-        const inputDefinition = inputItem.definition;
+        const inputItem = /** @type {ShapestItem} */ (payload.items[0].item);
+        assert(inputItem instanceof ShapestItem, "Input for rotation is not a shape");
 
-        const rotatedDefinition = this.root.shapeDefinitionMgr.shapeActionRotate180(inputDefinition);
         payload.outItems.push({
-            item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinition),
+            item: ShapestItemDefinition.do_rotate(inputItem.getHash(), 0),
         });
     }
 
@@ -419,11 +410,11 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
         const lowerItem = /** @type {ShapestItem} */ (payload.itemsBySlot[0]);
         const upperItem = /** @type {ShapestItem} */ (payload.itemsBySlot[1]);
 
-        assert(lowerItem instanceof ShapeItem, "Input for lower stack is not a shape");
-        assert(upperItem instanceof ShapeItem, "Input for upper stack is not a shape");
+        assert(lowerItem instanceof ShapestItem, "Input for lower stack is not a shape");
+        assert(upperItem instanceof ShapestItem, "Input for upper stack is not a shape");
 
         payload.outItems.push({
-            item: ShapestItemDefinition.do_stack(lowerItem.hash, upperItem.hash),
+            item: ShapestItemDefinition.do_stack(lowerItem.getHash(), upperItem.getHash()),
         });
     }
 
@@ -462,16 +453,11 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      * @param {ProcessorImplementationPayload} payload
      */
     process_PAINTER(payload) {
-        const shapeItem = /** @type {ShapeItem} */ (payload.itemsBySlot[0]);
+        const shapeItem = /** @type {ShapestItem} */ (payload.itemsBySlot[0]);
         const colorItem = /** @type {ColorItem} */ (payload.itemsBySlot[1]);
 
-        const colorizedDefinition = this.root.shapeDefinitionMgr.shapeActionPaintWith(
-            shapeItem.definition,
-            colorItem.color
-        );
-
         payload.outItems.push({
-            item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(colorizedDefinition),
+            item: ShapestItemDefinition.do_paint(shapeItem.getHash(), colorItem.getHash()),
         });
     }
 
@@ -479,29 +465,19 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
      * @param {ProcessorImplementationPayload} payload
      */
     process_PAINTER_DOUBLE(payload) {
-        const shapeItem1 = /** @type {ShapeItem} */ (payload.itemsBySlot[0]);
-        const shapeItem2 = /** @type {ShapeItem} */ (payload.itemsBySlot[1]);
+        const shapeItem1 = /** @type {ShapestItem} */ (payload.itemsBySlot[0]);
+        const shapeItem2 = /** @type {ShapestItem} */ (payload.itemsBySlot[1]);
         const colorItem = /** @type {ColorItem} */ (payload.itemsBySlot[2]);
 
-        assert(shapeItem1 instanceof ShapeItem, "Input for painter is not a shape");
-        assert(shapeItem2 instanceof ShapeItem, "Input for painter is not a shape");
+        assert(shapeItem1 instanceof ShapestItem, "Input for painter is not a shape");
+        assert(shapeItem2 instanceof ShapestItem, "Input for painter is not a shape");
         assert(colorItem instanceof ColorItem, "Input for painter is not a color");
 
-        const colorizedDefinition1 = this.root.shapeDefinitionMgr.shapeActionPaintWith(
-            shapeItem1.definition,
-            colorItem.color
-        );
-
-        const colorizedDefinition2 = this.root.shapeDefinitionMgr.shapeActionPaintWith(
-            shapeItem2.definition,
-            colorItem.color
-        );
         payload.outItems.push({
-            item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(colorizedDefinition1),
+            item: ShapestItemDefinition.do_paint(shapeItem1.getHash(), colorItem.getHash()),
         });
-
         payload.outItems.push({
-            item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(colorizedDefinition2),
+            item: ShapestItemDefinition.do_paint(shapeItem2.getHash(), colorItem.getHash()),
         });
     }
 

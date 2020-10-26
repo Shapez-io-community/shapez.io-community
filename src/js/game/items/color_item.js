@@ -3,7 +3,7 @@ import { DrawParameters } from "../../core/draw_parameters";
 import { Loader } from "../../core/loader";
 import { types } from "../../savegame/serialization";
 import { BaseItem } from "../base_item";
-import { enumColors } from "../colors";
+import { enumColors, enumColorToShortcode } from "../colors";
 import { THEME } from "../theme";
 
 export class ColorItem extends BaseItem {
@@ -26,6 +26,10 @@ export class ColorItem extends BaseItem {
     /** @returns {"color"} **/
     getItemType() {
         return "color";
+    }
+
+    getHash() {
+        return enumColorToShortcode[this.color];
     }
 
     /**

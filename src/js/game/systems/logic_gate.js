@@ -6,6 +6,7 @@ import { GameSystemWithFilter } from "../game_system_with_filter";
 import { BOOL_FALSE_SINGLETON, BOOL_TRUE_SINGLETON, BooleanItem, isTruthyItem } from "../items/boolean_item";
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 import { ShapeItem } from "../items/shape_item";
+import { ShapestItem, ShapestItemDefinition } from "../items/shapest_item";
 import { ShapeDefinition } from "../shape_definition";
 
 export class LogicGateSystem extends GameSystemWithFilter {
@@ -163,9 +164,7 @@ export class LogicGateSystem extends GameSystemWithFilter {
             return null;
         }
 
-        const definition = /** @type {ShapeItem} */ (item).definition;
-        const rotatedDefinitionCW = this.root.shapeDefinitionMgr.shapeActionRotateCW(definition);
-        return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinitionCW);
+        return ShapestItemDefinition.do_rotate(item.getHash(), 1);
     }
 
     /**
@@ -178,6 +177,9 @@ export class LogicGateSystem extends GameSystemWithFilter {
             // Not a shape
             return [null, null];
         }
+
+        return ShapestItemDefinition.virt_analyze(item.getHash());
+
 
         const definition = /** @type {ShapeItem} */ (item).definition;
         const lowerLayer = /** @type {import("../shape_definition").ShapeLayer} */ (definition.layers[0]);
@@ -217,18 +219,8 @@ export class LogicGateSystem extends GameSystemWithFilter {
         if (!item || item.getItemType() !== "shape") {
             // Not a shape
             return [null, null];
-        }
-
-        const definition = /** @type {ShapeItem} */ (item).definition;
-        const result = this.root.shapeDefinitionMgr.shapeActionCutHalf(definition);
-        return [
-            result[0].isEntirelyEmpty()
-                ? null
-                : this.root.shapeDefinitionMgr.getShapeItemFromDefinition(result[0]),
-            result[1].isEntirelyEmpty()
-                ? null
-                : this.root.shapeDefinitionMgr.getShapeItemFromDefinition(result[1]),
-        ];
+        }        
+        return ShapestItemDefinition.do_cut2(item.getHash());
     }
 
     /**
@@ -242,23 +234,7 @@ export class LogicGateSystem extends GameSystemWithFilter {
             return [null, null];
         }
 
-        const definition = /** @type {ShapeItem} */ (item).definition;
-        const layers = /** @type {Array<import("../shape_definition").ShapeLayer>}  */ (definition.layers);
-
-        const upperLayerDefinition = new ShapeDefinition({
-            layers: [layers[layers.length - 1]],
-        });
-
-        const lowerLayers = layers.slice(0, layers.length - 1);
-        const lowerLayerDefinition =
-            lowerLayers.length > 0 ? new ShapeDefinition({ layers: lowerLayers }) : null;
-
-        return [
-            lowerLayerDefinition
-                ? this.root.shapeDefinitionMgr.getShapeItemFromDefinition(lowerLayerDefinition)
-                : null,
-            this.root.shapeDefinitionMgr.getShapeItemFromDefinition(upperLayerDefinition),
-        ];
+        return ShapestItemDefinition.virt_unstack_bottom(item.getHash());
     }
 
     /**
@@ -279,12 +255,7 @@ export class LogicGateSystem extends GameSystemWithFilter {
             return null;
         }
 
-        const stackedShape = this.root.shapeDefinitionMgr.shapeActionStack(
-            /** @type {ShapeItem} */ (lowerItem).definition,
-            /** @type {ShapeItem} */ (upperItem).definition
-        );
-
-        return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(stackedShape);
+        return ShapestItemDefinition.do_stack(lowerItem.getHash(), upperItem.getHash());
     }
 
     /**
@@ -305,12 +276,7 @@ export class LogicGateSystem extends GameSystemWithFilter {
             return null;
         }
 
-        const coloredShape = this.root.shapeDefinitionMgr.shapeActionPaintWith(
-            /** @type {ShapeItem} */ (shape).definition,
-            /** @type {ColorItem} */ (color).color
-        );
-
-        return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(coloredShape);
+        return ShapestItemDefinition.do_paint(shape.getHash(), color.getHash());
     }
 
     /**

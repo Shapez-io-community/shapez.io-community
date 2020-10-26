@@ -7,6 +7,7 @@ import { globalConfig } from "../../core/config";
 import { smoothenDpi } from "../../core/dpi_manager";
 import { enumColors, enumColorsToHexCode, enumColorToShortcode, enumShortcodeToColor } from "../colors";
 import { ShapeItem } from "./shape_item"
+import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 
 
 const ERROR = "tErRrRrOrRr";
@@ -224,6 +225,12 @@ class ShapestLayer {
             case "e": return new EmojiLayer(hash, layer);
             case "4": return new Shape4Layer(hash, layer);
             case "6": return new Shape6Layer(hash, layer);
+
+            case "-":
+            case "R":
+            case "C":
+            case "S":
+            case "W": return new Shape4Layer("4" + hash, layer);
         }
         throw new Error('can\'t create layer ' + hash);
     }
@@ -235,6 +242,12 @@ class ShapestLayer {
             case "e": return EmojiLayer.isValidKey(hash);
             case "4": return Shape4Layer.isValidKey(hash);
             case "6": return Shape6Layer.isValidKey(hash);
+
+            case "-":
+            case "R":
+            case "C":
+            case "S":
+            case "W": return Shape4Layer.isValidKey("4" + hash);
         }
         return false;
     }
@@ -244,12 +257,18 @@ class ShapestLayer {
         return enumColorsToHexCode[enumShortcodeToColor[this.color(i)]];
     }
 
+    sameLayerAs(layer) {
+        return this.layerHash() == layer.layerHash();
+    }
+
     draw(context) { abstract; }
-    do_paint(clr) { abstract; }
-    do_rotate(rot) { abstract; }
-    can_fall_through(layer) { return false; }
-    can_stack_with(layer) { return this.hash[0] == layer.hash[0]; }
-    do_stack_with(layer) { abstract; }
+    can_fall_through(layer) { return this.can_stack_with(layer); }
+    can_stack_with(layer) { return this.sameLayerAs(layer); }
+    /** @returns {any} */ do_stack_with(layer) { return ERROR; }
+    /** @returns {any} */ do_paint(clr) { return ERROR; }
+    /** @returns {any} */ do_rotate(rot) { return ERROR; }
+    /** @returns {any} */ do_cut2() { return [ERROR, ERROR]; }
+    virt_analyze() { return [null, null, null]; }
 
 }
 
@@ -263,8 +282,8 @@ class NumberLayer extends ShapestLayer {
         return hash[0] == this.layerHash() && Number.isInteger(+hash.slice(2));
     }
 
-    get color() {
-        return enumColorsToHexCode[enumShortcodeToColor[this.hash[1]]];
+    color() {
+        return this.hash[1];
     }
 
     get value() {
@@ -276,13 +295,35 @@ class NumberLayer extends ShapestLayer {
      */
     draw(ctx) {
 
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = this.colorHex(0);
 
         ctx.font = `${this.scale}px Sans-serif`;
 
         ctx.strokeText(this.value + '', 0, 0, 20);
         ctx.fillText(this.value + '', 0, 0, 20);
 
+    }
+
+    toTextLayer() {
+        let value = this.value.toString().split('').map(e => e + this.color()).join('');
+        return new TextLayer('t' + value, this.layer);
+    }
+
+    can_fall_through(layer) {
+        return this.sameLayerAs(layer) || layer.layerHash() == 't';
+    }
+
+    do_stack_with(layer) {
+        if (layer.layerHash() == 't') return this.toTextLayer().do_stack_with(layer);
+        if (!this.sameLayerAs(layer) || this.color() != layer.color()) return ERROR;
+        return new NumberLayer(`n${this.color()}${this.value + layer.value}`, this.layer);
+    }
+    do_paint(clr) {
+        return new NumberLayer(`n${clr}${this.value}`, this.layer);
+    }
+    do_rotate(rot) {
+        let value = rot == 1 ? this.value + 1 : rot == -1 ? this.value - 1 : -this.value;
+        return new NumberLayer(`n${this.color()}${value}`, this.layer);
     }
 
 }
@@ -302,11 +343,12 @@ class TextLayer extends ShapestLayer {
     }
 
     color(i) {
-        return enumColorsToHexCode[enumShortcodeToColor[this.hash[2 + 2 * i]]];
+        return this.hash[2 + 2 * i];
     }
 
     shape(i) {
-        return this.hash[1 + 2 * i];
+        let l = this.hash[1 + 2 * i]
+        return l != '_' ? l : i == 0 || i == this.length - 1 ? ' ' : l;
     }
 
     get value() {
@@ -318,33 +360,75 @@ class TextLayer extends ShapestLayer {
      */
     draw(ctx) {
 
-        ctx.fillStyle = this.color(0);
-
         ctx.font = `${this.scale}px Sans-serif`;
 
+        let actw = ctx.measureText(this.value).width;
         let fullw = 0;
         for (let i = 0; i < this.length; i++) {
             fullw += ctx.measureText(this.shape(i)).width;
         }
+        let mul = Math.min(fullw, 20) / fullw;
         let x = -fullw / 2;
         for (let i = 0; i < this.length; i++) {
             let w = ctx.measureText(this.shape(i)).width;
             x += w / 2;
-            ctx.strokeText(this.shape(i), x, 0, 20);
-            ctx.fillText(this.shape(i), x, 0, 20);
+            ctx.fillStyle = this.colorHex(i);
+            ctx.strokeText(this.shape(i), x * mul, 0, w * mul);
+            ctx.fillText(this.shape(i), x * mul, 0, w * mul);
             x += w / 2;
         }
-
 
     }
 
     can_fall_through(layer) {
-        return layer.layerHash() == this.layerHash();
+        return this.sameLayerAs(layer) || layer.layerHash() == 'n';
     }
 
     do_stack_with(layer) {
-        if (layer.layerHash() != this.layerHash()) return ERROR;
+        if (layer.layerHash() == 'n') return this.do_stack_with(layer.toTextLayer());
+        if (!this.sameLayerAs(layer)) return ERROR;
         return this.hash + layer.hash.slice(1);
+    }
+    do_paint(clr) {
+        let s = this.layerHash();
+        for (let i = 0; i < this.length; i++) {
+            s += this.shape(i) + clr;
+        }
+        return new TextLayer(s, this.layer);
+    }
+    do_rotate(rot) {
+        // !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+        let list_low = 'abcdefghijklmnopqrstuvwxyz';
+        let list_high = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let list_sym = '_!"#$%&\'()*+,-./<=>?[]^{|}';
+
+        assert(list_low.length == list_high.length && list_high.length == list_sym.length);
+
+        if (this.length != 1) {
+            let list = this.hash.slice(1).match(/[^][^]/g);
+            if (rot == 1) {
+                list.push(list.shift());
+            } else if (rot == -1) {
+                list.unshift(list.pop());
+            } else if (rot == 0) {
+                list.reverse();
+            }
+            return new TextLayer(`t${list.join('')}`, this.layer);
+        } else {
+            let dblist = list_low + list_low + list_high + list_high + list_sym + list_sym;
+            let qlist = list_low + list_high + list_sym + list_low;
+
+            let letter = this.shape(0);
+            if (rot == 1) {
+                letter = dblist[dblist.indexOf(letter) + 1];
+            } else if (rot == -1) {
+                letter = dblist[dblist.lastIndexOf(letter) - 1];
+            } else if (rot == 0) {
+                letter = qlist[qlist.indexOf(letter) + list_low.length];
+            }
+            return new TextLayer(`t${letter}${this.color(0)}`, this.layer);
+        }
+
     }
 
 }
@@ -379,10 +463,10 @@ class EmojiLayer extends ShapestLayer {
 }
 
 const shape4svg = {
-    R: "M 0 0 v 1 h 1 v -1 z",
-    C: "M 0 0 l 1 0 a 1 1 0 0 1 -1 1 z ",
-    S: "M 0 0 L 0 0.6 1 1 0.6 0 z",
-    W: "M 0 0 L 0 0.6 1 1 1 0 z",
+    R: "M 0 0 L 1 0 L 1 1 L 0 1 Z",
+    C: "M 0 0 L 1 0 A 1 1 0 0 1 0 1 Z",
+    S: "M 0 0 L 0 0.6 L 1 1 L 0.6 0 Z",
+    W: "M 0 0 L 0 0.6 L 1 1 L 1 0 Z",
     "-": "M 0 0",
 }
 
@@ -459,15 +543,59 @@ class Shape4Layer extends ShapestLayer {
         return s;
     }
 
+    do_paint(clr) {
+        let s = this.layerHash();
+        for (let i = 0; i < this.length; i++) {
+            s += this.shape(i) + clr;
+        }
+        return new Shape4Layer(s, this.layer);
+    }
+    do_rotate(rot) {
+        let value = this.hash.slice(1);
+        if (rot == 1) {
+            value = value.slice(2) + value.slice(0, 2);
+        } else if (rot == -1) {
+            value = value.slice(0, -2) + value.slice(-2);
+        } else if (rot == 0) {
+            value = value.slice(this.length) + value.slice(0, this.length);
+        }
+        return new Shape4Layer(this.layerHash() + value, this.layer);
+    }
+    do_cut2() {
+        let half1 = this.hash.slice(1, this.length + 1);
+        let half2 = this.hash.slice(this.length + 1);
+        if (half1 == '-'.repeat(this.length)) half1 = null;
+        if (half2 == '-'.repeat(this.length)) half2 = null;
+        return [half1 && new Shape4Layer(this.layerHash() + half1 + '-'.repeat(this.length), 0), half2 && new Shape4Layer(this.layerHash() + '-'.repeat(this.length) + half2, 0)];
+    }
+
+    virt_analyze() {
+        return [new Shape4Layer(this.layerHash() + (this.shape(0) + 'u').repeat(this.length), 0), this.color(0)];
+    }
 }
 
+function dotPos(l, a) {
+    return `${l * Math.cos(Math.PI / a)} ${l * Math.sin(Math.PI / a)}`;
+}
+
+function sinPiBy(a) {
+    return Math.sin(Math.PI / a);
+}
+function cosPiBy(a) {
+    return Math.cos(Math.PI / a);
+}
+
+let sahpe6long = 1 / cosPiBy(6);
+
 const shape6svg = {
-    R: `M 0 0 L 1 0 1 ${Math.sin(Math.PI / 6) / Math.cos(Math.PI / 6)} ${Math.cos(Math.PI / 3)} ${Math.sin(Math.PI / 3)} Z`,
-    C: "M 0 0 l 1 0 a 1 1 0 0 1 -1 1 z ",
-    S: "M 0 0 L 0 0.6 1 1 0.6 0 z",
-    W: "M 0 0 L 0 0.6 1 1 1 0 z",
+    R: `M 0 0 L 1 0 L ${dotPos(sahpe6long, 6)} L ${dotPos(1, 3)} Z`,
+    C: `M 0 0 L 1 0 A 1 1 0 0 1 ${dotPos(1, 3)} Z`,
+    S: `M 0 0 L 0.6 0 L ${dotPos(sahpe6long, 6)} L ${dotPos(0.6, 3)} Z`,
+    W: `M 0 0 L 0.6 0 L ${dotPos(sahpe6long, 6)} L ${dotPos(1, 3)} Z`,
     "-": "M 0 0",
 }
+
+console.log(shape6svg);
 
 // 6CwCrCgCbRcRy
 class Shape6Layer extends ShapestLayer {
@@ -484,7 +612,7 @@ class Shape6Layer extends ShapestLayer {
     }
 
     color(i) {
-        return enumColorsToHexCode[enumShortcodeToColor[this.hash[2 + 2 * i]]];
+        return this.hash[2 + 2 * i];
     }
 
     shape(i) {
@@ -502,7 +630,7 @@ class Shape6Layer extends ShapestLayer {
 
         for (let i = 0; i < 6; i++) {
             let p = new Path2D(shape6svg[this.shape(i)]);
-            ctx.fillStyle = this.color(i);
+            ctx.fillStyle = this.colorHex(i);
             ctx.fill(p);
             ctx.stroke(p);
             ctx.rotate(Math.PI / 3);
@@ -513,7 +641,7 @@ class Shape6Layer extends ShapestLayer {
     can_fall_through(layer) {
         switch (layer.layerHash()) {
             case "6": {
-                for (let i = 0; i < 6; i++)
+                for (let i = 0; i < this.length; i++)
                     if (this.shape(i) != '-' && layer.shape(i) != '-') return false;
                 return true;
             }
@@ -527,7 +655,7 @@ class Shape6Layer extends ShapestLayer {
 
     do_stack_with(layer) {
         if (layer.layerHash() != this.layerHash()) return ERROR;
-        let s = '6';
+        let s = this.layerHash();
         for (let i = 0; i < this.length; i++) {
             if (this.shape(i) != '-') {
                 s += this.shape(i) + this.color(i);
@@ -538,11 +666,44 @@ class Shape6Layer extends ShapestLayer {
         return s;
     }
 
+    do_paint(clr) {
+        let s = this.layerHash();
+        for (let i = 0; i < this.length; i++) {
+            s += this.shape(i) + clr;
+        }
+        return new Shape6Layer(s, this.layer);
+    }
+    do_rotate(rot) {
+        let value = this.hash.slice(1);
+        if (rot == 1) {
+            value = value.slice(-2) + value.slice(0, -2);
+        } else if (rot == -1) {
+            value = value.slice(2) + value.slice(0, 2);
+        } else if (rot == 0) {
+            value = value.slice(this.length) + value.slice(0, this.length);
+        }
+        return new Shape6Layer(this.layerHash() + value, this.layer);
+    }
+    do_cut2() {
+        let half1 = this.hash.slice(1, this.length + 1);
+        let half2 = this.hash.slice(this.length + 1);
+        if (half1 == '-'.repeat(this.length)) half1 = null;
+        if (half2 == '-'.repeat(this.length)) half2 = null;
+        return [half1 && new Shape6Layer(this.layerHash() + half1 + '-'.repeat(this.length), 0), half2 && new Shape6Layer(this.layerHash() + '-'.repeat(this.length) + half2, 0)];
+    }
+    virt_analyze() {
+        return [new Shape6Layer(this.layerHash() + (this.shape(0) + 'u').repeat(this.length), 0), this.color(0)];
+    }
 }
 
 
 const cache = {
     do_stack: new Map(),
+    do_rotate: new Map(),
+    do_paint: new Map(),
+    do_cut2: new Map(),
+    virt_unstack_bottom: new Map(),
+    virt_analyze: new Map(),
 };
 
 
@@ -593,8 +754,83 @@ export class ShapestItemDefinition {
             }
         }
 
-        let result = new ShapestItem(resultLayers.join(':'));
+        let resultItem = new ShapestItem(resultLayers.join(':'));
 
-        return this.addCached('do_stack', lowerItem + ':::' + upperItem, result);
+        return this.addCached('do_stack', lowerItem + ':::' + upperItem, resultItem);
+    }
+
+    static do_rotate(item, dir) {
+        if (this.getCached('do_rotate', item + ':::' + dir)) return this.lastCached;
+
+        let layers = new ShapestItem(item).layers;
+
+        let resultLayers = layers.map(e => e.do_rotate(dir));
+
+        let resultItem = new ShapestItem(resultLayers.join(':'));
+
+        return this.addCached('do_rotate', item + ':::' + dir, resultItem);
+    }
+
+    static do_paint(item, clr) {
+        if (this.getCached('do_paint', item + ':::' + clr)) return this.lastCached;
+
+        let layers = new ShapestItem(item).layers;
+
+        let resultLayers = layers.map(e => e.do_paint(clr));
+
+        let resultItem = new ShapestItem(resultLayers.join(':'));
+
+        return this.addCached('do_paint', item + ':::' + clr, resultItem);
+    }
+
+    static do_cut2(item) {
+        if (this.getCached('do_cut2', item)) return this.lastCached;
+
+        let layers = new ShapestItem(item).layers;
+
+        let resultLayers1 = layers.map(e => e.do_cut2()[0]).filter(Boolean);
+        let resultLayers2 = layers.map(e => e.do_cut2()[1]).filter(Boolean);
+
+        let resultItem1 = resultLayers1.length ? new ShapestItem(resultLayers1.join(':')) : null;
+        let resultItem2 = resultLayers2.length ? new ShapestItem(resultLayers2.join(':')) : null;
+
+        return this.addCached('do_cut2', item, [resultItem1, resultItem2]);
+    }
+
+    static virt_unstack_bottom(item) {
+        if (this.getCached('virt_unstack_bottom', item)) return this.lastCached;
+
+        let layers = new ShapestItem(item).layers;
+
+        let lowerItem = new ShapestItem(layers[0] + '');
+        let upperItem = layers.length > 1 ? new ShapestItem(layers.slice(1).join(':')) : null;
+
+        return this.addCached('virt_unstack_bottom', item, [lowerItem, upperItem]);
+    }
+
+    static virt_analyze(item) {
+        if (this.getCached('virt_analyze', item)) return this.lastCached;
+
+        let layers = new ShapestItem(item).layers;
+
+        let result = layers[0].virt_analyze();
+
+        let shapeItem = result[0] && new ShapestItem(result[0] + '');
+        let colorItem = result[1] && result[1] != '-' ? COLOR_ITEM_SINGLETONS[enumShortcodeToColor[result[1]]] : null;
+
+        return this.addCached('virt_analyze', item, [shapeItem, colorItem]);
     }
 }
+
+/// DEBUG:
+
+
+globalThis.shape6 = shape6svg;
+
+globalThis.clearCaches = function() {
+    for (let k in cache) {
+        cache[k].clear();
+    }
+}
+
+globalThis.cache = cache;

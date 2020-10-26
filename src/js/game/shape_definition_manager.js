@@ -2,6 +2,7 @@ import { createLogger } from "../core/logging";
 import { BasicSerializableObject } from "../savegame/serialization";
 import { enumColors } from "./colors";
 import { ShapeItem } from "./items/shape_item";
+import { ShapestItem } from "./items/shapest_item";
 import { GameRoot } from "./root";
 import { enumSubShape, ShapeDefinition } from "./shape_definition";
 
@@ -59,8 +60,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
         if (cached) {
             return cached;
         }
-        const definition = this.getShapeFromShortKey(hash);
-        return (this.shapeKeyToItem[hash] = new ShapeItem(definition));
+        return (this.shapeKeyToItem[hash] = new ShapestItem(hash));
     }
 
     /**
