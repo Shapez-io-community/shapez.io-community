@@ -19,7 +19,7 @@ export class BeltReaderSystem extends GameSystemWithFilter {
             const pinsComp = entity.components.WiredPins;
 
             // Remove outdated items
-            while (readerComp.lastItemTimes[0] < minimumTime) {
+            while (readerComp.lastItemTimes[0] < minimumTime || readerComp.lastItemTimes.length > 24) {
                 readerComp.lastItemTimes.shift();
             }
 
@@ -38,17 +38,10 @@ export class BeltReaderSystem extends GameSystemWithFilter {
                 if (readerComp.lastItemTimes.length < 2) {
                     throughput = 0;
                 } else {
-                    let averageSpacing = 0;
-                    let averageSpacingNum = 0;
-                    for (let i = 0; i < readerComp.lastItemTimes.length - 1; ++i) {
-                        averageSpacing += readerComp.lastItemTimes[i + 1] - readerComp.lastItemTimes[i];
-                        ++averageSpacingNum;
-                    }
-
-                    throughput = 1 / (averageSpacing / averageSpacingNum);
+                    throughput = (readerComp.lastItemTimes.length - 1) / (readerComp.lastItemTimes[readerComp.lastItemTimes.length-1] - readerComp.lastItemTimes[0]);
                 }
 
-                readerComp.lastThroughput = Math.min(30, throughput);
+                readerComp.lastThroughput = throughput;
             }
         }
     }
