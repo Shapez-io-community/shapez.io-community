@@ -179,35 +179,6 @@ export class LogicGateSystem extends GameSystemWithFilter {
         }
 
         return ShapestItemDefinition.virt_analyze(item.getHash());
-
-
-        const definition = /** @type {ShapeItem} */ (item).definition;
-        const lowerLayer = /** @type {import("../shape_definition").ShapeLayer} */ (definition.layers[0]);
-        if (!lowerLayer) {
-            return [null, null];
-        }
-
-        const topRightContent = lowerLayer[0];
-
-        if (!topRightContent || topRightContent.subShape === null) {
-            return [null, null];
-        }
-
-        const newDefinition = new ShapeDefinition({
-            layers: [
-                [
-                    { subShape: topRightContent.subShape, color: enumColors.uncolored },
-                    { subShape: topRightContent.subShape, color: enumColors.uncolored },
-                    { subShape: topRightContent.subShape, color: enumColors.uncolored },
-                    { subShape: topRightContent.subShape, color: enumColors.uncolored },
-                ],
-            ],
-        });
-
-        return [
-            COLOR_ITEM_SINGLETONS[topRightContent.color],
-            this.root.shapeDefinitionMgr.getShapeItemFromDefinition(newDefinition),
-        ];
     }
 
     /**

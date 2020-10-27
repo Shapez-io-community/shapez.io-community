@@ -352,7 +352,7 @@ class SettingsStorage {
 
 export class ApplicationSettings extends ReadWriteProxy {
     constructor(app) {
-        super(app, "app_settings.bin");
+        super(app, `app_settings_${globalConfig.info.fork}.bin`);
     }
 
     initialize() {

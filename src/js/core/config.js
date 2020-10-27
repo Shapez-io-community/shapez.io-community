@@ -101,6 +101,8 @@ export const globalConfig = {
 
     // Secret vars
     info: {
+        fork: "SHAPEST",
+
         // Binary file salt
         file: "Ec'])@^+*9zMevK3uMV4432x9%iK'=",
 

@@ -546,7 +546,7 @@ class Shape4Layer extends ShapestLayer {
     do_paint(clr) {
         let s = this.layerHash();
         for (let i = 0; i < this.length; i++) {
-            s += this.shape(i) + clr;
+            s += this.shape(i) == '-' ? '--' : this.shape(i) + clr;
         }
         return new Shape4Layer(s, this.layer);
     }
@@ -669,7 +669,7 @@ class Shape6Layer extends ShapestLayer {
     do_paint(clr) {
         let s = this.layerHash();
         for (let i = 0; i < this.length; i++) {
-            s += this.shape(i) + clr;
+            s += this.shape(i) == '-' ? '--' : this.shape(i) + clr;
         }
         return new Shape6Layer(s, this.layer);
     }
