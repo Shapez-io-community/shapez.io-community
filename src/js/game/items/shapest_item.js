@@ -8,6 +8,7 @@ import { smoothenDpi } from "../../core/dpi_manager";
 import { enumColors, enumColorsToHexCode, enumColorToShortcode, enumShortcodeToColor } from "../colors";
 import { ShapeItem } from "./shape_item"
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
+import { makeOffscreenBuffer } from "../../core/buffer_utils";
 
 
 export const ERROR = "tErRrRrOrRr";
@@ -158,6 +159,21 @@ export class ShapestItem extends ShapeItem {
     }
 
     /**
+     * Generates this shape as a canvas
+     * @param {number} size
+     */
+    generateAsCanvas(size = 120) {
+        const [canvas, context] = makeOffscreenBuffer(size, size, {
+            smooth: true,
+            label: "definition-canvas-cache-" + this.getHash(),
+            reusable: false,
+        });
+
+        this.internalGenerateShapeBuffer(canvas, context, size, size, 1);
+        return canvas;
+    }
+
+    /**
      * @returns {ShapestItemDefinition}
      */
     get do() {
@@ -173,7 +189,7 @@ export class ShapestItem extends ShapeItem {
 
 
     get layers() {
-        return this.hash.split(':').map(ShapestLayer.create);
+        return this.hash.split(':').filter(Boolean).map(ShapestLayer.create);
     }
 }
 
@@ -264,10 +280,18 @@ class ShapestLayer {
     draw(context) { abstract; }
     can_fall_through(layer) { return this.can_stack_with(layer); }
     can_stack_with(layer) { return this.sameLayerAs(layer); }
-    /** @returns {any} */ do_stack_with(layer) { return ERROR; }
-    /** @returns {any} */ do_paint(clr) { return ERROR; }
-    /** @returns {any} */ do_rotate(rot) { return ERROR; }
-    /** @returns {any} */ do_cut2() { return [ERROR, ERROR]; }
+    /** @returns {any} */
+    do_stack_with(layer) { return ERROR; }
+    /** @returns {any} */
+    do_paint(clr) { return ERROR; }
+    /** @returns {any} */
+    do_paint4(clrs) { return ERROR; }
+    /** @returns {any} */
+    do_rotate(rot) { return ERROR; }
+    /** @returns {any[]} */
+    do_cut2() { return [ERROR, ERROR]; }
+    /** @returns {any[]} */
+    do_cut4() { return [ERROR, ERROR, ERROR, ERROR]; }
     virt_analyze() { return [null, null, null]; }
 
 }
@@ -393,6 +417,13 @@ class TextLayer extends ShapestLayer {
         let s = this.layerHash();
         for (let i = 0; i < this.length; i++) {
             s += this.shape(i) + clr;
+        }
+        return new TextLayer(s, this.layer);
+    }
+    do_paint4(clrs) {
+        let s = this.layerHash();
+        for (let i = 0; i < this.length; i++) {
+            s += this.shape(i) + (clrs[i] || this.color(i));
         }
         return new TextLayer(s, this.layer);
     }
@@ -550,6 +581,13 @@ class Shape4Layer extends ShapestLayer {
         }
         return new Shape4Layer(s, this.layer);
     }
+    do_paint4(clrs) {
+        let s = this.layerHash();
+        for (let i = 0; i < this.length; i++) {
+            s += this.shape(i) == '-' ? '--' :  this.shape(i) + (clrs[i] || this.color(i));
+        }
+        return new Shape4Layer(s, this.layer);
+    }
     do_rotate(rot) {
         let value = this.hash.slice(1);
         if (rot == 1) {
@@ -567,6 +605,13 @@ class Shape4Layer extends ShapestLayer {
         if (half1 == '-'.repeat(this.length)) half1 = null;
         if (half2 == '-'.repeat(this.length)) half2 = null;
         return [half1 && new Shape4Layer(this.layerHash() + half1 + '-'.repeat(this.length), 0), half2 && new Shape4Layer(this.layerHash() + '-'.repeat(this.length) + half2, 0)];
+    }
+    do_cut4() {
+        let parts = Array(this.length).fill(0).map((e,i)=>this.shape(i)+this.color(i));
+
+        return parts
+            .map((e, i) => Array(this.length).fill('--').map((elm,ind)=>i==ind?e:elm).join(''))
+            .map(e => e == '--'.repeat(this.length) ? null : new Shape4Layer(this.layerHash() + e, this.layer));
     }
 
     virt_analyze() {
@@ -672,6 +717,13 @@ class Shape6Layer extends ShapestLayer {
         }
         return new Shape6Layer(s, this.layer);
     }
+    do_paint4(clrs) {
+        let s = this.layerHash();
+        for (let i = 0; i < this.length; i++) {
+            s += this.shape(i) == '-' ? '--' :  this.shape(i) + (clrs[i] || this.color(i));
+        }
+        return new Shape4Layer(s, this.layer);
+    }
     do_rotate(rot) {
         let value = this.hash.slice(1);
         if (rot == 1) {
@@ -690,6 +742,14 @@ class Shape6Layer extends ShapestLayer {
         if (half2 == '-'.repeat(this.length)) half2 = null;
         return [half1 && new Shape6Layer(this.layerHash() + half1 + '-'.repeat(this.length), 0), half2 && new Shape6Layer(this.layerHash() + '-'.repeat(this.length) + half2, 0)];
     }
+    do_cut4() {
+        let parts = Array(this.length / 2).fill(0).map((e,i)=>this.hash.slice(1 + 4 * i, 5 + 4 * i));
+
+        return parts
+            .map((e, i) => Array(this.length).fill('----').map((elm,ind)=>i==ind?e:elm).join(''))
+            .map(e => e == '--'.repeat(this.length) ? null : new Shape6Layer(this.layerHash() + e, this.layer))
+            .concat([null]);
+    }
     virt_analyze() {
         return [new Shape6Layer(this.layerHash() + (this.shape(0) + 'u').repeat(this.length), 0), this.color(0)];
     }
@@ -700,7 +760,9 @@ const cache = {
     do_stack: new Map(),
     do_rotate: new Map(),
     do_paint: new Map(),
+    do_paint4: new Map(),
     do_cut2: new Map(),
+    do_cut4: new Map(),
     virt_unstack_bottom: new Map(),
     virt_analyze: new Map(),
 };
@@ -782,6 +844,18 @@ export class ShapestItemDefinition {
         return this.addCached('do_paint', item + ':::' + clr, resultItem);
     }
 
+    static do_paint4(item, clr) {
+        if (this.getCached('do_paint4', item + ':::' + clr)) return this.lastCached;
+
+        let layers = new ShapestItem(item).layers;
+
+        let resultLayers = layers.map(e => e.do_paint4(clr));
+
+        let resultItem = new ShapestItem(resultLayers.join(':'));
+
+        return this.addCached('do_paint4', item + ':::' + clr, resultItem);
+    }
+
     static do_cut2(item) {
         if (this.getCached('do_cut2', item)) return this.lastCached;
 
@@ -794,6 +868,17 @@ export class ShapestItemDefinition {
         let resultItem2 = resultLayers2.length ? new ShapestItem(resultLayers2.join(':')) : null;
 
         return this.addCached('do_cut2', item, [resultItem1, resultItem2]);
+    }
+    static do_cut4(item) {
+        if (this.getCached('do_cut4', item)) return this.lastCached;
+
+        let layers = new ShapestItem(item).layers;
+
+        let result = Array(4).fill(0)
+            .map((e, i) => layers.map(e => e.do_cut4()[i]).filter(Boolean))
+            .map(e => e.length ? new ShapestItem(e.join(':')) : null);
+
+        return this.addCached('do_cut4', item, result);
     }
 
     static virt_unstack_bottom(item) {

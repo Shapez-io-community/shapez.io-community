@@ -233,14 +233,15 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
                 // Check if all colors of the enabled slots are there
                 for (let i = 0; i < slotStatus.length; ++i) {
                     if (slotStatus[i] && !itemsBySlot[1 + i]) {
+                        return false;
                         // A slot which is enabled wasn't enabled. Make sure if there is anything on the quadrant,
                         // it is not possible to paint, but if there is nothing we can ignore it
-                        for (let j = 0; j < 4; ++j) {
-                            const layer = shapeItem.definition.layers[j];
-                            if (layer && layer[i]) {
-                                return false;
-                            }
-                        }
+                        // for (let j = 0; j < 4; ++j) {
+                        //     const layer = shapeItem.definition.layers[j];
+                        //     if (layer && layer[i]) {
+                        //         return false;
+                        //     }
+                        // }
                     }
                 }
 
@@ -352,18 +353,13 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
     process_CUTTER_QUAD(payload) {
         const inputItem = /** @type {ShapeItem} */ (payload.items[0].item);
         assert(inputItem instanceof ShapeItem, "Input for cut is not a shape");
-        const inputDefinition = inputItem.definition;
 
-        const cutDefinitions = this.root.shapeDefinitionMgr.shapeActionCutQuad(inputDefinition);
-
-        for (let i = 0; i < cutDefinitions.length; ++i) {
-            const definition = cutDefinitions[i];
-            if (!definition.isEntirelyEmpty()) {
-                payload.outItems.push({
-                    item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(definition),
-                    requiredSlot: i,
-                });
-            }
+        let result = ShapestItemDefinition.do_cut4(inputItem.getHash())
+        for (let i = 0; i < result.length; i++) {
+            result[i] && payload.outItems.push({
+                item: result[i],
+                requiredSlot: i,
+            });
         }
     }
 
@@ -492,17 +488,12 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
         const colors = [null, null, null, null];
         for (let i = 0; i < 4; ++i) {
             if (payload.itemsBySlot[i + 1]) {
-                colors[i] = /** @type {ColorItem} */ (payload.itemsBySlot[i + 1]).color;
+                colors[i] = /** @type {ColorItem} */ (payload.itemsBySlot[i + 1]).getHash();
             }
         }
 
-        const colorizedDefinition = this.root.shapeDefinitionMgr.shapeActionPaintWith4Colors(
-            shapeItem.definition,
-            /** @type {[string, string, string, string]} */ (colors)
-        );
-
         payload.outItems.push({
-            item: this.root.shapeDefinitionMgr.getShapeItemFromDefinition(colorizedDefinition),
+            item: ShapestItemDefinition.do_paint4(shapeItem.getHash(), colors),
         });
     }
 

@@ -48,7 +48,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
         if (cached) {
             return cached;
         }
-        return (this.shapeKeyToDefinition[hash] = ShapeDefinition.fromShortKey(hash));
+        return (this.shapeKeyToDefinition[hash] = new ShapestItem(hash));
     }
 
     /**
