@@ -3,6 +3,7 @@ import { BasicSerializableObject } from "../savegame/serialization";
 import { enumColors } from "./colors";
 import { ShapeItem } from "./items/shape_item";
 import { ShapestItem } from "./items/shapest_item";
+import "./custom/shapes";
 import { GameRoot } from "./root";
 import { enumSubShape, ShapeDefinition } from "./shape_definition";
 

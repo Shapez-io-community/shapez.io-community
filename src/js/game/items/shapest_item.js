@@ -10,7 +10,7 @@ import { ShapeItem } from "./shape_item"
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 
 
-const ERROR = "tErRrRrOrRr";
+export const ERROR = "tErRrRrOrRr";
 
 export class ShapestItem extends ShapeItem {
     static getId() {
@@ -462,7 +462,7 @@ class EmojiLayer extends ShapestLayer {
 
 }
 
-const shape4svg = {
+export const shape4svg = {
     R: "M 0 0 L 1 0 L 1 1 L 0 1 Z",
     C: "M 0 0 L 1 0 A 1 1 0 0 1 0 1 Z",
     S: "M 0 0 L 0 0.6 L 1 1 L 0.6 0 Z",
@@ -585,17 +585,16 @@ function cosPiBy(a) {
     return Math.cos(Math.PI / a);
 }
 
-let sahpe6long = 1 / cosPiBy(6);
+let shape6long = 1 / cosPiBy(6);
 
-const shape6svg = {
-    R: `M 0 0 L 1 0 L ${dotPos(sahpe6long, 6)} L ${dotPos(1, 3)} Z`,
+export const shape6svg = {
+    R: `M 0 0 L 1 0 L ${dotPos(shape6long, 6)} L ${dotPos(1, 3)} Z`,
     C: `M 0 0 L 1 0 A 1 1 0 0 1 ${dotPos(1, 3)} Z`,
-    S: `M 0 0 L 0.6 0 L ${dotPos(sahpe6long, 6)} L ${dotPos(0.6, 3)} Z`,
-    W: `M 0 0 L 0.6 0 L ${dotPos(sahpe6long, 6)} L ${dotPos(1, 3)} Z`,
+    S: `M 0 0 L 0.6 0 L ${dotPos(shape6long, 6)} L ${dotPos(0.6, 3)} Z`,
+    W: `M 0 0 L 0.6 0 L ${dotPos(shape6long, 6)} L ${dotPos(1, 3)} Z`,
     "-": "M 0 0",
 }
 
-console.log(shape6svg);
 
 // 6CwCrCgCbRcRy
 class Shape6Layer extends ShapestLayer {
@@ -834,3 +833,6 @@ globalThis.clearCaches = function() {
 }
 
 globalThis.cache = cache;
+
+
+console.log(shape6svg);

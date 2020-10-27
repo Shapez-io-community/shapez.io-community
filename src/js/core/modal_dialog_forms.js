@@ -217,6 +217,8 @@ export class FormElementItemChooser extends FormElement {
                 this.chosenItem = item;
                 this.valueChosen.dispatch(item);
             });
+
+            canvas.title = item.getItemType() == 'color' ? item.color : item.getHash();
         }
     }
 

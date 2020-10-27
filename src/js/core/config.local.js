@@ -10,6 +10,9 @@ export default {
     _fastGameEnter: "Quickly enters the game and skips the main menu - good for fast iterating",
     fastGameEnter: false,
     // -----------------------------------------------------------------------------------
+    _resumeGameOnFastEnter: "When using fastGameEnter, controls whether a new game is started or the last one is resumed",
+    resumeGameOnFastEnter: false,
+    // -----------------------------------------------------------------------------------
     _noArtificialDelays: "Skips any delays like transitions between states and such",
     noArtificialDelays: false,
     // -----------------------------------------------------------------------------------
@@ -78,9 +81,6 @@ export default {
     // -----------------------------------------------------------------------------------
     _instantMiners: "Makes miners almost infinitely fast",
     instantMiners: false,
-    // -----------------------------------------------------------------------------------
-    _resumeGameOnFastEnter: "When using fastGameEnter, controls whether a new game is started or the last one is resumed",
-    resumeGameOnFastEnter: false,
     // -----------------------------------------------------------------------------------
     _renderForTrailer: "Special option used to render the trailer",
     renderForTrailer: false,

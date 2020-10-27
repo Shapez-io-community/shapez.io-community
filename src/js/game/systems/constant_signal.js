@@ -11,7 +11,7 @@ import { Entity } from "../entity";
 import { GameSystemWithFilter } from "../game_system_with_filter";
 import { BOOL_FALSE_SINGLETON, BOOL_TRUE_SINGLETON } from "../items/boolean_item";
 import { COLOR_ITEM_SINGLETONS } from "../items/color_item";
-import { ShapestItem } from "../items/shapest_item";
+import { ShapestItem, shape4svg, shape6svg } from "../items/shapest_item";
 import { ShapeDefinition } from "../shape_definition";
 
 export class ConstantSignalSystem extends GameSystemWithFilter {
@@ -58,6 +58,14 @@ export class ConstantSignalSystem extends GameSystemWithFilter {
                 BOOL_FALSE_SINGLETON,
                 BOOL_TRUE_SINGLETON,
                 ...Object.values(COLOR_ITEM_SINGLETONS),
+                ...Object.keys(shape4svg).filter(s => s!='-').map(s => new ShapestItem('4' + `${s}u`.repeat(4))),
+                ...Object.keys(shape6svg).filter(s => s!='-').map(s => new ShapestItem('6' + `${s}u`.repeat(6))),
+                new ShapestItem("nu-1"),
+                new ShapestItem("nu0"),
+                new ShapestItem("nu1"),
+                new ShapestItem("nu2"),
+                new ShapestItem("tTrEgXbTu"),
+                new ShapestItem("e💩"),
                 this.root.shapeDefinitionMgr.getShapeItemFromDefinition(
                     this.root.hubGoals.currentGoal.definition
                 ),
