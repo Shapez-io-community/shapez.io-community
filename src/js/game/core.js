@@ -32,6 +32,8 @@ import { GameLogic } from "./logic";
 import { MapView } from "./map_view";
 import { defaultBuildingVariant } from "./meta_building";
 import { RegularGameMode } from "./modes/regular";
+import { RegularModifiedGameMode } from "./modes/regular-modified";
+import { HexagonalGameMode } from "./modes/hexagonal";
 import { ProductionAnalytics } from "./production_analytics";
 import { GameRoot } from "./root";
 import { ShapeDefinitionManager } from "./shape_definition_manager";
@@ -103,7 +105,10 @@ export class GameCore {
         root.dynamicTickrate = new DynamicTickrate(root);
 
         // Init game mode
-        root.gameMode = new RegularGameMode(root);
+        // SHAPEST-TODO
+        // root.gameMode = new RegularGameMode(root);
+        // root.gameMode = new RegularModifiedGameMode(root);
+        root.gameMode = new HexagonalGameMode(root);
 
         // Init classes
         root.camera = new Camera(root);

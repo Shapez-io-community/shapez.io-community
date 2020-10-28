@@ -584,16 +584,16 @@ class Shape4Layer extends ShapestLayer {
     do_paint4(clrs) {
         let s = this.layerHash();
         for (let i = 0; i < this.length; i++) {
-            s += this.shape(i) == '-' ? '--' :  this.shape(i) + (clrs[i] || this.color(i));
+            s += this.shape(i) == '-' ? '--' : this.shape(i) + (clrs[i] || this.color(i));
         }
         return new Shape4Layer(s, this.layer);
     }
     do_rotate(rot) {
         let value = this.hash.slice(1);
         if (rot == 1) {
-            value = value.slice(2) + value.slice(0, 2);
+            value = value.slice(-2) + value.slice(0, -2);
         } else if (rot == -1) {
-            value = value.slice(0, -2) + value.slice(-2);
+            value = value.slice(2) + value.slice(0, 2);
         } else if (rot == 0) {
             value = value.slice(this.length) + value.slice(0, this.length);
         }
@@ -607,10 +607,10 @@ class Shape4Layer extends ShapestLayer {
         return [half1 && new Shape4Layer(this.layerHash() + half1 + '-'.repeat(this.length), 0), half2 && new Shape4Layer(this.layerHash() + '-'.repeat(this.length) + half2, 0)];
     }
     do_cut4() {
-        let parts = Array(this.length).fill(0).map((e,i)=>this.shape(i)+this.color(i));
+        let parts = Array(this.length).fill(0).map((e, i) => this.shape(i) + this.color(i));
 
         return parts
-            .map((e, i) => Array(this.length).fill('--').map((elm,ind)=>i==ind?e:elm).join(''))
+            .map((e, i) => Array(this.length).fill('--').map((elm, ind) => i == ind ? e : elm).join(''))
             .map(e => e == '--'.repeat(this.length) ? null : new Shape4Layer(this.layerHash() + e, this.layer));
     }
 
@@ -720,7 +720,7 @@ class Shape6Layer extends ShapestLayer {
     do_paint4(clrs) {
         let s = this.layerHash();
         for (let i = 0; i < this.length; i++) {
-            s += this.shape(i) == '-' ? '--' :  this.shape(i) + (clrs[i] || this.color(i));
+            s += this.shape(i) == '-' ? '--' : this.shape(i) + (clrs[i] || this.color(i));
         }
         return new Shape4Layer(s, this.layer);
     }
@@ -743,10 +743,11 @@ class Shape6Layer extends ShapestLayer {
         return [half1 && new Shape6Layer(this.layerHash() + half1 + '-'.repeat(this.length), 0), half2 && new Shape6Layer(this.layerHash() + '-'.repeat(this.length) + half2, 0)];
     }
     do_cut4() {
-        let parts = Array(this.length / 2).fill(0).map((e,i)=>this.hash.slice(1 + 4 * i, 5 + 4 * i));
+        let partCount = 3;
+        let parts = Array(partCount).fill(0).map((e, i) => this.hash.slice(1 + 4 * i, 5 + 4 * i));
 
         return parts
-            .map((e, i) => Array(this.length).fill('----').map((elm,ind)=>i==ind?e:elm).join(''))
+            .map((e, i) => Array(partCount).fill('----').map((elm, ind) => i == ind ? e : elm).join(''))
             .map(e => e == '--'.repeat(this.length) ? null : new Shape6Layer(this.layerHash() + e, this.layer))
             .concat([null]);
     }
@@ -917,7 +918,20 @@ globalThis.clearCaches = function() {
     }
 }
 
-globalThis.cache = cache;
+globalThis.cache = function() {
+    let es = Object.entries(cache)
+    let es2 = es.map(([k, map]) => {
+        return [
+            k,
+            Object.fromEntries(
+                [...map.entries()].map(([k,v])=>[k,
+                    Array.isArray(v) ? v.map(e=>e&&e.hash) : v.hash
+                    ])
+            )
+        ]
+    })
+    return Object.fromEntries(es2);
+}
 
 
 console.log(shape6svg);
