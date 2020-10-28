@@ -36,27 +36,13 @@ export const namedShapes = {
     plant: "Rg--Rg--:CwRwCwRw:--Rg--Rg",
     rocket: "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw",
 
-
-
-
-    // 6------CuCuCu:
-    // 6RuRuRuRuRuRu:
-    // 6RuRuRu------:
-    // 6CuCu------Cu:
-    // 6Cu----------:
-    // 6CrCrCrCrCrCr:
-    // 6RbRbRb------:
-    // 6CpCpCpCpCpCp:
-    // 6ScScScScScSc:
-    // 6CgCgScScScCg:
-    // 6CbCbCbCbCbRb:6CwCwCwCwCwCw
-    // 6RpRpRpRpRpRp:6CwCwCwCwCwCw
-    // 6----Cg------:6----Cr------
-    // 6SrSrSrSrSrSr:6CyCyCyCyCyCy
-    // 6SrSrSrSrSrSr:6CyCyCyCyCyCy:6SwSwSwSwSwSw
-    // 6CbCbRbRbRbCb:6CwCwCwCwCwCw:6WbWbWbWbWbWb
-    // 6SgSg------Sg:6CgCgCgCgCgCg:6----CyCyCy--
-    // 6CpCpRpCpCp--:6SwSwSwSwSwSw
+    mill: "CwCwCwCw:WbWbWbWb",
+    star: "SuSuSuSu",
+    circleStar: "CwCrCwCr:SgSgSgSg",
+    clown: "WrRgWrRg:CwCrCwCr:SgSgSgSg",
+    windmillRed: "WrWrWrWr",
+    fanTriple: "WpWpWpWp:CwCwCwCw:WpWpWpWp",
+    fanQuadruple: "WpWpWpWp:CwCwCwCw:WpWpWpWp:CwCwCwCw",
 }
 
 // Tiers need % of the previous tier as requirement too
@@ -72,9 +58,9 @@ function generateUpgrades(limitedVersion = false) {
     function generateInfiniteUnlocks() {
         return new Array(numEndgameUpgrades).fill(null).map((_, i) => ({
             required: [
-                { shape: preparementShape, amount: 30000 + i * 10000 },
-                { shape: finalGameShape, amount: 20000 + i * 5000 },
-                { shape: rocketShape, amount: 20000 + i * 5000 },
+                { shape: namedShapes.bouquet, amount: 30000 + i * 10000 },
+                { shape: namedShapes.logo, amount: 20000 + i * 5000 },
+                { shape: namedShapes.rocket, amount: 20000 + i * 5000 },
             ],
             excludePrevious: true,
         }));
@@ -96,28 +82,28 @@ function generateUpgrades(limitedVersion = false) {
     const upgrades = {
         belt: [
             {
-                required: [{ shape: "CuCuCuCu", amount: 30 }],
+                required: [{ shape: namedShapes.circle, amount: 30 }],
             },
             {
-                required: [{ shape: "--CuCu--", amount: 500 }],
+                required: [{ shape: namedShapes.circleHalfRotated, amount: 500 }],
             },
             {
-                required: [{ shape: "CpCpCpCp", amount: 1000 }],
+                required: [{ shape: namedShapes.circlePurple, amount: 1000 }],
             },
             {
-                required: [{ shape: "SrSrSrSr:CyCyCyCy", amount: 6000 }],
+                required: [{ shape: namedShapes.starCircle, amount: 6000 }],
             },
             {
-                required: [{ shape: "SrSrSrSr:CyCyCyCy:SwSwSwSw", amount: 25000 }],
+                required: [{ shape: namedShapes.starCircleStar, amount: 25000 }],
             },
             {
-                required: [{ shape: preparementShape, amount: 25000 }],
+                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
                 excludePrevious: true,
             },
             {
                 required: [
-                    { shape: preparementShape, amount: 25000 },
-                    { shape: finalGameShape, amount: 50000 },
+                    { shape: namedShapes.bouquet, amount: 25000 },
+                    { shape: namedShapes.logo, amount: 50000 },
                 ],
                 excludePrevious: true,
             },
@@ -126,28 +112,28 @@ function generateUpgrades(limitedVersion = false) {
 
         miner: [
             {
-                required: [{ shape: "RuRuRuRu", amount: 300 }],
+                required: [{ shape: namedShapes.rect, amount: 300 }],
             },
             {
-                required: [{ shape: "Cu------", amount: 800 }],
+                required: [{ shape: namedShapes.circleQuad, amount: 800 }],
             },
             {
-                required: [{ shape: "ScScScSc", amount: 3500 }],
+                required: [{ shape: namedShapes.starCyan, amount: 3500 }],
             },
             {
-                required: [{ shape: "CwCwCwCw:WbWbWbWb", amount: 23000 }],
+                required: [{ shape: namedShapes.mill, amount: 23000 }],
             },
             {
-                required: [{ shape: "CbRbRbCb:CwCwCwCw:WbWbWbWb", amount: 50000 }],
+                required: [{ shape: namedShapes.fan, amount: 50000 }],
             },
             {
-                required: [{ shape: preparementShape, amount: 25000 }],
+                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
                 excludePrevious: true,
             },
             {
                 required: [
-                    { shape: preparementShape, amount: 25000 },
-                    { shape: finalGameShape, amount: 50000 },
+                    { shape: namedShapes.bouquet, amount: 25000 },
+                    { shape: namedShapes.logo, amount: 50000 },
                 ],
                 excludePrevious: true,
             },
@@ -156,28 +142,28 @@ function generateUpgrades(limitedVersion = false) {
 
         processors: [
             {
-                required: [{ shape: "SuSuSuSu", amount: 500 }],
+                required: [{ shape: namedShapes.star, amount: 500 }],
             },
             {
-                required: [{ shape: "RuRu----", amount: 600 }],
+                required: [{ shape: namedShapes.rectHalf, amount: 600 }],
             },
             {
-                required: [{ shape: "CgScScCg", amount: 3500 }],
+                required: [{ shape: namedShapes.fish, amount: 3500 }],
             },
             {
-                required: [{ shape: "CwCrCwCr:SgSgSgSg", amount: 25000 }],
+                required: [{ shape: namedShapes.circleStar, amount: 25000 }],
             },
             {
-                required: [{ shape: "WrRgWrRg:CwCrCwCr:SgSgSgSg", amount: 50000 }],
+                required: [{ shape: namedShapes.clown, amount: 50000 }],
             },
             {
-                required: [{ shape: preparementShape, amount: 25000 }],
+                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
                 excludePrevious: true,
             },
             {
                 required: [
-                    { shape: preparementShape, amount: 25000 },
-                    { shape: finalGameShape, amount: 50000 },
+                    { shape: namedShapes.bouquet, amount: 25000 },
+                    { shape: namedShapes.logo, amount: 50000 },
                 ],
                 excludePrevious: true,
             },
@@ -186,28 +172,28 @@ function generateUpgrades(limitedVersion = false) {
 
         painting: [
             {
-                required: [{ shape: "RbRb----", amount: 600 }],
+                required: [{ shape: namedShapes.rectHalfBlue, amount: 600 }],
             },
             {
-                required: [{ shape: "WrWrWrWr", amount: 3800 }],
+                required: [{ shape: namedShapes.windmillRed, amount: 3800 }],
             },
             {
-                required: [{ shape: "RpRpRpRp:CwCwCwCw", amount: 6500 }],
+                required: [{ shape: namedShapes.rectCircle, amount: 6500 }],
             },
             {
-                required: [{ shape: "WpWpWpWp:CwCwCwCw:WpWpWpWp", amount: 25000 }],
+                required: [{ shape: namedShapes.fanTriple, amount: 25000 }],
             },
             {
-                required: [{ shape: "WpWpWpWp:CwCwCwCw:WpWpWpWp:CwCwCwCw", amount: 50000 }],
+                required: [{ shape: namedShapes.fanQuadruple, amount: 50000 }],
             },
             {
-                required: [{ shape: preparementShape, amount: 25000 }],
+                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
                 excludePrevious: true,
             },
             {
                 required: [
-                    { shape: preparementShape, amount: 25000 },
-                    { shape: finalGameShape, amount: 50000 },
+                    { shape: namedShapes.bouquet, amount: 25000 },
+                    { shape: namedShapes.logo, amount: 50000 },
                 ],
                 excludePrevious: true,
             },

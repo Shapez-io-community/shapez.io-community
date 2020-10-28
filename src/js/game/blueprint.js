@@ -4,6 +4,7 @@ import { findNiceIntegerValue } from "../core/utils";
 import { Vector } from "../core/vector";
 import { Entity } from "./entity";
 import { GameRoot } from "./root";
+import { SerializerInternal } from "../savegame/serializer_internal"
 
 export class Blueprint {
     /**
@@ -164,5 +165,24 @@ export class Blueprint {
             }
             return anyPlaced;
         });
+    }
+
+    serializeToString() {
+        let array = new SerializerInternal().serializeEntityArray(this.entities);
+        return JSON.stringify(array);
+    }
+
+    /**
+     * @param {GameRoot} root
+     * @param {string} bpJson
+     */
+    static deserializeFromString(root, bpJson) {
+        try {
+            let array = JSON.parse(bpJson);
+            let entities = new SerializerInternal().deserializeEntityArray(root, array, false);
+            return new Blueprint(entities);
+        } catch(err) {
+            return null;
+        }
     }
 }

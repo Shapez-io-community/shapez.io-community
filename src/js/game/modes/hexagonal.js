@@ -1,6 +1,7 @@
 import { findNiceIntegerValue } from "../../core/utils";
 import { GameMode } from "../game_mode";
 import { ShapeDefinition } from "../shape_definition";
+import { ShapestItem } from "../items/shapest_item";
 import { enumHubGoalRewards } from "../tutorial_goals";
 
 const rocketShape = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw";
@@ -36,6 +37,13 @@ export const namedShapes = {
     plant: "6Rg--Rg--Rg--:6CwRwCwRwCwRw:6--Rg--Rg--Rg",
     rocket: "6CbCuCbCuCbCu:6Sr----------:6--CrCrSrCrCr:6CwCwCwCwCwCw",
 
+    mill: "6CwCwCwCwCwCw:6WbWbWbWbWbWb",
+    star: "6SuSuSuSuSuSu",
+    circleStar: "6CwCrCwCrCwCr:6SgSgSgSgSgSg",
+    clown: "6WrRgWrRgWrRg:6CwCrCwCrCwCr:6SgSgSgSgSgSg",
+    windmillRed: "6WrWrWrWrWrWr",
+    fanTriple: "6WpWpWpWpWpWp:6CwCwCwCwCwCw:6WpWpWpWpWpWp",
+    fanQuadruple: "6WpWpWpWpWpWp:6CwCwCwCwCwCw:6WpWpWpWpWpWp:6CwCwCwCwCwCw",
 }
 
 // Tiers need % of the previous tier as requirement too
@@ -51,9 +59,9 @@ function generateUpgrades(limitedVersion = false) {
     function generateInfiniteUnlocks() {
         return new Array(numEndgameUpgrades).fill(null).map((_, i) => ({
             required: [
-                { shape: preparementShape, amount: 30000 + i * 10000 },
-                { shape: finalGameShape, amount: 20000 + i * 5000 },
-                { shape: rocketShape, amount: 20000 + i * 5000 },
+                { shape: namedShapes.bouquet, amount: 30000 + i * 10000 },
+                { shape: namedShapes.logo, amount: 20000 + i * 5000 },
+                { shape: namedShapes.rocket, amount: 20000 + i * 5000 },
             ],
             excludePrevious: true,
         }));
@@ -75,28 +83,28 @@ function generateUpgrades(limitedVersion = false) {
     const upgrades = {
         belt: [
             {
-                required: [{ shape: "CuCuCuCu", amount: 30 }],
+                required: [{ shape: namedShapes.circle, amount: 30 }],
             },
             {
-                required: [{ shape: "--CuCu--", amount: 500 }],
+                required: [{ shape: namedShapes.circleHalfRotated, amount: 500 }],
             },
             {
-                required: [{ shape: "CpCpCpCp", amount: 1000 }],
+                required: [{ shape: namedShapes.circlePurple, amount: 1000 }],
             },
             {
-                required: [{ shape: "SrSrSrSr:CyCyCyCy", amount: 6000 }],
+                required: [{ shape: namedShapes.starCircle, amount: 6000 }],
             },
             {
-                required: [{ shape: "SrSrSrSr:CyCyCyCy:SwSwSwSw", amount: 25000 }],
+                required: [{ shape: namedShapes.starCircleStar, amount: 25000 }],
             },
             {
-                required: [{ shape: preparementShape, amount: 25000 }],
+                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
                 excludePrevious: true,
             },
             {
                 required: [
-                    { shape: preparementShape, amount: 25000 },
-                    { shape: finalGameShape, amount: 50000 },
+                    { shape: namedShapes.bouquet, amount: 25000 },
+                    { shape: namedShapes.logo, amount: 50000 },
                 ],
                 excludePrevious: true,
             },
@@ -105,28 +113,28 @@ function generateUpgrades(limitedVersion = false) {
 
         miner: [
             {
-                required: [{ shape: "RuRuRuRu", amount: 300 }],
+                required: [{ shape: namedShapes.rect, amount: 300 }],
             },
             {
-                required: [{ shape: "Cu------", amount: 800 }],
+                required: [{ shape: namedShapes.circleQuad, amount: 800 }],
             },
             {
-                required: [{ shape: "ScScScSc", amount: 3500 }],
+                required: [{ shape: namedShapes.starCyan, amount: 3500 }],
             },
             {
-                required: [{ shape: "CwCwCwCw:WbWbWbWb", amount: 23000 }],
+                required: [{ shape: namedShapes.mill, amount: 23000 }],
             },
             {
-                required: [{ shape: "CbRbRbCb:CwCwCwCw:WbWbWbWb", amount: 50000 }],
+                required: [{ shape: namedShapes.fan, amount: 50000 }],
             },
             {
-                required: [{ shape: preparementShape, amount: 25000 }],
+                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
                 excludePrevious: true,
             },
             {
                 required: [
-                    { shape: preparementShape, amount: 25000 },
-                    { shape: finalGameShape, amount: 50000 },
+                    { shape: namedShapes.bouquet, amount: 25000 },
+                    { shape: namedShapes.logo, amount: 50000 },
                 ],
                 excludePrevious: true,
             },
@@ -135,28 +143,28 @@ function generateUpgrades(limitedVersion = false) {
 
         processors: [
             {
-                required: [{ shape: "SuSuSuSu", amount: 500 }],
+                required: [{ shape: namedShapes.star, amount: 500 }],
             },
             {
-                required: [{ shape: "RuRu----", amount: 600 }],
+                required: [{ shape: namedShapes.rectHalf, amount: 600 }],
             },
             {
-                required: [{ shape: "CgScScCg", amount: 3500 }],
+                required: [{ shape: namedShapes.fish, amount: 3500 }],
             },
             {
-                required: [{ shape: "CwCrCwCr:SgSgSgSg", amount: 25000 }],
+                required: [{ shape: namedShapes.circleStar, amount: 25000 }],
             },
             {
-                required: [{ shape: "WrRgWrRg:CwCrCwCr:SgSgSgSg", amount: 50000 }],
+                required: [{ shape: namedShapes.clown, amount: 50000 }],
             },
             {
-                required: [{ shape: preparementShape, amount: 25000 }],
+                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
                 excludePrevious: true,
             },
             {
                 required: [
-                    { shape: preparementShape, amount: 25000 },
-                    { shape: finalGameShape, amount: 50000 },
+                    { shape: namedShapes.bouquet, amount: 25000 },
+                    { shape: namedShapes.logo, amount: 50000 },
                 ],
                 excludePrevious: true,
             },
@@ -165,28 +173,28 @@ function generateUpgrades(limitedVersion = false) {
 
         painting: [
             {
-                required: [{ shape: "RbRb----", amount: 600 }],
+                required: [{ shape: namedShapes.rectHalfBlue, amount: 600 }],
             },
             {
-                required: [{ shape: "WrWrWrWr", amount: 3800 }],
+                required: [{ shape: namedShapes.windmillRed, amount: 3800 }],
             },
             {
-                required: [{ shape: "RpRpRpRp:CwCwCwCw", amount: 6500 }],
+                required: [{ shape: namedShapes.rectCircle, amount: 6500 }],
             },
             {
-                required: [{ shape: "WpWpWpWp:CwCwCwCw:WpWpWpWp", amount: 25000 }],
+                required: [{ shape: namedShapes.fanTriple, amount: 25000 }],
             },
             {
-                required: [{ shape: "WpWpWpWp:CwCwCwCw:WpWpWpWp:CwCwCwCw", amount: 50000 }],
+                required: [{ shape: namedShapes.fanQuadruple, amount: 50000 }],
             },
             {
-                required: [{ shape: preparementShape, amount: 25000 }],
+                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
                 excludePrevious: true,
             },
             {
                 required: [
-                    { shape: preparementShape, amount: 25000 },
-                    { shape: finalGameShape, amount: 50000 },
+                    { shape: namedShapes.bouquet, amount: 25000 },
+                    { shape: namedShapes.logo, amount: 50000 },
                 ],
                 excludePrevious: true,
             },
@@ -231,7 +239,9 @@ function generateUpgrades(limitedVersion = false) {
             upgrades[upgradeId].forEach(tier => {
                 tier.required.forEach(({ shape }) => {
                     try {
-                        ShapeDefinition.fromShortKey(shape);
+                        if (!ShapestItem.isValidShortKey(shape)) {
+                            throw new Error();
+                        }
                     } catch (ex) {
                         throw new Error("Invalid upgrade goal: '" + ex + "' for shape" + shape);
                     }
@@ -411,7 +421,9 @@ export function generateLevelDefinitions(limitedVersion = false) {
     if (G_IS_DEV) {
         levelDefinitions.forEach(({ shape }) => {
             try {
-                ShapeDefinition.fromShortKey(shape);
+                if (!ShapestItem.isValidShortKey(shape)) {
+                    throw new Error();
+                }
             } catch (ex) {
                 throw new Error("Invalid tutorial goal: '" + ex + "' for shape" + shape);
             }
@@ -428,6 +440,10 @@ const fullVersionLevels = generateLevelDefinitions(false);
 export class HexagonalGameMode extends GameMode {
     constructor(root) {
         super(root);
+    }
+
+    getName() {
+        return "Hexagonal";
     }
 
     getUpgrades() {

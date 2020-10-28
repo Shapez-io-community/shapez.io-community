@@ -117,6 +117,8 @@ export class MapResourcesSystem extends GameSystem {
             context.fillStyle = THEME.map.chunkBorders;
             context.fillRect(0, 0, w, 1);
             context.fillRect(0, 1, 1, h);
+            context.fillRect(0, h-1, w, 1);
+            context.fillRect(w-1, 1, 1, h);
         }
     }
 }
