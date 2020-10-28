@@ -116,8 +116,9 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
 
         const variant = this.currentVariant.get();
 
-        this.buildingInfoElements.label.innerHTML = T.buildings[metaBuilding.id][variant].name;
-        this.buildingInfoElements.descText.innerHTML = T.buildings[metaBuilding.id][variant].description;
+        let Tl = (T.buildings[metaBuilding.id] || {})[variant] || {};
+        this.buildingInfoElements.label.innerHTML = Tl.name;
+        this.buildingInfoElements.descText.innerHTML = Tl.description;
 
         const layer = this.root.currentLayer;
 
@@ -136,9 +137,9 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         this.buildingInfoElements.tutorialImage.setAttribute(
             "data-icon",
             "building_tutorials/" +
-                metaBuilding.getId() +
-                (variant === defaultBuildingVariant ? "" : "-" + variant) +
-                ".png"
+            metaBuilding.getId() +
+            (variant === defaultBuildingVariant ? "" : "-" + variant) +
+            ".png"
         );
 
         removeAllChildren(this.buildingInfoElements.additionalInfo);
@@ -195,10 +196,10 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
             T.ingame.buildingPlacement.cycleBuildingVariants.replace(
                 "<key>",
                 "<code class='keybinding'>" +
-                    this.root.keyMapper
-                        .getBinding(KEYMAPPINGS.placement.cycleBuildingVariants)
-                        .getKeyCodeString() +
-                    "</code>"
+                this.root.keyMapper
+                    .getBinding(KEYMAPPINGS.placement.cycleBuildingVariants)
+                    .getKeyCodeString() +
+                "</code>"
             )
         );
 
@@ -442,9 +443,9 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
                     arrowSprite,
                     -6,
                     -globalConfig.halfTileSize -
-                        clamp((this.root.time.realtimeNow() * 1.5) % 1.0, 0, 1) * 1 * globalConfig.tileSize +
-                        globalConfig.halfTileSize -
-                        6,
+                    clamp((this.root.time.realtimeNow() * 1.5) % 1.0, 0, 1) * 1 * globalConfig.tileSize +
+                    globalConfig.halfTileSize -
+                    6,
                     12,
                     12
                 );
@@ -529,7 +530,7 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
                     } else if (
                         sourceBeltComp &&
                         sourceStaticComp.localDirectionToWorld(sourceBeltComp.direction) ===
-                            enumInvertedDirections[worldDirection]
+                        enumInvertedDirections[worldDirection]
                     ) {
                         // Belt connected
                         isConnected = true;
