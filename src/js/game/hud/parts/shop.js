@@ -29,7 +29,7 @@ export class HUDShop extends BaseHUDPart {
             handle.elem.setAttribute("data-upgrade-id", upgradeId);
 
             // Title
-            const title = makeDiv(handle.elem, null, ["title"], T.shopUpgrades[upgradeId].name);
+            const title = makeDiv(handle.elem, null, ["title"], (T.shopUpgrades[upgradeId] || {}).name || upgradeId);
 
             // Title > Tier
             handle.elemTierLabel = makeDiv(title, null, ["tier"]);
@@ -95,7 +95,7 @@ export class HUDShop extends BaseHUDPart {
             }
 
             // Set description
-            handle.elemDescription.innerText = T.shopUpgrades[upgradeId].description
+            handle.elemDescription.innerText = ((T.shopUpgrades[upgradeId] || {}).description || `Speed x<currentMult> → x<newMult>`)
                 .replace("<currentMult>", formatBigNumber(currentTierMultiplier))
                 .replace("<newMult>", formatBigNumber(currentTierMultiplier + tierHandle.improvement));
 

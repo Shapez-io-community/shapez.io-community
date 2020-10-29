@@ -44,6 +44,12 @@ export class HUDSandboxController extends BaseHUDPart {
                     <button class="styledButton plus">+</button>
                 </div>
 
+                <div class="upgradesGlobal plusMinus">
+                    <label>Upgrades &rarr; Global</label>
+                    <button class="styledButton minus">-</button>
+                    <button class="styledButton plus">+</button>
+                </div>
+
                 <div class="additionalOptions">
                     <button class="styledButton giveBlueprints">Fill blueprint shapes</button>
                     <button class="styledButton maxOutAll">Max out all</button>
@@ -70,6 +76,9 @@ export class HUDSandboxController extends BaseHUDPart {
 
         bind(".upgradesPainting .minus", () => this.modifyUpgrade("painting", -1));
         bind(".upgradesPainting .plus", () => this.modifyUpgrade("painting", 1));
+
+        bind(".upgradesGlobal .minus", () => this.modifyUpgrade("global", -1));
+        bind(".upgradesGlobal .plus", () => this.modifyUpgrade("global", 1));
     }
 
     giveBlueprints() {

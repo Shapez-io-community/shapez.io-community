@@ -4,11 +4,6 @@ import { ShapeDefinition } from "../shape_definition";
 import { ShapestItem } from "../items/shapest_item";
 import { enumHubGoalRewards } from "../tutorial_goals";
 
-const rocketShape = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw";
-const finalGameShape = "RuCw--Cw:----Ru--";
-const preparementShape = "CpRpCp--:SwSwSwSw";
-const blueprintShape = "CbCbCbRb:CwCwCwCw";
-
 export const namedShapes = {
     circle: "6CuCuCuCuCuCu",
     circleHalf: "6------CuCuCu",
@@ -44,6 +39,9 @@ export const namedShapes = {
     windmillRed: "6WrWrWrWrWrWr",
     fanTriple: "6WpWpWpWpWpWp:6CwCwCwCwCwCw:6WpWpWpWpWpWp",
     fanQuadruple: "6WpWpWpWpWpWp:6CwCwCwCwCwCw:6WpWpWpWpWpWp:6CwCwCwCwCwCw",
+
+    bird: "6Sr----------:6--CgCg--CgCg:6Sb----Sb----:6--CwCw--CwCw",
+    scissors: "6Sr----------:6--CgCgCgCgCg:6----Sb------:6CwCw--CwCwCw",
 }
 
 // Tiers need % of the previous tier as requirement too
@@ -53,7 +51,18 @@ const tierGrowth = 2.5;
  * Generates all upgrades
  * @returns {Object<string, import("../game_mode").UpgradeTiers>} */
 function generateUpgrades(limitedVersion = false) {
-    const fixedImprovements = [0.5, 0.5, 1, 1, 2, 1, 1];
+    //                         1 1.5   2   3  4  6
+    const fixedImprovementsT1 = [0.5, 0.5, 1, 1, 2];
+    //                         6 7  8  9  10 12
+    const fixedImprovementsT2 = [1, 1, 1, 1, 2];
+    const maxSpeed = 30;
+
+    const fixedImprovements = fixedImprovementsT1.concat(fixedImprovementsT2);
+
+    while (fixedImprovements.reduce((v,e)=>v+1,1) < maxSpeed) {
+        fixedImprovements.push(0.5)
+    }
+
     const numEndgameUpgrades = limitedVersion ? 0 : 1000 - fixedImprovements.length - 1;
 
     function generateInfiniteUnlocks() {
@@ -66,6 +75,18 @@ function generateUpgrades(limitedVersion = false) {
             excludePrevious: true,
         }));
     }
+
+    // {
+    //     required: [{ shape: namedShapes.bouquet, amount: 25000 }],
+    //     excludePrevious: true,
+    // },
+    // {
+    //     required: [
+    //         { shape: namedShapes.bouquet, amount: 25000 },
+    //         { shape: namedShapes.logo, amount: 50000 },
+    //     ],
+    //     excludePrevious: true,
+    // },
 
     // Fill in endgame upgrades
     for (let i = 0; i < numEndgameUpgrades; ++i) {
@@ -97,18 +118,6 @@ function generateUpgrades(limitedVersion = false) {
             {
                 required: [{ shape: namedShapes.starCircleStar, amount: 25000 }],
             },
-            {
-                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
-                excludePrevious: true,
-            },
-            {
-                required: [
-                    { shape: namedShapes.bouquet, amount: 25000 },
-                    { shape: namedShapes.logo, amount: 50000 },
-                ],
-                excludePrevious: true,
-            },
-            ...generateInfiniteUnlocks(),
         ],
 
         miner: [
@@ -127,18 +136,6 @@ function generateUpgrades(limitedVersion = false) {
             {
                 required: [{ shape: namedShapes.fan, amount: 50000 }],
             },
-            {
-                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
-                excludePrevious: true,
-            },
-            {
-                required: [
-                    { shape: namedShapes.bouquet, amount: 25000 },
-                    { shape: namedShapes.logo, amount: 50000 },
-                ],
-                excludePrevious: true,
-            },
-            ...generateInfiniteUnlocks(),
         ],
 
         processors: [
@@ -157,18 +154,6 @@ function generateUpgrades(limitedVersion = false) {
             {
                 required: [{ shape: namedShapes.clown, amount: 50000 }],
             },
-            {
-                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
-                excludePrevious: true,
-            },
-            {
-                required: [
-                    { shape: namedShapes.bouquet, amount: 25000 },
-                    { shape: namedShapes.logo, amount: 50000 },
-                ],
-                excludePrevious: true,
-            },
-            ...generateInfiniteUnlocks(),
         ],
 
         painting: [
@@ -187,18 +172,6 @@ function generateUpgrades(limitedVersion = false) {
             {
                 required: [{ shape: namedShapes.fanQuadruple, amount: 50000 }],
             },
-            {
-                required: [{ shape: namedShapes.bouquet, amount: 25000 }],
-                excludePrevious: true,
-            },
-            {
-                required: [
-                    { shape: namedShapes.bouquet, amount: 25000 },
-                    { shape: namedShapes.logo, amount: 50000 },
-                ],
-                excludePrevious: true,
-            },
-            ...generateInfiniteUnlocks(),
         ],
     };
 
@@ -231,6 +204,28 @@ function generateUpgrades(limitedVersion = false) {
                 tier.amount = findNiceIntegerValue(tier.amount * tierGrowth);
             });
         }
+    }
+
+    upgrades.global = [];
+    const globalShapes = [
+        namedShapes.bouquet,
+        namedShapes.logo,
+        namedShapes.rocket,
+        namedShapes.bird,
+        namedShapes.scissors,
+    ];
+    for (let i = 0; i < 5; i++) {
+        let upgrade = {
+            required: [],
+            improvement: 1,
+        };
+        for (let j = 0; j <= i; j++) {
+            upgrade.required.push({
+                shape: globalShapes[j],
+                amount: 1000 * (5 + i) * (5 + j),
+            });
+        }
+        upgrades.global.push(upgrade);
     }
 
     // VALIDATE
@@ -455,7 +450,7 @@ export class HexagonalGameMode extends GameMode {
     }
 
     getBlueprintShapeKey() {
-        return blueprintShape;
+        return namedShapes.blueprint;
     }
 
     getLevelDefinitions() {

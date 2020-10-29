@@ -52,7 +52,7 @@ export class HubGoals extends BasicSerializableObject {
         const upgrades = this.root.gameMode.getUpgrades();
         for (const upgradeId in upgrades) {
             const tiers = upgrades[upgradeId];
-            const level = this.upgradeLevels[upgradeId] || 0;
+            const level = Math.min(this.upgradeLevels[upgradeId] || 0, tiers.length);
             let totalImprovement = 1;
             for (let i = 0; i < level; ++i) {
                 totalImprovement += tiers[i].improvement;
@@ -471,7 +471,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getBeltBaseSpeed() {
-        return globalConfig.beltSpeedItemsPerSecond * this.upgradeImprovements.belt;
+        return globalConfig.beltSpeedItemsPerSecond * (this.upgradeImprovements.belt + this.upgradeImprovements.global);
     }
 
     /**
@@ -479,7 +479,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getUndergroundBeltBaseSpeed() {
-        return globalConfig.beltSpeedItemsPerSecond * this.upgradeImprovements.belt;
+        return globalConfig.beltSpeedItemsPerSecond * (this.upgradeImprovements.belt + this.upgradeImprovements.global);
     }
 
     /**
@@ -487,7 +487,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getMinerBaseSpeed() {
-        return globalConfig.minerSpeedItemsPerSecond * this.upgradeImprovements.miner;
+        return globalConfig.minerSpeedItemsPerSecond * (this.upgradeImprovements.miner + this.upgradeImprovements.global);
     }
 
     /**

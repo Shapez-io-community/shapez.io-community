@@ -297,13 +297,28 @@ class ShapestLayer {
 }
 
 // n123
-class NumberLayer extends ShapestLayer {
+export class NumberLayer extends ShapestLayer {
     static layerHash() {
         return "n";
     }
 
     static isValidKey(hash) {
         return hash[0] == this.layerHash() && Number.isInteger(+hash.slice(2));
+    }
+
+    static get mapPatchItemList() {
+        if (this._mapPatchItemList) {
+            return this._mapPatchItemList;
+        }
+        let numList = Array(11).fill(0).map((e, i) => i-1);
+        return this._mapPatchItemList = numList.map(n => new ShapestItem(`nu${n}`));
+    }
+
+    static get mapPatchItemDisplay() {
+        if (this._mapPatchItem) {
+            return this._mapPatchItem;
+        }
+        return this._mapPatchItem = new ShapestItem(`nu1`);
     }
 
     color() {
@@ -353,13 +368,31 @@ class NumberLayer extends ShapestLayer {
 }
 
 // twqwerty
-class TextLayer extends ShapestLayer {
+export class TextLayer extends ShapestLayer {
     static layerHash() {
         return "t";
     }
 
     static isValidKey(hash) {
         return hash[0] == this.layerHash() && hash.length % 2 && hash.length >= 3;
+    }
+
+    static get mapPatchItemList() {
+        if (this._mapPatchItemList) {
+            return this._mapPatchItemList;
+        }
+        let list_low = 'abcdefghijklmnopqrstuvwxyz';
+        let list_high = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let list_sym = '_!"#$%&\'()*+,-./<=>?[]^{|}';
+        let fullList = list_low + list_high + list_sym;
+        return this._mapPatchItemList = fullList.split('').map(c => new ShapestItem(`t${c}u`));
+    }
+
+    static get mapPatchItemDisplay() {
+        if (this._mapPatchItem) {
+            return this._mapPatchItem;
+        }
+        return this._mapPatchItem = new ShapestItem(`tAu`);
     }
 
     get length() {
