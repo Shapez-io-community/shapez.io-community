@@ -1,8 +1,10 @@
 import { findNiceIntegerValue } from "../../core/utils";
 import { GameMode } from "../game_mode";
 import { ShapeDefinition } from "../shape_definition";
-import { ShapestItem } from "../items/shapest_item";
+import { ShapestItem, ShapestLayer, Shape6Layer } from "../items/shapest_item";
 import { enumHubGoalRewards } from "../tutorial_goals";
+import { clamp } from "../../core/utils";
+import { RandomNumberGenerator } from "../../core/rng";
 
 export const namedShapes = {
     circle: "6CuCuCuCuCuCu",
@@ -59,7 +61,7 @@ function generateUpgrades(limitedVersion = false) {
 
     const fixedImprovements = fixedImprovementsT1.concat(fixedImprovementsT2);
 
-    while (fixedImprovements.reduce((v,e)=>v+1,1) < maxSpeed) {
+    while (fixedImprovements.reduce((v, e) => v + 1, 1) < maxSpeed) {
         fixedImprovements.push(0.5)
     }
 
@@ -67,75 +69,32 @@ function generateUpgrades(limitedVersion = false) {
 
     const upgrades = {
         belt: [
-            {
-                required: [{ shape: namedShapes.circle, amount: 30 }],
-            },
-            {
-                required: [{ shape: namedShapes.circleHalfRotated, amount: 500 }],
-            },
-            {
-                required: [{ shape: namedShapes.circlePurple, amount: 1000 }],
-            },
-            {
-                required: [{ shape: namedShapes.starCircle, amount: 6000 }],
-            },
-            {
-                required: [{ shape: namedShapes.starCircleStar, amount: 25000 }],
-            },
+            { required: [{ shape: namedShapes.circle, amount: 30 }], },
+            { required: [{ shape: namedShapes.circleHalfRotated, amount: 500 }], },
+            { required: [{ shape: namedShapes.circlePurple, amount: 1000 }], },
+            { required: [{ shape: namedShapes.starCircle, amount: 6000 }], },
+            { required: [{ shape: namedShapes.starCircleStar, amount: 25000 }], },
         ],
-
         miner: [
-            {
-                required: [{ shape: namedShapes.rect, amount: 300 }],
-            },
-            {
-                required: [{ shape: namedShapes.circleQuad, amount: 800 }],
-            },
-            {
-                required: [{ shape: namedShapes.starCyan, amount: 3500 }],
-            },
-            {
-                required: [{ shape: namedShapes.mill, amount: 23000 }],
-            },
-            {
-                required: [{ shape: namedShapes.fan, amount: 50000 }],
-            },
+            { required: [{ shape: namedShapes.rect, amount: 300 }], },
+            { required: [{ shape: namedShapes.circleQuad, amount: 800 }], },
+            { required: [{ shape: namedShapes.starCyan, amount: 3500 }], },
+            { required: [{ shape: namedShapes.mill, amount: 23000 }], },
+            { required: [{ shape: namedShapes.fan, amount: 50000 }], },
         ],
-
         processors: [
-            {
-                required: [{ shape: namedShapes.star, amount: 500 }],
-            },
-            {
-                required: [{ shape: namedShapes.rectHalf, amount: 600 }],
-            },
-            {
-                required: [{ shape: namedShapes.fish, amount: 3500 }],
-            },
-            {
-                required: [{ shape: namedShapes.circleStar, amount: 25000 }],
-            },
-            {
-                required: [{ shape: namedShapes.clown, amount: 50000 }],
-            },
+            { required: [{ shape: namedShapes.star, amount: 500 }], },
+            { required: [{ shape: namedShapes.rectHalf, amount: 600 }], },
+            { required: [{ shape: namedShapes.fish, amount: 3500 }], },
+            { required: [{ shape: namedShapes.circleStar, amount: 25000 }], },
+            { required: [{ shape: namedShapes.clown, amount: 50000 }], },
         ],
-
         painting: [
-            {
-                required: [{ shape: namedShapes.rectHalfBlue, amount: 600 }],
-            },
-            {
-                required: [{ shape: namedShapes.windmillRed, amount: 3800 }],
-            },
-            {
-                required: [{ shape: namedShapes.rectCircle, amount: 6500 }],
-            },
-            {
-                required: [{ shape: namedShapes.fanTriple, amount: 25000 }],
-            },
-            {
-                required: [{ shape: namedShapes.fanQuadruple, amount: 50000 }],
-            },
+            { required: [{ shape: namedShapes.rectHalfBlue, amount: 600 }], },
+            { required: [{ shape: namedShapes.windmillRed, amount: 3800 }], },
+            { required: [{ shape: namedShapes.rectCircle, amount: 6500 }], },
+            { required: [{ shape: namedShapes.fanTriple, amount: 25000 }], },
+            { required: [{ shape: namedShapes.fanQuadruple, amount: 50000 }], },
         ],
     };
 
@@ -420,4 +379,90 @@ export class HexagonalGameMode extends GameMode {
     getLevelDefinitions() {
         return fullVersionLevels;
     }
+
+    generateFreeplayLevel(level) {
+        const rng = new RandomNumberGenerator(this.root.map.seed + "/" + level);
+        let throughputOnly = level % 10 == 0;
+        let required = !throughputOnly ? level * 5 : Math.min(320, level * 0.5);
+        //Math.min(50, 80 + (level - 27) * 5);
+        return {
+            definition: computeFreeplayShape(level, rng),
+            required,
+            reward: enumHubGoalRewards.no_reward_freeplay,
+            throughputOnly,
+        };
+    }
+}
+
+
+/**
+ * @param {number} level
+ * @param {RandomNumberGenerator} rng
+*/
+function computeFreeplayShape(level, rng) {
+    let layerCount = 1;
+    if (level >= 50) layerCount = 2;
+    if (level >= 75) layerCount = 3;
+    if (level >= 100) layerCount = 4;
+    if (rng.next() < 0.2) {
+        layerCount && layerCount--;
+        if (rng.next() < 0.25) {
+            layerCount && layerCount--;
+        }
+    }
+    const allowGray = level > 35;
+    const allowHoles = level > 60;
+    const allowUnstackable = false;
+    const allowText = false;
+    const allowNumbers = false;
+    const allowNumbersInText = false;
+    const allowColoredText = false;
+    const allowMultiColoredText = false;
+    const allow4Shapes = false;
+    const allowEmoji = false;
+
+    let choice = s => rng.choice(s.split(''));
+
+    const shapes = "RCSW";
+    const symmetries = [
+        "012210", // half-mirror
+        "012321", // half-mirror-diaginal
+        "012012", // half-rotate
+        "010101", // third-rotate
+    ];
+    const colorWheel = "rygcbp".repeat(3);
+    const extraColors = level < 50 ? "w" : "wu";
+    const colorWheelGroups = [
+        "a012", // near
+        "a024", // triple
+        "ab03", // opposite
+        "0134", // opposite pairs
+    ];
+
+    const symmetryOffset = +choice('012345');
+    const cwOffset = +choice('012345');
+    const symmetry = rng.choice(symmetries).repeat(3).slice(symmetryOffset, symmetryOffset + 6);
+    const colors = rng.choice(colorWheelGroups)
+        .replace(/\d/g, n => colorWheel[+n + cwOffset])
+        .replace(/[ab]/g, () => choice(extraColors));
+
+    /** @type {ShapestLayer[]} */
+    let layers = [];
+    for (let layerIndex = 0; layerIndex <= layerCount; layerIndex++) {
+        const quads = Array(6).fill('').map(() => choice(shapes) + choice(colors));
+        if (allowHoles) {
+            quads[+choice('012345')] = '--';
+            if (allowUnstackable) {
+                quads[+choice('2345')] = '--';
+            }
+        }
+        const layer = new Shape6Layer('6' + symmetry.replace(/\d/g, n => quads[+n]), layerIndex);
+        if (!allowUnstackable && layers.length && layer.can_fall_through(layers[layers.length - 1])) {
+            layerIndex--;
+        } else {
+            layers.push(layer);
+        }
+    }
+
+    return new ShapestItem(layers.join(':'));
 }

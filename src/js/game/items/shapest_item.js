@@ -207,7 +207,7 @@ export class ShapestItem extends ShapeItem {
 // */
 
 
-class ShapestLayer {
+export class ShapestLayer {
     /**
      * @param {string} hash
      * paran {number} layer
@@ -364,6 +364,11 @@ export class NumberLayer extends ShapestLayer {
         let value = rot == 1 ? this.value + 1 : rot == -1 ? this.value - 1 : -this.value;
         return new NumberLayer(`n${this.color()}${value}`, this.layer);
     }
+    do_cut2() {
+        let half1 = Math.ceil(this.value / 2);
+        let half2 = Math.floor(this.value / 2);
+        return [new NumberLayer(`nu${ half1 }`, this.layer), new NumberLayer(`nu${ half2 }`, this.layer)];
+    }
 
 }
 
@@ -405,7 +410,7 @@ export class TextLayer extends ShapestLayer {
 
     shape(i) {
         let l = this.hash[1 + 2 * i]
-        return l != '_' ? l : i == 0 || i == this.length - 1 ? ' ' : l;
+        return l != '_' ? l : i == 0 || i == this.length - 1 ? l : ' ';
     }
 
     get value() {
@@ -498,7 +503,7 @@ export class TextLayer extends ShapestLayer {
 }
 
 // e💩
-class EmojiLayer extends ShapestLayer {
+export class EmojiLayer extends ShapestLayer {
     static layerHash() {
         return "e";
     }
@@ -535,7 +540,7 @@ export const shape4svg = {
 }
 
 // 4CwCrCgCb
-class Shape4Layer extends ShapestLayer {
+export class Shape4Layer extends ShapestLayer {
     static layerHash() {
         return "4";
     }
@@ -684,7 +689,7 @@ export const shape6svg = {
 
 
 // 6CwCrCgCbRcRy
-class Shape6Layer extends ShapestLayer {
+export class Shape6Layer extends ShapestLayer {
     static layerHash() {
         return "6";
     }

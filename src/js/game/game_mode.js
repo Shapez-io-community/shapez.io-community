@@ -72,4 +72,9 @@ export class GameMode {
     getIsFreeplayAvailable() {
         return true;
     }
+    
+    generateFreeplayLevel(level) {
+        abstract;
+        return null;
+    }
 }

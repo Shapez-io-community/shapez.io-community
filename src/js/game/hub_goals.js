@@ -238,6 +238,9 @@ export class HubGoals extends BasicSerializableObject {
             return;
         }
 
+        this.currentGoal = this.root.gameMode.generateFreeplayLevel(this.level);
+        return;
+
         const required = Math.min(200, 4 + (this.level - 27) * 0.25);
         this.currentGoal = {
             definition: this.computeFreeplayShape(this.level),

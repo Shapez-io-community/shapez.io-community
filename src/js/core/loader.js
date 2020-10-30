@@ -8,6 +8,13 @@ import { createLogger } from "./logging";
  * @typedef {import("./atlas_definitions").AtlasDefinition} AtlasDefinition;
  */
 
+/**
+ * @callback SpriteDrawer
+ * @param {Object} param0
+ * @param {HTMLCanvasElement} param0.canvas
+ */
+ // canvas, context, canvas2, context2, w, h, smooth, mipmap, resolution
+
 const logger = createLogger("loader");
 
 const missingSpriteIds = {};
@@ -20,6 +27,12 @@ class LoaderImpl {
         this.sprites = new Map();
 
         this.rawImages = [];
+
+        if (LoaderImpl._drawSpriteList) {
+            for (let args of LoaderImpl._drawSpriteList) {
+                this.drawSprite(...args);
+            }
+        }
     }
 
     /**
@@ -224,6 +237,62 @@ class LoaderImpl {
         });
 
         this.spriteNotFoundSprite = sprite;
+    }
+
+    /**
+     * Draw sprite with function
+     * @param {SpriteDrawer} callback
+     */
+    drawSprite(name, callback, { w = 128, h = 128, smooth = false, mipmap = false }, url) {
+        // TODO: mipmap
+        const [canvas, context] = makeOffscreenBuffer(w, h, {
+            smooth,
+            reusable: false,
+            label: url,
+        });
+        const [canvas2, context2] = makeOffscreenBuffer(w, h, {
+            smooth,
+            reusable: true,
+            label: url,
+        });
+
+        const resolution = 1; // mipmap scale, 1/0.75/0.5/...
+        context.save();
+        // TODO: scale and translate to make mipmap state same
+
+        callback({ canvas, context, canvas2, context2, w, h, smooth, mipmap, resolution });
+
+        const resolutions = ["0.1", "0.25", "0.5", "0.75", "1"];
+        const sprite = new AtlasSprite(name);
+        // TODO: remake for mipmapping
+        for (let i = 0; i < resolutions.length; ++i) {
+            const res = resolutions[i];
+            const link = new SpriteAtlasLink({
+                packedX: 0,
+                packedY: 0,
+                w,
+                h,
+                packOffsetX: 0,
+                packOffsetY: 0,
+                packedW: w,
+                packedH: h,
+                atlas: canvas,
+            });
+            sprite.linksByResolution[res] = link;
+        }
+
+        context.restore();
+        this.sprites.set(name, sprite);
+        canvas.src = url
+    }
+
+    /**
+     * Draw sprite with function
+     * @param {SpriteDrawer} callback
+     */
+    static drawSprite(name, callback, { w = 128, h = 128, smooth = false, mipmap = false }, url) {
+        if (!this._drawSpriteList) this._drawSpriteList = [];
+        this._drawSpriteList.push(arguments);
     }
 }
 

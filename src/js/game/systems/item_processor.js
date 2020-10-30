@@ -11,6 +11,7 @@ import { BOOL_TRUE_SINGLETON, isTruthyItem } from "../items/boolean_item";
 import { ColorItem, COLOR_ITEM_SINGLETONS } from "../items/color_item";
 import { ShapeItem } from "../items/shape_item";
 import { ShapestItem, ShapestItemDefinition } from "../items/shapest_item";
+import { globalConfig } from "../../core/config";
 
 /**
  * We need to allow queuing charges, otherwise the throughput will stall
@@ -293,7 +294,10 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
         }
 
         // Queue Charge
-        const baseSpeed = this.root.hubGoals.getProcessorBaseSpeed(processorComp.type);
+        let baseSpeed = this.root.hubGoals.getProcessorBaseSpeed(processorComp.type);
+        if (globalConfig.debug.instantProcessors) {
+            baseSpeed *= 100;
+        }
         const originalTime = 1 / baseSpeed;
 
         const bonusTimeToApply = Math.min(originalTime, processorComp.bonusTime);

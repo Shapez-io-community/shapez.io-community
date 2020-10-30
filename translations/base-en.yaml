@@ -967,6 +967,11 @@ settings:
             description: >-
                 If enabled, mutes all music.
 
+        colorwheel:
+            title: Color Wheel
+            description: >-
+                Enable secondary colors
+
         soundVolume:
             title: Sound Volume
             description: >-

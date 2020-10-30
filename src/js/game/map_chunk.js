@@ -282,7 +282,10 @@ export class MapChunk {
 
         if (distanceToOriginInChunks < 10) {
             // Initial chunk patches always have the same shape
-            const subShape = this.internalGenerateRandomSubShape(rng, weights);
+            let subShape = this.internalGenerateRandomSubShape(rng, weights);
+            if (subShape == 'Wu') {
+                subShape = 'Ru';
+            }
             key = subShape.repeat(6);
         } else if (distanceToOriginInChunks < 15) {
             // Later patches can also have mixed ones

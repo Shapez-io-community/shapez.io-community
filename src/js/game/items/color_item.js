@@ -5,6 +5,7 @@ import { types } from "../../savegame/serialization";
 import { BaseItem } from "../base_item";
 import { enumColors, enumColorToShortcode } from "../colors";
 import { THEME } from "../theme";
+import { initializeCustomColors } from "../custom/colors";
 
 export class ColorItem extends BaseItem {
     static getId() {
@@ -82,6 +83,17 @@ export class ColorItem extends BaseItem {
             this.cachedSprite = Loader.getSprite("sprites/colors/" + this.color + ".png");
         }
         this.cachedSprite.drawCachedCentered(parameters, x, y, realDiameter);
+    }
+
+    static initializeCustomColors(enable) {
+        if (enable) {
+            initializeCustomColors();
+            for (const color in enumColors) {
+                COLOR_ITEM_SINGLETONS[color] = new ColorItem(color);
+            }
+        } else {
+            // alert("disabling color wheel is not supported, reload page to apply");
+        }
     }
 }
 
