@@ -82,6 +82,14 @@ export class DisplaySystem extends GameSystemWithFilter {
                     D_context.fillStyle = "#" + value.getAsCopyableKey();
                     D_context.fillRect((origin.x + 0.5) * globalConfig.tileSize - 15 + Dimension.x / 2 - 0.5, (origin.y + 0.5) * globalConfig.tileSize - 15 + Dimension.y / 2, 30 * Dimension.x, 30 * Dimension.y - 0.5)
                 } else if (value.getItemType() === "shape") {
+                    if (this.root.currentLayer == "wires") {
+                        value.drawItemCenteredClipped(
+                            (origin.x + 0.5) * globalConfig.tileSize,
+                            (origin.y + 0.5) * globalConfig.tileSize,
+                            parameters,
+                            30
+                        );                 
+                    }
                     value.drawItemCenteredClipped(
                         (origin.x + 0.5) * globalConfig.tileSize,
                         (origin.y + 0.5) * globalConfig.tileSize,
