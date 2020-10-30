@@ -471,7 +471,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getBeltBaseSpeed() {
-        return globalConfig.beltSpeedItemsPerSecond * (this.upgradeImprovements.belt + this.upgradeImprovements.global);
+        return globalConfig.beltSpeedItemsPerSecond * this.upgradeImprovements.belt * this.upgradeImprovements.global;
     }
 
     /**
@@ -479,7 +479,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getUndergroundBeltBaseSpeed() {
-        return globalConfig.beltSpeedItemsPerSecond * (this.upgradeImprovements.belt + this.upgradeImprovements.global);
+        return globalConfig.beltSpeedItemsPerSecond * this.upgradeImprovements.belt * this.upgradeImprovements.global;
     }
 
     /**
@@ -487,7 +487,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getMinerBaseSpeed() {
-        return globalConfig.minerSpeedItemsPerSecond * (this.upgradeImprovements.miner + this.upgradeImprovements.global);
+        return globalConfig.minerSpeedItemsPerSecond * this.upgradeImprovements.miner * this.upgradeImprovements.global;
     }
 
     /**

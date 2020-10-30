@@ -51,8 +51,8 @@ const tierGrowth = 2.5;
  * Generates all upgrades
  * @returns {Object<string, import("../game_mode").UpgradeTiers>} */
 function generateUpgrades(limitedVersion = false) {
-    //                         1 1.5   2   3  4  6
-    const fixedImprovementsT1 = [0.5, 0.5, 1, 1, 2];
+    //                         1 2  3  4  6  8
+    const fixedImprovementsT1 = [1, 1, 1, 2, 2];
     //                         6 7  8  9  10 12
     const fixedImprovementsT2 = [1, 1, 1, 1, 2];
     const maxSpeed = 30;
@@ -64,42 +64,6 @@ function generateUpgrades(limitedVersion = false) {
     }
 
     const numEndgameUpgrades = limitedVersion ? 0 : 1000 - fixedImprovements.length - 1;
-
-    function generateInfiniteUnlocks() {
-        return new Array(numEndgameUpgrades).fill(null).map((_, i) => ({
-            required: [
-                { shape: namedShapes.bouquet, amount: 30000 + i * 10000 },
-                { shape: namedShapes.logo, amount: 20000 + i * 5000 },
-                { shape: namedShapes.rocket, amount: 20000 + i * 5000 },
-            ],
-            excludePrevious: true,
-        }));
-    }
-
-    // {
-    //     required: [{ shape: namedShapes.bouquet, amount: 25000 }],
-    //     excludePrevious: true,
-    // },
-    // {
-    //     required: [
-    //         { shape: namedShapes.bouquet, amount: 25000 },
-    //         { shape: namedShapes.logo, amount: 50000 },
-    //     ],
-    //     excludePrevious: true,
-    // },
-
-    // Fill in endgame upgrades
-    for (let i = 0; i < numEndgameUpgrades; ++i) {
-        if (i < 20) {
-            fixedImprovements.push(0.1);
-        } else if (i < 50) {
-            fixedImprovements.push(0.05);
-        } else if (i < 100) {
-            fixedImprovements.push(0.025);
-        } else {
-            fixedImprovements.push(0.0125);
-        }
-    }
 
     const upgrades = {
         belt: [
@@ -214,12 +178,12 @@ function generateUpgrades(limitedVersion = false) {
         namedShapes.bird,
         namedShapes.scissors,
     ];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 8; i++) {
         let upgrade = {
             required: [],
-            improvement: 1,
+            improvement: 1 / 16,
         };
-        for (let j = 0; j <= i; j++) {
+        for (let j = 0; j <= i && j < globalShapes.length; j++) {
             upgrade.required.push({
                 shape: globalShapes[j],
                 amount: 1000 * (5 + i) * (5 + j),

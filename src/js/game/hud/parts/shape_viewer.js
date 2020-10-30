@@ -5,6 +5,7 @@ import { KeyActionMapper, KEYMAPPINGS } from "../../key_action_mapper";
 import { ShapeDefinition } from "../../shape_definition";
 import { BaseHUDPart } from "../base_hud_part";
 import { DynamicDomAttach } from "../dynamic_dom_attach";
+import { ShapestItem } from "../../items/shapest_item";
 
 const copy = require("clipboard-copy");
 
@@ -83,41 +84,35 @@ export class HUDShapeViewer extends BaseHUDPart {
 
         this.currentShapeKey = definition.getHash();
 
-        const layers = definition.layers;
+        const layers = new ShapestItem(this.currentShapeKey).layers;
         this.contentDiv.setAttribute("data-layers", layers.length);
 
         for (let i = layers.length - 1; i >= 0; --i) {
             const layerElem = makeDiv(this.renderArea, null, ["layer", "layer-" + i]);
 
-            let fakeLayers = [];
-            for (let k = 0; k < i; ++k) {
-                fakeLayers.push([null, null, null, null]);
-            }
-            fakeLayers.push(layers[i]);
-
-            const thisLayerOnly = new ShapeDefinition({ layers: fakeLayers });
+            const thisLayerOnly = new ShapestItem('e :'.repeat(i) + layers[i]);
             const thisLayerCanvas = thisLayerOnly.generateAsCanvas(160);
             layerElem.appendChild(thisLayerCanvas);
 
             for (let quad = 0; quad < 4; ++quad) {
-                const quadElem = makeDiv(layerElem, null, ["quad", "quad-" + quad]);
+                // const quadElem = makeDiv(layerElem, null, ["quad", "quad-" + quad]);
 
-                const contents = layers[i][quad];
-                if (contents) {
-                    const colorLabelElem = makeDiv(
-                        quadElem,
-                        null,
-                        ["colorLabel"],
-                        T.ingame.colors[contents.color]
-                    );
-                } else {
-                    const emptyLabelElem = makeDiv(
-                        quadElem,
-                        null,
-                        ["emptyLabel"],
-                        T.ingame.shapeViewer.empty
-                    );
-                }
+                // const contents = layers[i][quad];
+                // if (contents) {
+                //     const colorLabelElem = makeDiv(
+                //         quadElem,
+                //         null,
+                //         ["colorLabel"],
+                //         T.ingame.colors[contents.color]
+                //     );
+                // } else {
+                //     const emptyLabelElem = makeDiv(
+                //         quadElem,
+                //         null,
+                //         ["emptyLabel"],
+                //         T.ingame.shapeViewer.empty
+                //     );
+                // }
             }
         }
     }

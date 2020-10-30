@@ -310,7 +310,7 @@ export class NumberLayer extends ShapestLayer {
         if (this._mapPatchItemList) {
             return this._mapPatchItemList;
         }
-        let numList = Array(11).fill(0).map((e, i) => i-1);
+        let numList = Array(11).fill(0).map((e, i) => i - 1);
         return this._mapPatchItemList = numList.map(n => new ShapestItem(`nu${n}`));
     }
 
@@ -529,8 +529,8 @@ class EmojiLayer extends ShapestLayer {
 export const shape4svg = {
     R: "M 0 0 L 1 0 L 1 1 L 0 1 Z",
     C: "M 0 0 L 1 0 A 1 1 0 0 1 0 1 Z",
-    S: "M 0 0 L 0 0.6 L 1 1 L 0.6 0 Z",
-    W: "M 0 0 L 0 0.6 L 1 1 L 1 0 Z",
+    S: "M 0 0 L 0.6 0 L 1 1 L 0 0.6 Z",
+    W: "M 0 0 L 0.6 0 L 1 1 L 0 1 Z",
     "-": "M 0 0",
 }
 
@@ -570,6 +570,15 @@ class Shape4Layer extends ShapestLayer {
             ctx.fillStyle = this.colorHex(i);
             ctx.fill(p);
             ctx.stroke(p);
+            ctx.rotate(Math.PI / 2);
+        }
+        for (let i = 0; i < 4; i++) {
+            let p = new Path2D(shape4svg[this.shape(i)]);
+            ctx.fillStyle = this.colorHex(i);
+            if (this.shape(i) == 'Y') {
+                ctx.fill(p);
+                ctx.stroke(p);
+            }
             ctx.rotate(Math.PI / 2);
         }
 
@@ -957,9 +966,9 @@ globalThis.cache = function() {
         return [
             k,
             Object.fromEntries(
-                [...map.entries()].map(([k,v])=>[k,
-                    Array.isArray(v) ? v.map(e=>e&&e.hash) : v.hash
-                    ])
+                [...map.entries()].map(([k, v]) => [k,
+                    Array.isArray(v) ? v.map(e => e && e.hash) : v.hash
+                ])
             )
         ]
     })
