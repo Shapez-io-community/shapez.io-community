@@ -21,7 +21,7 @@ export function initializeCustomColors() {
         purple: 300,
         zrose: 330,
     }
-    // for (let k in enumColors) delete enumColors[k];
+    for (let k in enumColors) delete enumColors[k];
 
     for (let k in colorWheel) {
         enumColors[k] = k;
