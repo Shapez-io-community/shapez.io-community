@@ -909,8 +909,9 @@ export class ShapestItemDefinition {
 
         let layers = new ShapestItem(item).layers;
 
-        let resultLayers1 = layers.map(e => e.do_cut2()[0]).filter(Boolean);
-        let resultLayers2 = layers.map(e => e.do_cut2()[1]).filter(Boolean);
+        // SWAPPED!
+        let resultLayers2 = layers.map(e => e.do_cut2()[0]).filter(Boolean);
+        let resultLayers1 = layers.map(e => e.do_cut2()[1]).filter(Boolean);
 
         let resultItem1 = resultLayers1.length ? new ShapestItem(resultLayers1.join(':')) : null;
         let resultItem2 = resultLayers2.length ? new ShapestItem(resultLayers2.join(':')) : null;
