@@ -20,6 +20,11 @@ import { HUDBuildingPlacerLogic } from "./building_placer_logic";
 import { makeOffscreenBuffer } from "../../../core/buffer_utils";
 import { layers } from "../../root";
 import { getCodeFromBuildingData } from "../../building_codes";
+import { generateBuildingCosts } from "../../modes/regular";
+
+const enumBuildingList = generateBuildingCosts();
+const enumBuildingToCost = {};
+const enumBuildingToShape = {};
 
 export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
     /**
@@ -46,6 +51,20 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         const compact = this.root.app.settings.getAllSettings().compactBuildingInfo;
         this.element.classList.toggle("compact", compact);
         this.variantsElement.classList.toggle("compact", compact);
+
+        this.costDisplayParent = makeDiv(parent, "ingame_HUD_BuildingCost", [], ``);
+        
+        //Turns Shape Codes To Shape Canvas
+        for (let i = 0; i < enumBuildingList.length; ++i) {
+            const buildingShape = enumBuildingList[i].shape;
+            enumBuildingToShape[enumBuildingList[i].building] = this.root.shapeDefinitionMgr.getShapeFromShortKey(buildingShape).generateAsCanvas(80);
+        }
+
+        //Defines Costs Of All Buildings
+        for (let i = 0; i < enumBuildingList.length; ++i) {
+            const buildingCost = enumBuildingList[i].cost;
+            enumBuildingToCost[enumBuildingList[i].building] = buildingCost;
+        }
     }
 
     initialize() {
@@ -172,6 +191,7 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
      * Rerenders the variants displayed
      */
     rerenderVariants() {
+        removeAllChildren(this.costDisplayParent);
         removeAllChildren(this.variantsElement);
         this.rerenderInfoDialog();
 
@@ -183,6 +203,25 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         if (!metaBuilding) {
             return;
         }
+
+        this.costDraw = makeDiv(this.costDisplayParent, null, ["draw"], "");
+        if (!this.costLabel || !this.costLabel.parentElement) {
+            this.costLabel = makeDiv(this.costDisplayParent, null, ["label"], "Building Cost");
+        }
+        this.costContainer = makeDiv(this.costDisplayParent, null, ["costContainer"], "");
+        this.costDisplayText = makeDiv(this.costContainer, null, ["costText"], "");
+        if (!enumBuildingToShape[metaBuilding.id]) {
+            console.log(metaBuilding.id);
+        } else {
+            this.costContainer.appendChild(enumBuildingToShape[metaBuilding.id]);
+        }
+
+        if (!enumBuildingToCost[metaBuilding.id]) {
+            console.log(metaBuilding.id);
+        } else {
+            this.costDisplayText.innerText = "" + enumBuildingToCost[metaBuilding.id];
+        }
+
         const availableVariants = metaBuilding.getAvailableVariants(this.root);
         if (availableVariants.length === 1) {
             return;
@@ -229,11 +268,18 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         }
     }
 
+    canAfford() {
+        return true;
+    }
+
     /**
      *
      * @param {DrawParameters} parameters
      */
     draw(parameters) {
+        if (this.costDisplayText) {
+            this.costDisplayParent.classList.toggle("canAfford", this.canAfford());
+        }
         if (this.root.camera.zoomLevel < globalConfig.mapChunkOverviewMinZoom) {
             // Dont allow placing in overview mode
             this.domAttach.update(false);

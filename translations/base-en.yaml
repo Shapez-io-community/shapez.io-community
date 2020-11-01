@@ -523,6 +523,9 @@ buildings:
         toUnlock: to unlock
         levelShortcut: LVL
         endOfDemo: End of Demo
+        default:
+            name: &hub HUB
+            description: More HUB. 
 
     belt:
         default:
@@ -1130,6 +1133,7 @@ keybindings:
         logic_gate: Logic Gate
         lever: *lever
         filter: *filter
+        hub: *hub
         wire_tunnel: *wire_tunnel
         display: *display
         reader: *reader

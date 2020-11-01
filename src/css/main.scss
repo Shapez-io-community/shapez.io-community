@@ -47,6 +47,7 @@
 @import "ingame_hud/tutorial_hints";
 @import "ingame_hud/watermark";
 @import "ingame_hud/blueprint_placer";
+@import "ingame_hud/building_cost";
 @import "ingame_hud/waypoints";
 @import "ingame_hud/interactive_tutorial";
 @import "ingame_hud/color_blind_helper";
@@ -78,6 +79,7 @@ ingame_HUD_InteractiveTutorial,
 ingame_HUD_BuildingsToolbar,
 ingame_HUD_wires_toolbar,
 ingame_HUD_BlueprintPlacer,
+ingame_HUD_BuildingCost,
 ingame_HUD_Waypoints_Hint,
 ingame_HUD_WatermarkClicker,
 ingame_HUD_Watermark,

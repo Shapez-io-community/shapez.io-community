@@ -64,6 +64,7 @@ export class Blueprint {
         if (G_IS_DEV && globalConfig.debug.blueprintsNoCost) {
             return 0;
         }
+
         return findNiceIntegerValue(4 * Math.pow(this.entities.length, 1.1));
     }
 

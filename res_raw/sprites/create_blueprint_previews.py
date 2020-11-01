@@ -85,8 +85,6 @@ def generate_blueprint_sprite(infilename, outfilename):
 buildings = listdir("buildings")
 
 for buildingId in buildings:
-    if "hub" in buildingId:
-        continue
     if "wire-" in buildingId:
         continue
     generate_blueprint_sprite("buildings/" + buildingId + "", "blueprints/" + buildingId + "")

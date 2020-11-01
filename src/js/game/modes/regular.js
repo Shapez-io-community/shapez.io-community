@@ -214,6 +214,176 @@ function generateUpgrades(limitedVersion = false) {
 }
 
 /**
+ * Generates costs of all buildings
+ */
+export function generateBuildingCosts() {
+    const buildingCost = [
+
+        // Belt
+        {
+            building: "belt",
+            shape: "RuRuRuRu",
+            cost: 4,
+        },
+
+        // Extractor
+        {
+            building: "miner",
+            shape: "RuRuRuRu",
+            cost: 8,
+        },
+
+        // Cutter
+        {
+            building: "cutter",
+            shape: "CuCuCuCu",
+            cost: 12,
+        },
+
+        // Trash
+        {
+            building: "trash",
+            shape: "CuCuCuCu",
+            cost: 2,
+        },
+
+        // Balancer
+        {
+            building: "balancer",
+            shape: "CuCuCuCu",
+            cost: 6,
+        },
+
+        // Rotater
+        {
+            building: "rotater",
+            shape: "----RuRu",
+            cost: 5,
+        },
+
+        // Tunnel
+        {
+            building: "underground_belt",
+            shape: "Ru----Ru",
+            cost: 10,
+        },
+
+        // Painter
+        {
+            building: "painter",
+            shape: "------Ru",
+            cost: 15,
+        },
+
+        // Mixer
+        {
+            building: "mixer",
+            shape: "--SbSb--",
+            cost: 15,
+        },
+
+        // Stacker
+        {
+            building: "stacker",
+            shape: "Cg----Cg",
+            cost: 20,
+        },
+
+        // Reader
+        {
+            building: "reader",
+            shape: "--Cg----:--Cr----",
+            cost: 5,
+        },
+
+        // Storage
+        {
+            building: "storage",
+            shape: "RwRwRwRw",
+            cost: 10,
+        },
+
+        // Wire
+        {
+            building: "wire",
+            shape: "RuRuRuRu:Rb--Rb--",
+            cost: 5,
+        },
+
+        // Wire Tunnel
+        {
+            building: "wire_tunnel",
+            shape: "RuRuRuRu:Rb--Rb--",
+            cost: 5,
+        },
+
+        // Lever
+        {
+            building: "lever",
+            shape: "RwRwRwRw:CuCuCuCu",
+            cost: 1,
+        },
+
+        // Filter
+        {
+            building: "filter",
+            shape: "Cg----Cr:Cw----Cw:Sy------:Cy----Cy",
+            cost: 3,
+        },
+
+        // Constant Signal
+        {
+            building: "constant_signal",
+            shape: "CcSyCcSy:SyCcSyCc:CcSyCcSy",
+            cost: 3,
+        },
+
+        // Display
+        {
+            building: "display",
+            shape: "RuRuRuRu:RwRwRwRw:RuCw--Cw:----Ru--",
+            cost: 1,
+        },
+
+        // Logic Gates
+        {
+            building: "logic_gate",
+            shape: "CrCyCpCb",
+            cost: 10,
+        },
+
+        // Transistor
+        {
+            building: "transistor",
+            shape: "CbCbCbRb:CpCpCpRp:CwCwCwRw",
+            cost: 5,
+        },
+
+        // Comparator
+        {
+            building: "comparator",
+            shape: "Sg----Sg:CgCgCgCg:--CyCy--",
+            cost: 5,
+        },
+
+        // Virtual Processor
+        {
+            building: "virtual_processor",
+            shape: "CpRpCp--:SwSwSwSw",
+            cost: 5,
+        },
+
+        // Analyzer
+        {
+            building: "analyzer",
+            shape: "CrCwCrCw:CwCrCwCr:CrCwCrCw:CwCrCwCr",
+            cost: 5,
+        },
+    ]
+    return buildingCost;
+}
+
+/**
  * Generates the level definitions
  * @param {boolean} limitedVersion
  */
