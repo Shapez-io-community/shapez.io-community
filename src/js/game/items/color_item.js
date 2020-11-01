@@ -3,7 +3,7 @@ import { DrawParameters } from "../../core/draw_parameters";
 import { Loader } from "../../core/loader";
 import { types } from "../../savegame/serialization";
 import { BaseItem } from "../base_item";
-import { enumColors, enumColorToShortcode, enumShortcodeToColor } from "../colors";
+import { enumColors, enumColorToShortcode, enumShortcodeToColor, enumColorMixingResults } from "../colors";
 import { THEME } from "../theme";
 import { initializeCustomColors } from "../custom/colors";
 
@@ -122,6 +122,16 @@ export class ColorItem extends BaseItem {
         let color = colorWheel[(index + colorWheel.length) % colorWheel.length];
 
         return recipeCache[hash + dir] = COLOR_ITEM_SINGLETONS[enumShortcodeToColor[color]];
+    }
+
+    static virt_mix(color1, color2) {
+        if (recipeCache[color1 + color2]) {
+            return recipeCache[color1 + color2];
+        }
+
+        let color = enumColorMixingResults[enumShortcodeToColor[color1]][enumShortcodeToColor[color2]];
+
+        return recipeCache[color1 + color2] = COLOR_ITEM_SINGLETONS[color];
     }
 }
 

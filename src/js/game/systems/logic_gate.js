@@ -26,7 +26,7 @@ export class LogicGateSystem extends GameSystemWithFilter {
             [enumLogicGateType.unstacker]: this.compute_UNSTACK.bind(this),
             [enumLogicGateType.compare]: this.compute_COMPARE.bind(this),
             [enumLogicGateType.stacker]: this.compute_STACKER.bind(this),
-            [enumLogicGateType.painter]: this.compute_PAINTER.bind(this),
+            [enumLogicGateType.painter]: this.compute_STACKER.bind(this),
         };
     }
 
@@ -224,12 +224,24 @@ export class LogicGateSystem extends GameSystemWithFilter {
             return null;
         }
 
-        if (lowerItem.getItemType() !== "shape" || upperItem.getItemType() !== "shape") {
-            // Bad type
-            return null;
+        if (lowerItem.getItemType() == "shape") {
+            if (upperItem.getItemType() == "shape") {
+                return ShapestItemDefinition.do_stack(lowerItem.getHash(), upperItem.getHash());
+            }
+            if (upperItem.getItemType() == "color") {
+                return ShapestItemDefinition.do_paint(lowerItem.getHash(), upperItem.getHash());
+            }
+        }
+        if (lowerItem.getItemType() == "color") {
+            if (upperItem.getItemType() == "shape") {
+                return ShapestItemDefinition.do_paint(upperItem.getHash(), lowerItem.getHash());
+            }
+            if (upperItem.getItemType() == "color") {
+                return ColorItem.virt_mix(lowerItem.getHash(), upperItem.getHash());
+            }
         }
 
-        return ShapestItemDefinition.do_stack(lowerItem.getHash(), upperItem.getHash());
+        return null;
     }
 
     /**
