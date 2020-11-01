@@ -160,6 +160,9 @@ export class LogicGateSystem extends GameSystemWithFilter {
     compute_ROTATE(parameters) {
         const item = parameters[0];
         if (!item || item.getItemType() !== "shape") {
+            if (item && item.getItemType() == 'color') {
+                return ColorItem.virt_rotate(item.getHash(), 1);
+            }
             // Not a shape
             return null;
         }

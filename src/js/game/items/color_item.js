@@ -3,7 +3,7 @@ import { DrawParameters } from "../../core/draw_parameters";
 import { Loader } from "../../core/loader";
 import { types } from "../../savegame/serialization";
 import { BaseItem } from "../base_item";
-import { enumColors, enumColorToShortcode } from "../colors";
+import { enumColors, enumColorToShortcode, enumShortcodeToColor } from "../colors";
 import { THEME } from "../theme";
 import { initializeCustomColors } from "../custom/colors";
 
@@ -88,12 +88,40 @@ export class ColorItem extends BaseItem {
     static initializeCustomColors(enable) {
         if (enable) {
             initializeCustomColors();
+            for (const color in COLOR_ITEM_SINGLETONS) {
+                delete COLOR_ITEM_SINGLETONS[color];
+            }
             for (const color in enumColors) {
+                delete COLOR_ITEM_SINGLETONS[color];
                 COLOR_ITEM_SINGLETONS[color] = new ColorItem(color);
             }
         } else {
             // alert("disabling color wheel is not supported, reload page to apply");
         }
+    }
+
+    static virt_rotate(hash, dir) {
+        if (recipeCache[hash + dir]) {
+            return recipeCache[hash + dir];
+        }
+        let colorWheel = "roylgscabvpz";
+        if (!COLOR_ITEM_SINGLETONS.orange) {
+            colorWheel = "rygcbp";
+        }
+
+        let index = colorWheel.indexOf(hash);
+        if (index == -1) {
+            return recipeCache[hash + dir] = COLOR_ITEM_SINGLETONS[enumShortcodeToColor[hash]];
+        }
+
+        if (dir == 1 || dir == -1) {
+            index += dir;
+        } else {
+            index += colorWheel.length / 2;
+        }
+        let color = colorWheel[(index + colorWheel.length) % colorWheel.length];
+
+        return recipeCache[hash + dir] = COLOR_ITEM_SINGLETONS[enumShortcodeToColor[color]];
     }
 }
 
@@ -106,3 +134,5 @@ export const COLOR_ITEM_SINGLETONS = {};
 for (const color in enumColors) {
     COLOR_ITEM_SINGLETONS[color] = new ColorItem(color);
 }
+
+const recipeCache = {};

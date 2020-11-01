@@ -102,6 +102,26 @@ export function initializeCustomColors() {
         };
         let url = `sprites/colors/${k}.png`;
         Loader.drawSprite(url, callback, { w: 128, h: 128, smooth: false, mipmap: false }, url);
+
+        /**
+         * @param {Object} param0
+         * @param {CanvasRenderingContext2D} param0.context
+         */
+        let callback_display = ({context}) => {
+
+            context.fillStyle = enumColorsToHexCode[k];
+            context.globalAlpha = 0.38;
+            context.fillRect(3, 3, 59, 59);
+            context.globalAlpha = 1;
+            context.fillRect(4, 3, 57, 1);
+            context.fillRect(3, 4, 59, 57);
+            context.fillRect(4, 61, 57, 1);
+
+        };
+        let url_display = `sprites/wires/display/${k}.png`;
+        Loader.drawSprite(url_display, callback_display, { w: 65, h: 65, smooth: false, mipmap: false }, url_display);
+
+
     }
 
 }
