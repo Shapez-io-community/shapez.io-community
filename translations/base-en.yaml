@@ -900,6 +900,7 @@ settings:
         userInterface: User Interface
         advanced: Advanced
         performance: Performance
+        debug: Debug
 
     versionBadges:
         dev: Development

@@ -62,12 +62,12 @@ export class EntityManager extends BasicSerializableObject {
      * @param {number=} uid Optional predefined uid
      */
     registerEntity(entity, uid = null) {
-        if (G_IS_DEV && !globalConfig.debug.disableSlowAsserts) {
+        if (globalConfig.debug.enableSlowAsserts) {
             assert(this.entities.indexOf(entity) < 0, `RegisterEntity() called twice for entity ${entity}`);
         }
         assert(!entity.destroyed, `Attempting to register destroyed entity ${entity}`);
 
-        if (G_IS_DEV && !globalConfig.debug.disableSlowAsserts && uid !== null) {
+        if (globalConfig.debug.enableSlowAsserts && uid !== null) {
             assert(!this.findByUid(uid, false), "Entity uid already taken: " + uid);
             assert(uid >= 0 && uid < Number.MAX_SAFE_INTEGER, "Invalid uid passed: " + uid);
         }

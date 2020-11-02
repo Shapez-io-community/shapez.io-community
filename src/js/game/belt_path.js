@@ -81,7 +81,7 @@ export class BeltPath extends BasicSerializableObject {
 
         this.init();
 
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("constructor");
         }
     }
@@ -137,7 +137,7 @@ export class BeltPath extends BasicSerializableObject {
             this.items.unshift([this.spacingToFirstItem - initialProgress, item]);
             this.spacingToFirstItem = initialProgress;
 
-            if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+            if (globalConfig.debug.checkBeltPaths) {
                 this.debug_checkIntegrity("accept-item");
             }
 
@@ -496,7 +496,7 @@ export class BeltPath extends BasicSerializableObject {
         // Update bounds
         this.worldBounds = this.computeBounds();
 
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("extend-on-end");
         }
     }
@@ -528,7 +528,7 @@ export class BeltPath extends BasicSerializableObject {
         // Update bounds
         this.worldBounds = this.computeBounds();
 
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("extend-on-begin");
         }
     }
@@ -706,7 +706,7 @@ export class BeltPath extends BasicSerializableObject {
         // Update bounds
         this.worldBounds = this.computeBounds();
 
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("split-two-first");
             secondPath.debug_checkIntegrity("split-two-second");
         }
@@ -817,7 +817,7 @@ export class BeltPath extends BasicSerializableObject {
         // Update bounds
         this.worldBounds = this.computeBounds();
 
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("delete-on-end");
         }
     }
@@ -946,7 +946,7 @@ export class BeltPath extends BasicSerializableObject {
         // Update bounds
         this.worldBounds = this.computeBounds();
 
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("delete-on-start");
         }
     }
@@ -1020,7 +1020,7 @@ export class BeltPath extends BasicSerializableObject {
 
         this.onPathChanged();
 
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("extend-by-path");
         }
     }
@@ -1042,7 +1042,7 @@ export class BeltPath extends BasicSerializableObject {
      * Performs one tick
      */
     update() {
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("pre-update");
         }
 
@@ -1052,7 +1052,7 @@ export class BeltPath extends BasicSerializableObject {
             this.root.dynamicTickrate.deltaSeconds *
             globalConfig.itemSpacingOnBelts;
 
-        if (G_IS_DEV && globalConfig.debug.instantBelts) {
+        if (globalConfig.debug.instantBelts) {
             beltSpeed *= 100;
         }
 
@@ -1135,7 +1135,7 @@ export class BeltPath extends BasicSerializableObject {
             }
         }
 
-        if (G_IS_DEV && globalConfig.debug.checkBeltPaths) {
+        if (globalConfig.debug.checkBeltPaths) {
             this.debug_checkIntegrity("post-update");
         }
     }

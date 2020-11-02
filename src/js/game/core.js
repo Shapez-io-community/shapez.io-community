@@ -131,12 +131,11 @@ export class GameCore {
         this.resize(this.app.screenWidth, this.app.screenHeight);
 
         if (G_IS_DEV) {
-            // @ts-ignore
-            window.globalRoot = root;
+            globalThis.globalRoot = root;
         }
 
         // @todo Find better place
-        if (G_IS_DEV && globalConfig.debug.manualTickOnly) {
+        if (globalConfig.debug.manualTickOnly) {
             this.root.gameState.inputReciever.keydown.add(key => {
                 if (key.keyCode === 84) {
                     // 'T'
@@ -268,7 +267,7 @@ export class GameCore {
         // Camera is always updated, no matter what
         root.camera.update(deltaMs);
 
-        if (!(G_IS_DEV && globalConfig.debug.manualTickOnly)) {
+        if (!globalConfig.debug.manualTickOnly) {
             // Perform logic ticks
             this.root.time.performTicks(deltaMs, this.boundInternalTick);
 
@@ -303,7 +302,7 @@ export class GameCore {
 
         root.dynamicTickrate.beginTick();
 
-        if (G_IS_DEV && globalConfig.debug.disableLogicTicks) {
+        if (globalConfig.debug.disableLogicTicks) {
             root.dynamicTickrate.endTick();
             return true;
         }
@@ -395,13 +394,13 @@ export class GameCore {
             root: root,
         });
 
-        if (G_IS_DEV && globalConfig.debug.testCulling) {
+        if (globalConfig.debug.testCulling) {
             context.clearRect(0, 0, root.gameWidth, root.gameHeight);
         }
 
         // Transform to world space
 
-        if (G_IS_DEV && globalConfig.debug.testClipping) {
+        if (globalConfig.debug.testClipping) {
             params.visibleRect = params.visibleRect.expandedInAllDirections(
                 -200 / this.root.camera.zoomLevel
             );
@@ -454,11 +453,9 @@ export class GameCore {
             context.globalAlpha = 1;
         }
 
-        if (G_IS_DEV) {
-            root.map.drawStaticEntityDebugOverlays(params);
-        }
+        root.map.drawStaticEntityDebugOverlays(params);
 
-        if (G_IS_DEV && globalConfig.debug.renderBeltPaths) {
+        if (globalConfig.debug.renderBeltPaths) {
             systems.belt.drawBeltPathDebug(params);
         }
 
@@ -477,7 +474,7 @@ export class GameCore {
         params.zoomLevel = 1;
         params.desiredAtlasScale = ORIGINAL_SPRITE_SCALE;
         params.visibleRect = new Rectangle(0, 0, this.root.gameWidth, this.root.gameHeight);
-        if (G_IS_DEV && globalConfig.debug.testClipping) {
+        if (globalConfig.debug.testClipping) {
             params.visibleRect = params.visibleRect.expandedInAllDirections(-200);
         }
 
@@ -486,7 +483,7 @@ export class GameCore {
 
         assert(context.globalAlpha === 1.0, "context.globalAlpha not 1 on frame end");
 
-        if (G_IS_DEV && globalConfig.debug.simulateSlowRendering) {
+        if (globalConfig.debug.simulateSlowRendering) {
             let sum = 0;
             for (let i = 0; i < 1e8; ++i) {
                 sum += i;
@@ -496,7 +493,7 @@ export class GameCore {
             }
         }
 
-        if (G_IS_DEV && globalConfig.debug.showAtlasInfo) {
+        if (globalConfig.debug.showAtlasInfo) {
             context.font = "13px GameFont";
             context.fillStyle = "blue";
             context.fillText(
@@ -544,7 +541,7 @@ export class GameCore {
             );
         }
 
-        if (G_IS_DEV && globalConfig.debug.testClipping) {
+        if (globalConfig.debug.testClipping) {
             context.strokeStyle = "red";
             context.lineWidth = 1;
             context.beginPath();
