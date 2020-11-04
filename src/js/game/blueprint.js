@@ -97,13 +97,15 @@ export class Blueprint {
      * Rotates the blueprint clockwise
      */
     rotateCw() {
-        for (let i = 0; i < this.entities.length; ++i) {
-            const entity = this.entities[i];
-            const staticComp = entity.components.StaticMapEntity;
-
-            staticComp.rotation = (staticComp.rotation + 90) % 360;
-            staticComp.originalRotation = (staticComp.originalRotation + 90) % 360;
-            staticComp.origin = staticComp.origin.rotateFastMultipleOf90(90);
+        if (!this.testForHub()) {
+            for (let i = 0; i < this.entities.length; ++i) {
+                const entity = this.entities[i];
+                const staticComp = entity.components.StaticMapEntity;
+    
+                staticComp.rotation = (staticComp.rotation + 90) % 360;
+                staticComp.originalRotation = (staticComp.originalRotation + 90) % 360;
+                staticComp.origin = staticComp.origin.rotateFastMultipleOf90(90);
+            }
         }
     }
 
@@ -115,6 +117,18 @@ export class Blueprint {
         for (let i = 0; i < 3; ++i) {
             this.rotateCw();
         }
+    }
+
+    /**
+     * Tests All Entities and if there is hub in it, returns true
+     */
+    testForHub() {
+        for (const num in this.entities) {
+            if (this.entities[num].components.Hub) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

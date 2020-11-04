@@ -20,6 +20,7 @@ export const enumCategories = {
     userInterface: "userInterface",
     performance: "performance",
     advanced: "advanced",
+    modBrowser: "modBrowser",
 };
 
 export const uiScales = [
@@ -263,6 +264,8 @@ export const allApplicationSettings = [
     new BoolSetting("enableTunnelSmartplace", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("vignette", enumCategories.userInterface, (app, value) => {}),
     new BoolSetting("compactBuildingInfo", enumCategories.userInterface, (app, value) => {}),
+    new BoolSetting("sandboxMode", enumCategories.modBrowser, (app, value) => {}),
+    new BoolSetting("survivalMode", enumCategories.modBrowser, (app, value) => {}),
     new BoolSetting("disableCutDeleteWarnings", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("rotationByBuilding", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("displayChunkBorders", enumCategories.advanced, (app, value) => {}),
@@ -311,6 +314,8 @@ class SettingsStorage {
         this.enableTunnelSmartplace = true;
         this.vignette = true;
         this.compactBuildingInfo = false;
+        this.sandboxMode = false;
+        this.survivalMode = false;
         this.disableCutDeleteWarnings = false;
         this.rotationByBuilding = true;
         this.clearCursorOnDeleteWhilePlacing = true;
@@ -681,6 +686,16 @@ export class ApplicationSettings extends ReadWriteProxy {
             data.settings.offerHints = true;
 
             data.version = 30;
+        }
+
+        if (data.version < 31) {
+            data.settings.sandboxMode = false;
+            data.version = 31;
+        }
+
+        if (data.version < 32) {
+            data.settings.survivalMode = false;
+            data.version = 32;
         }
 
         return ExplainedResult.good();

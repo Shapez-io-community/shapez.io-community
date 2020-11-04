@@ -22,15 +22,20 @@ import { layers } from "../../root";
 import { getCodeFromBuildingData } from "../../building_codes";
 import { generateBuildingCosts } from "../../modes/regular";
 
+// Defines important veriables for survival mode
+export const enumBuildingToShapeKey = {};
+export const enumBuildingToCost = {};
 const enumBuildingList = generateBuildingCosts();
-const enumBuildingToCost = {};
-const enumBuildingToShape = {};
+export const enumBuildingToShape = {};
 
 export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
     /**
      * @param {HTMLElement} parent
      */
     createElements(parent) {
+        this.survivalMode = this.root.app.settings.getAllSettings().survivalMode;
+        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+
         this.element = makeDiv(parent, "ingame_HUD_PlacementHints", [], ``);
 
         this.buildingInfoElements = {};
@@ -53,17 +58,25 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         this.variantsElement.classList.toggle("compact", compact);
 
         this.costDisplayParent = makeDiv(parent, "ingame_HUD_BuildingCost", [], ``);
-        
-        //Turns Shape Codes To Shape Canvas
-        for (let i = 0; i < enumBuildingList.length; ++i) {
-            const buildingShape = enumBuildingList[i].shape;
-            enumBuildingToShape[enumBuildingList[i].building] = this.root.shapeDefinitionMgr.getShapeFromShortKey(buildingShape).generateAsCanvas(80);
-        }
 
-        //Defines Costs Of All Buildings
-        for (let i = 0; i < enumBuildingList.length; ++i) {
-            const buildingCost = enumBuildingList[i].cost;
-            enumBuildingToCost[enumBuildingList[i].building] = buildingCost;
+        // If survival mode is opened...
+        if (this.survivalMode) {
+            // Defines Shape Keys Of All Buildings
+            for (let i = 0; i < enumBuildingList.length; ++i) {
+                const buildingShapeKey = enumBuildingList[i].shape;
+                enumBuildingToShapeKey[enumBuildingList[i].building] = buildingShapeKey;
+            }
+    
+            // Defines Costs Of All Buildings
+            for (let i = 0; i < enumBuildingList.length; ++i) {
+                const buildingCost = enumBuildingList[i].cost;
+                enumBuildingToCost[enumBuildingList[i].building] = buildingCost;
+            }
+    
+            // Turns Shape Codes To Shape Canvas
+            for (const building in enumBuildingToShapeKey) {
+                enumBuildingToShape[building] = this.root.shapeDefinitionMgr.getShapeFromShortKey(enumBuildingToShapeKey[building]).generateAsCanvas(80);
+            }
         }
     }
 
@@ -204,22 +217,29 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
             return;
         }
 
-        this.costDraw = makeDiv(this.costDisplayParent, null, ["draw"], "");
-        if (!this.costLabel || !this.costLabel.parentElement) {
-            this.costLabel = makeDiv(this.costDisplayParent, null, ["label"], "Building Cost");
-        }
-        this.costContainer = makeDiv(this.costDisplayParent, null, ["costContainer"], "");
-        this.costDisplayText = makeDiv(this.costContainer, null, ["costText"], "");
-        if (!enumBuildingToShape[metaBuilding.id]) {
-            console.log(metaBuilding.id);
-        } else {
-            this.costContainer.appendChild(enumBuildingToShape[metaBuilding.id]);
-        }
+        // If survival mode is opened, create cost display.
+        if (this.survivalMode) {
+            if (this.sandboxMode) {
+                enumBuildingToCost[metaBuilding.id] = 0;
+            }
+    
+            this.shapeKey = enumBuildingToShapeKey[metaBuilding.id];
+            this.shape = enumBuildingToShape[metaBuilding.id];
+            this.cost = 0;
+            this.cost += enumBuildingToCost[metaBuilding.id];
+    
+            this.costDraw = makeDiv(this.costDisplayParent, null, ["draw"], "");
+            if (!this.costLabel || !this.costLabel.parentElement) {
+                this.costLabel = makeDiv(this.costDisplayParent, null, ["label"], "Building Cost");
+            }
+            this.costContainer = makeDiv(this.costDisplayParent, null, ["costContainer"], "");
+            this.costDisplayText = makeDiv(this.costContainer, null, ["costText"], "");
+            this.costContainer.appendChild(this.shape);
+            this.costDisplayText.innerText = "" + this.cost;
 
-        if (!enumBuildingToCost[metaBuilding.id]) {
-            console.log(metaBuilding.id);
-        } else {
-            this.costDisplayText.innerText = "" + enumBuildingToCost[metaBuilding.id];
+            if (this.costDisplayText) {
+                this.costDisplayParent.classList.toggle("canAfford", this.canAfford(metaBuilding.id));
+            }
         }
 
         const availableVariants = metaBuilding.getAvailableVariants(this.root);
@@ -268,8 +288,14 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         }
     }
 
-    canAfford() {
-        return true;
+    /**
+     * @param {string} building 
+     */
+    canAfford(building) {
+        if (!this.survivalMode) {
+            return true;
+        }
+        return this.root.hubGoals.getShapesStoredByKey(enumBuildingToShapeKey[building]) >= enumBuildingToCost[building];
     }
 
     /**
@@ -277,9 +303,11 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
      * @param {DrawParameters} parameters
      */
     draw(parameters) {
-        if (this.costDisplayText) {
-            this.costDisplayParent.classList.toggle("canAfford", this.canAfford());
+        // Gives A Little Bit Resource To Player If Survival Mode Is Opened
+        if (this.root.hubGoals.getShapesStoredByKey("RuRuRuRu", true) == undefined && this.survivalMode) {
+            this.root.hubGoals.addShapeByKey("RuRuRuRu", 64);
         }
+
         if (this.root.camera.zoomLevel < globalConfig.mapChunkOverviewMinZoom) {
             // Dont allow placing in overview mode
             this.domAttach.update(false);
@@ -293,6 +321,10 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
 
         if (!metaBuilding) {
             return;
+        }
+
+        if (this.costDisplayText && metaBuilding.id != "belt" && this.survivalMode) {
+            this.costDisplayParent.classList.toggle("canAfford", this.canAfford(metaBuilding.id));
         }
 
         // Draw direction lock
@@ -399,7 +431,7 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
             rotationVariant
         );
 
-        const canBuild = this.root.logic.checkCanPlaceEntity(this.fakeEntity);
+        var canBuild = this.root.logic.checkCanPlaceEntity(this.fakeEntity) && this.canAfford(metaBuilding.id);
 
         // Fade in / out
         parameters.context.lineWidth = 1;

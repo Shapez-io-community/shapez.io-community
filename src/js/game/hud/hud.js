@@ -10,6 +10,7 @@ import { Signal } from "../../core/signal";
 import { DrawParameters } from "../../core/draw_parameters";
 import { HUDBuildingsToolbar } from "./parts/buildings_toolbar";
 import { HUDBuildingPlacer } from "./parts/building_placer";
+import { HUDBuildingPlacerLogic } from "./parts/building_placer_logic";
 import { HUDBlueprintPlacer } from "./parts/blueprint_placer";
 import { HUDKeybindingOverlay } from "./parts/keybinding_overlay";
 import { HUDUnlockNotification } from "./parts/unlock_notification";
@@ -61,6 +62,7 @@ export class GameHUD {
      * Initializes the hud parts
      */
     initialize() {
+        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
         this.signals = {
             buildingSelectedForPlacement: /** @type {TypedSignal<[MetaBuilding|null]>} */ (new Signal()),
             selectedPlacementBuildingChanged: /** @type {TypedSignal<[MetaBuilding|null]>} */ (new Signal()),
@@ -78,6 +80,7 @@ export class GameHUD {
             wiresToolbar: new HUDWiresToolbar(this.root),
             blueprintPlacer: new HUDBlueprintPlacer(this.root),
             buildingPlacer: new HUDBuildingPlacer(this.root),
+            buildingPlacerLogic: new HUDBuildingPlacerLogic(this.root),
             unlockNotification: new HUDUnlockNotification(this.root),
             gameMenu: new HUDGameMenu(this.root),
             massSelector: new HUDMassSelector(this.root),
@@ -140,7 +143,7 @@ export class GameHUD {
             this.parts.colorBlindHelper = new HUDColorBlindHelper(this.root);
         }
 
-        if (queryParamOptions.sandboxMode || G_IS_DEV) {
+        if ((queryParamOptions.sandboxMode || G_IS_DEV) && this.sandboxMode) {
             this.parts.sandboxController = new HUDSandboxController(this.root);
         }
 

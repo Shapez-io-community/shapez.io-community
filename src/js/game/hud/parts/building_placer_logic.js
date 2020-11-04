@@ -14,12 +14,25 @@ import { MetaMinerBuilding, enumMinerVariants } from "../../buildings/miner";
 import { enumHubGoalRewards } from "../../tutorial_goals";
 import { getBuildingDataFromCode, getCodeFromBuildingData } from "../../building_codes";
 import { MetaHubBuilding } from "../../buildings/hub";
+import { enumBuildingToShapeKey, enumBuildingToCost, enumBuildingToShape } from "./building_placer";
+import { clamp, makeDiv, removeAllChildren } from "../../../core/utils";
+import { HubComponent } from "../../components/hub";
 
 /**
  * Contains all logic for the building placer - this doesn't include the rendering
  * of info boxes or drawing.
  */
 export class HUDBuildingPlacerLogic extends BaseHUDPart {
+    /**
+     * @param {HTMLElement} parent
+     */
+    createElements(parent) {
+        this.survivalMode = this.root.app.settings.getAllSettings().survivalMode;
+        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+        
+        this.costDisplayParent = makeDiv(parent, "ingame_HUD_BuildingCost", [], ``);
+    }
+    
     /**
      * Initializes the logic
      * @see BaseHUDPart.initialize
@@ -356,7 +369,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
         const extracted = getBuildingDataFromCode(buildingCode);
 
         // Disable pipetting the hub
-        if (extracted.metaInstance.getId() === gMetaBuildingRegistry.findByClass(MetaHubBuilding).getId()) {
+        if (extracted.metaInstance.getId() === gMetaBuildingRegistry.findByClass(MetaHubBuilding).getId() && !this.survivalMode) {
             this.currentMetaBuilding.set(null);
             return;
         }
@@ -407,6 +420,11 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
         }
 
         const metaBuilding = this.currentMetaBuilding.get();
+
+        if (!metaBuilding) {
+            return;
+        }
+        
         const { rotation, rotationVariant } = metaBuilding.computeOptimalDirectionAndRotationVariantAtTile({
             root: this.root,
             tile,
@@ -424,9 +442,12 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
             variant: this.currentVariant.get(),
         });
 
-        if (entity) {
+        if (entity && this.canAfford(metaBuilding.id)) {
             // Succesfully placed, find which entity we actually placed
             this.root.signals.entityManuallyPlaced.dispatch(entity);
+            if (this.survivalMode) {
+                this.root.hubGoals.takeShapeByKey(enumBuildingToShapeKey[metaBuilding.id], enumBuildingToCost[metaBuilding.id]);
+            }
 
             // Check if we should flip the orientation (used for tunnels)
             if (
@@ -440,9 +461,10 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
 
             // Check if we should stop placement
             if (
-                !metaBuilding.getStayInPlacementMode() &&
+                (!metaBuilding.getStayInPlacementMode() &&
                 !this.root.keyMapper.getBinding(KEYMAPPINGS.placementModifiers.placeMultiple).pressed &&
-                !this.root.app.settings.getAllSettings().alwaysMultiplace
+                !this.root.app.settings.getAllSettings().alwaysMultiplace) ||
+                (!this.canAfford(metaBuilding.id) && this.survivalMode)
             ) {
                 // Stop placement
                 this.currentMetaBuilding.set(null);
@@ -515,6 +537,70 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
         if (anythingPlaced) {
             this.root.soundProxy.playUi(metaBuilding.getPlacementSound());
         }
+    }
+
+    /**
+     * Performs the direction locked placement between two points after
+     * moving the mouse
+     */
+    getLengthOfBelt() {
+        const metaBuilding = this.currentMetaBuilding.get();
+        if (!metaBuilding) {
+            // No active building
+            return;
+        }
+
+        // Get path to place
+        return this.computeDirectionLockPath().length;
+    }
+
+    /**
+     * Generates cost display
+     * @param {string} building
+     * @param {number} count
+     */
+    generateCostDisplay(building, count = 1) {
+        if (this.sandboxMode) {
+            enumBuildingToCost[building] = 0;
+        }
+
+        this.shapeKey = enumBuildingToShapeKey[building];
+        this.shape = enumBuildingToShape[building];
+        this.cost = enumBuildingToCost[building] * count;
+
+        if (this.costDisplayParent) {
+            removeAllChildren(this.costDisplayParent);
+        }
+
+        this.costDraw = makeDiv(this.costDisplayParent, null, ["draw"], "");
+        if (!this.costLabel || !this.costLabel.parentElement) {
+            this.costLabel = makeDiv(this.costDisplayParent, null, ["label"], "Building Cost");
+        }
+        this.costContainer = makeDiv(this.costDisplayParent, null, ["costContainer"], "");
+        this.costDisplayText = makeDiv(this.costContainer, null, ["costText"], "");
+        this.costContainer.appendChild(this.shape);
+        this.costDisplayText.innerText = "" + this.cost;
+
+        const afford = this.root.hubGoals.getShapesStoredByKey(enumBuildingToShapeKey[building]) >= (enumBuildingToCost[building] * count);
+        this.costDisplayParent.classList.toggle("canAfford", afford);
+    }
+
+    /**
+     * Tests can you afford the building or not
+     */
+    canAfford(building) {
+        if (!this.survivalMode) {
+            return true;
+        }
+        return this.root.hubGoals.getShapesStoredByKey(enumBuildingToShapeKey[building]) >= enumBuildingToCost[building];
+    }
+
+    /**
+     * Compute Auto Belt Cost
+     */
+    computeAutoBelts() {
+        const beltLength = this.getLengthOfBelt();
+        this.generateCostDisplay("belt", beltLength);
     }
 
     /**
@@ -650,15 +736,19 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
         if (button === enumMouseButton.left && metaBuilding) {
             this.currentlyDragging = true;
             this.currentlyDeleting = false;
-            this.lastDragTile = this.root.camera.screenToWorld(pos).toTileSpace();
+            if (this.canAfford(metaBuilding.id)) {
+                this.lastDragTile = this.root.camera.screenToWorld(pos).toTileSpace();
 
-            // Place initial building, but only if direction lock is not active
-            if (!this.isDirectionLockActive) {
-                if (this.tryPlaceCurrentBuildingAt(this.lastDragTile)) {
-                    this.root.soundProxy.playUi(metaBuilding.getPlacementSound());
+                // Place initial building, but only if direction lock is not active
+                if (!this.isDirectionLockActive) {
+                    if (this.tryPlaceCurrentBuildingAt(this.lastDragTile)) {
+                        this.root.soundProxy.playUi(metaBuilding.getPlacementSound());
+                    }
                 }
+            } else {
+                this.root.soundProxy.playUiError();
             }
-            return STOP_PROPAGATION;
+            return STOP_PROPAGATION;   
         }
 
         // Deletion
@@ -685,6 +775,10 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
      * @param {Vector} pos
      */
     onMouseMove(pos) {
+        if (!this.root.camera.getIsMapOverlayActive() && this.lastDragTile && this.currentlyDragging && this.isDirectionLockActive && this.survivalMode) {
+            this.computeAutoBelts();
+        }
+
         if (this.root.camera.getIsMapOverlayActive()) {
             return;
         }

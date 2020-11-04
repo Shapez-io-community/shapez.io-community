@@ -5,6 +5,9 @@ import { Entity } from "./entity";
 import { BasicSerializableObject, types } from "../savegame/serialization";
 import { createLogger } from "../core/logging";
 import { globalConfig } from "../core/config";
+import { enumBuildingToShapeKey, enumBuildingToCost } from "./hud/parts/building_placer";
+import { getBuildingDataFromCode, getCodeFromBuildingData } from "./building_codes";
+import { isEntityName } from "typescript";
 
 const logger = createLogger("entity_manager");
 
@@ -54,6 +57,8 @@ export class EntityManager extends BasicSerializableObject {
     // Main update
     update() {
         this.processDestroyList();
+        this.survivalMode = this.root.app.settings.getAllSettings().survivalMode;
+        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
     }
 
     /**
@@ -210,6 +215,10 @@ export class EntityManager extends BasicSerializableObject {
             entity.destroyed = true;
 
             this.root.signals.entityDestroyed.dispatch(entity);
+            const building = entity.components.StaticMapEntity.getMetaBuilding().id;
+            if (this.survivalMode) {
+                this.root.hubGoals.addShapeByKey(enumBuildingToShapeKey[building], enumBuildingToCost[building]);
+            }
         }
 
         this.destroyList = [];

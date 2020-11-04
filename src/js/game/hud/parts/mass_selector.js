@@ -3,10 +3,8 @@ import { Vector } from "../../../core/vector";
 import { STOP_PROPAGATION } from "../../../core/signal";
 import { DrawParameters } from "../../../core/draw_parameters";
 import { Entity } from "../../entity";
-import { Loader } from "../../../core/loader";
 import { globalConfig } from "../../../core/config";
-import { makeDiv, formatBigNumber, formatBigNumberFull } from "../../../core/utils";
-import { DynamicDomAttach } from "../dynamic_dom_attach";
+import { formatBigNumberFull } from "../../../core/utils";
 import { createLogger } from "../../../core/logging";
 import { enumMouseButton } from "../../camera";
 import { T } from "../../../translations";
@@ -14,6 +12,8 @@ import { KEYMAPPINGS } from "../../key_action_mapper";
 import { THEME } from "../../theme";
 import { enumHubGoalRewards } from "../../tutorial_goals";
 import { Blueprint } from "../../blueprint";
+import { findNiceIntegerValue } from "../../../core/utils";
+import { enumBuildingToCost, enumBuildingToShapeKey } from "./building_placer";
 
 const logger = createLogger("hud/mass_selector");
 
@@ -128,8 +128,20 @@ export class HUDMassSelector extends BaseHUDPart {
                 );
                 return;
             }
+
+            const entityUids = Array.from(this.selectedUids);
+
+            for (let i = entityUids.length - 1; i >= 0; --i) {
+                const uid = entityUids[i];
+                const entity = this.root.entityMgr.findByUid(uid);
+                const metaBuilding = entity.components.StaticMapEntity.getMetaBuilding().id;
+                if (metaBuilding == "hub") {
+                    this.selectedUids.delete(uid);
+                }
+            }
             this.root.hud.signals.buildingsSelectedForCopy.dispatch(Array.from(this.selectedUids));
             this.selectedUids = new Set();
+
             this.root.soundProxy.playUiClick();
         } else {
             this.root.soundProxy.playUiError();
@@ -168,7 +180,7 @@ export class HUDMassSelector extends BaseHUDPart {
                 // copy code relies on entities still existing, so must copy before deleting.
                 this.root.hud.signals.buildingsSelectedForCopy.dispatch(entityUids);
 
-                for (let i = 0; i < entityUids.length; ++i) {
+                for (let i = entityUids.length - 1; i >= 0; --i) {
                     const uid = entityUids[i];
                     const entity = this.root.entityMgr.findByUid(uid);
                     if (!this.root.logic.tryDeleteBuilding(entity)) {
@@ -176,10 +188,25 @@ export class HUDMassSelector extends BaseHUDPart {
                         this.selectedUids.delete(uid);
                     }
                 }
+                if (this.survivalMode) {
+                    this.root.hubGoals.addShapeByKey(this.root.gameMode.getBlueprintShapeKey(),findNiceIntegerValue(4 * Math.pow(entityUids.length, 1.1)));
+                }
             };
 
+            if (this.survivalMode) {
+                for (let i = entityUids.length - 1; i >= 0; --i) {
+                    const uid = entityUids[i];
+                    const entity = this.root.entityMgr.findByUid(uid);
+                    const metaBuilding = entity.components.StaticMapEntity.getMetaBuilding().id;
+                    if (metaBuilding == "hub") {
+                        this.selectedUids.delete(uid);
+                        entityUids.splice(i);
+                    }
+                }
+            }
+
             const blueprint = Blueprint.fromUids(this.root, entityUids);
-            if (blueprint.canAfford(this.root)) {
+            if (blueprint.canAfford(this.root) || this.survivalMode) {
                 cutAction();
             } else {
                 const { cancel, ok } = this.root.hud.parts.dialogs.showWarning(
@@ -225,6 +252,9 @@ export class HUDMassSelector extends BaseHUDPart {
      * @param {Vector} pos
      */
     onMouseMove(pos) {
+        this.survivalMode = this.root.app.settings.getAllSettings().survivalMode;
+        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+
         if (this.currentSelectionStartWorld) {
             this.currentSelectionEnd = pos.copy();
         }

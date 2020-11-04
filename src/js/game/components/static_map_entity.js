@@ -6,6 +6,7 @@ import { enumDirection, Vector } from "../../core/vector";
 import { types } from "../../savegame/serialization";
 import { getBuildingDataFromCode } from "../building_codes";
 import { Component } from "../component";
+import { Loader } from "../../core/loader";
 
 export class StaticMapEntityComponent extends Component {
     static getId() {
@@ -259,6 +260,10 @@ export class StaticMapEntityComponent extends Component {
         if (overridePosition) {
             worldX = overridePosition.x * globalConfig.tileSize;
             worldY = overridePosition.y * globalConfig.tileSize;
+        }
+
+        if (!sprite) {
+            sprite = Loader.getSprite("sprites/buildings/hub.png");
         }
 
         if (this.rotation === 0) {

@@ -106,9 +106,10 @@ export class HubGoals extends BasicSerializableObject {
         }
 
         this.computeNextGoal();
+        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
 
         // Allow quickly switching goals in dev mode
-        if (G_IS_DEV) {
+        if (G_IS_DEV && this.sandboxMode) {
             window.addEventListener("keydown", ev => {
                 if (ev.key === "b") {
                     // root is not guaranteed to exist within ~0.5s after loading in
@@ -147,19 +148,35 @@ export class HubGoals extends BasicSerializableObject {
      * @param {number} amount
      */
     takeShapeByKey(key, amount) {
-        assert(this.getShapesStoredByKey(key) >= amount, "Can not afford: " + key + " x " + amount);
         assert(amount >= 0, "Amount < 0 for " + key);
         assert(Number.isInteger(amount), "Invalid amount: " + amount);
-        this.storedShapes[key] = (this.storedShapes[key] || 0) - amount;
+        if (this.storedShapes[key] >= amount) {
+            assert(this.getShapesStoredByKey(key) >= amount, "Can not afford: " + key + " x " + amount);
+            this.storedShapes[key] = (this.storedShapes[key] || 0) - amount;
+        }
+        return;
+    }
+
+    /**
+     * @param {string} key
+     * @param {number} amount
+     */
+    addShapeByKey(key, amount) {
+        assert(Number.isInteger(amount), "Invalid amount: " + amount);
+        this.storedShapes[key] = (this.storedShapes[key] || 0) + amount;
         return;
     }
 
     /**
      * Returns how much of the current shape is stored
      * @param {string} key
+     * @param {boolean} test
      * @returns {number}
      */
-    getShapesStoredByKey(key) {
+    getShapesStoredByKey(key, test = false) {
+        if (test) {
+            return this.storedShapes[key];    
+        }
         return this.storedShapes[key] || 0;
     }
 

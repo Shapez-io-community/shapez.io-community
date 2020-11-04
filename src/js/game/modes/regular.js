@@ -37,8 +37,10 @@ function generateUpgrades(limitedVersion = false) {
             fixedImprovements.push(0.05);
         } else if (i < 100) {
             fixedImprovements.push(0.025);
-        } else {
+        } else if (i < 991) {
             fixedImprovements.push(0.0125);
+        } else {
+            fixedImprovements.push(0.113);
         }
     }
 
@@ -378,6 +380,20 @@ export function generateBuildingCosts() {
             building: "analyzer",
             shape: "CrCwCrCw:CwCrCwCr:CrCwCrCw:CwCrCwCr",
             cost: 5,
+        },
+
+        // Hub
+        {
+            building: "hub",
+            shape: "Wr------:--CbWwWp:--Sw----:Wc--WyRg",
+            cost: 1000,
+        },
+
+        // Producer
+        {
+            building: "producer",
+            shape: "CuCuCuCu",
+            cost: 0,
         },
     ]
     return buildingCost;

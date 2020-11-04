@@ -886,6 +886,7 @@ settings:
         userInterface: User Interface
         advanced: Advanced
         performance: Performance
+        modBrowser: Mod Browser
 
     versionBadges:
         dev: Development
@@ -1021,6 +1022,16 @@ settings:
             description: >-
                 Shortens info boxes for buildings by only showing their ratios. Otherwise a description and image is shown.
 
+        sandboxMode:
+            title: Opens Sandbox Mode
+            description: >-
+                Everything is configurable and if survival mode is opened, everythin free.
+
+        survivalMode:
+            title: Opens Survival Mode
+            description: >-
+                Every build now has building cost and there is more hubs available.
+
         disableCutDeleteWarnings:
             title: Disable Cut/Delete Warnings
             description: >-
@@ -1092,6 +1103,7 @@ keybindings:
         massSelect: Mass Select
         buildings: Building Shortcuts
         placementModifiers: Placement Modifiers
+        modBrowser: Mod Browser
 
     mappings:
         confirm: Confirm
