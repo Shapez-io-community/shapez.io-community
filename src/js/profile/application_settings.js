@@ -264,8 +264,8 @@ export const allApplicationSettings = [
     new BoolSetting("enableTunnelSmartplace", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("vignette", enumCategories.userInterface, (app, value) => {}),
     new BoolSetting("compactBuildingInfo", enumCategories.userInterface, (app, value) => {}),
-    new BoolSetting("sandboxMode", enumCategories.modBrowser, (app, value) => {}),
-    new BoolSetting("survivalMode", enumCategories.modBrowser, (app, value) => {}),
+    new BoolSetting("sandboxMod", enumCategories.modBrowser, (app, value) => {}),
+    new BoolSetting("survivalMod", enumCategories.modBrowser, (app, value) => {}),
     new BoolSetting("disableCutDeleteWarnings", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("rotationByBuilding", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("displayChunkBorders", enumCategories.advanced, (app, value) => {}),
@@ -314,8 +314,8 @@ class SettingsStorage {
         this.enableTunnelSmartplace = true;
         this.vignette = true;
         this.compactBuildingInfo = false;
-        this.sandboxMode = false;
-        this.survivalMode = false;
+        this.sandboxMod = false;
+        this.survivalMod = false;
         this.disableCutDeleteWarnings = false;
         this.rotationByBuilding = true;
         this.clearCursorOnDeleteWhilePlacing = true;
@@ -689,12 +689,12 @@ export class ApplicationSettings extends ReadWriteProxy {
         }
 
         if (data.version < 31) {
-            data.settings.sandboxMode = false;
+            data.settings.sandboxMod = false;
             data.version = 31;
         }
 
         if (data.version < 32) {
-            data.settings.survivalMode = false;
+            data.settings.survivalMod = false;
             data.version = 32;
         }
 

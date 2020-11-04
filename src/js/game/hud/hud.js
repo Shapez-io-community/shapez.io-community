@@ -62,7 +62,7 @@ export class GameHUD {
      * Initializes the hud parts
      */
     initialize() {
-        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+        this.sandboxMod = this.root.app.settings.getAllSettings().sandboxMod;
         this.signals = {
             buildingSelectedForPlacement: /** @type {TypedSignal<[MetaBuilding|null]>} */ (new Signal()),
             selectedPlacementBuildingChanged: /** @type {TypedSignal<[MetaBuilding|null]>} */ (new Signal()),
@@ -143,7 +143,7 @@ export class GameHUD {
             this.parts.colorBlindHelper = new HUDColorBlindHelper(this.root);
         }
 
-        if ((queryParamOptions.sandboxMode || G_IS_DEV) && this.sandboxMode) {
+        if ((queryParamOptions.sandboxMode || G_IS_DEV) && this.sandboxMod) {
             this.parts.sandboxController = new HUDSandboxController(this.root);
         }
 

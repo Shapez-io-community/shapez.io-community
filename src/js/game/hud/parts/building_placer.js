@@ -33,8 +33,8 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
      * @param {HTMLElement} parent
      */
     createElements(parent) {
-        this.survivalMode = this.root.app.settings.getAllSettings().survivalMode;
-        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+        this.survivalMod = this.root.app.settings.getAllSettings().survivalMod;
+        this.sandboxMod = this.root.app.settings.getAllSettings().sandboxMod;
 
         this.element = makeDiv(parent, "ingame_HUD_PlacementHints", [], ``);
 
@@ -60,7 +60,7 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         this.costDisplayParent = makeDiv(parent, "ingame_HUD_BuildingCost", [], ``);
 
         // If survival mode is opened...
-        if (this.survivalMode) {
+        if (this.survivalMod) {
             // Defines Shape Keys Of All Buildings
             for (let i = 0; i < enumBuildingList.length; ++i) {
                 const buildingShapeKey = enumBuildingList[i].shape;
@@ -218,8 +218,8 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         }
 
         // If survival mode is opened, create cost display.
-        if (this.survivalMode) {
-            if (this.sandboxMode) {
+        if (this.survivalMod) {
+            if (this.sandboxMod) {
                 enumBuildingToCost[metaBuilding.id] = 0;
             }
     
@@ -292,7 +292,7 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
      * @param {string} building 
      */
     canAfford(building) {
-        if (!this.survivalMode) {
+        if (!this.survivalMod) {
             return true;
         }
         return this.root.hubGoals.getShapesStoredByKey(enumBuildingToShapeKey[building]) >= enumBuildingToCost[building];
@@ -304,7 +304,7 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
      */
     draw(parameters) {
         // Gives A Little Bit Resource To Player If Survival Mode Is Opened
-        if (this.root.hubGoals.getShapesStoredByKey("RuRuRuRu", true) == undefined && this.survivalMode) {
+        if (this.root.hubGoals.getShapesStoredByKey("RuRuRuRu", true) == undefined && this.survivalMod) {
             this.root.hubGoals.addShapeByKey("RuRuRuRu", 64);
         }
 
@@ -323,7 +323,7 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
             return;
         }
 
-        if (this.costDisplayText && metaBuilding.id != "belt" && metaBuilding.id != "wire" && this.survivalMode) {
+        if (this.costDisplayText && metaBuilding.id != "belt" && metaBuilding.id != "wire" && this.survivalMod) {
             this.costDisplayParent.classList.toggle("canAfford", this.canAfford(metaBuilding.id));
         }
 

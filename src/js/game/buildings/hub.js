@@ -38,16 +38,16 @@ export class MetaHubBuilding extends MetaBuilding {
      * @param {GameRoot} root
      */
     getIsUnlocked(root) {
-        this.survivalMode = root.app.settings.getAllSettings().survivalMode;
-        this.sandboxMode = root.app.settings.getAllSettings().sandboxMode;
-        if (this.survivalMode || this.sandboxMode) {
+        this.survivalMod = root.app.settings.getAllSettings().survivalMod;
+        this.sandboxMod = root.app.settings.getAllSettings().sandboxMod;
+        if (this.survivalMod || this.sandboxMod) {
             return true;
         }
         return null;
     }
 
     getIsRemovable(root) {
-        if (this.survivalMode || this.sandboxMode) {
+        if (this.survivalMod || this.sandboxMod) {
             return true;
         }
         return false;

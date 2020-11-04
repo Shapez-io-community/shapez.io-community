@@ -57,8 +57,8 @@ export class EntityManager extends BasicSerializableObject {
     // Main update
     update() {
         this.processDestroyList();
-        this.survivalMode = this.root.app.settings.getAllSettings().survivalMode;
-        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+        this.survivalMod = this.root.app.settings.getAllSettings().survivalMod;
+        this.sandboxMod = this.root.app.settings.getAllSettings().sandboxMod;
     }
 
     /**
@@ -216,7 +216,7 @@ export class EntityManager extends BasicSerializableObject {
 
             this.root.signals.entityDestroyed.dispatch(entity);
             const building = entity.components.StaticMapEntity.getMetaBuilding().id;
-            if (this.survivalMode) {
+            if (this.survivalMod) {
                 this.root.hubGoals.addShapeByKey(enumBuildingToShapeKey[building], enumBuildingToCost[building]);
             }
         }

@@ -188,12 +188,12 @@ export class HUDMassSelector extends BaseHUDPart {
                         this.selectedUids.delete(uid);
                     }
                 }
-                if (this.survivalMode) {
+                if (this.survivalMod) {
                     this.root.hubGoals.addShapeByKey(this.root.gameMode.getBlueprintShapeKey(),findNiceIntegerValue(4 * Math.pow(entityUids.length, 1.1)));
                 }
             };
 
-            if (this.survivalMode) {
+            if (this.survivalMod) {
                 for (let i = entityUids.length - 1; i >= 0; --i) {
                     const uid = entityUids[i];
                     const entity = this.root.entityMgr.findByUid(uid);
@@ -206,7 +206,7 @@ export class HUDMassSelector extends BaseHUDPart {
             }
 
             const blueprint = Blueprint.fromUids(this.root, entityUids);
-            if (blueprint.canAfford(this.root) || this.survivalMode) {
+            if (blueprint.canAfford(this.root) || this.survivalMod) {
                 cutAction();
             } else {
                 const { cancel, ok } = this.root.hud.parts.dialogs.showWarning(
@@ -252,8 +252,8 @@ export class HUDMassSelector extends BaseHUDPart {
      * @param {Vector} pos
      */
     onMouseMove(pos) {
-        this.survivalMode = this.root.app.settings.getAllSettings().survivalMode;
-        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+        this.survivalMod = this.root.app.settings.getAllSettings().survivalMod;
+        this.sandboxMod = this.root.app.settings.getAllSettings().sandboxMod;
 
         if (this.currentSelectionStartWorld) {
             this.currentSelectionEnd = pos.copy();

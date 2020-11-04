@@ -106,10 +106,10 @@ export class HubGoals extends BasicSerializableObject {
         }
 
         this.computeNextGoal();
-        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+        this.sandboxMod = this.root.app.settings.getAllSettings().sandboxMod;
 
         // Allow quickly switching goals in dev mode
-        if (G_IS_DEV && this.sandboxMode) {
+        if (G_IS_DEV && this.sandboxMod) {
             window.addEventListener("keydown", ev => {
                 if (ev.key === "b") {
                     // root is not guaranteed to exist within ~0.5s after loading in

@@ -1022,13 +1022,13 @@ settings:
             description: >-
                 Shortens info boxes for buildings by only showing their ratios. Otherwise a description and image is shown.
 
-        sandboxMode:
-            title: Opens Sandbox Mode
+        sandboxMod:
+            title: Opens Sandbox Mod
             description: >-
-                Everything is configurable and if survival mode is opened, everythin free.
+                Everything is configurable and if survival mode is opened, makes everything free.
 
-        survivalMode:
-            title: Opens Survival Mode
+        survivalMod:
+            title: Opens Survival Mod
             description: >-
                 Every build now has building cost and there is more hubs available.
 

@@ -27,8 +27,8 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
      * @param {HTMLElement} parent
      */
     createElements(parent) {
-        this.survivalMode = this.root.app.settings.getAllSettings().survivalMode;
-        this.sandboxMode = this.root.app.settings.getAllSettings().sandboxMode;
+        this.survivalMod = this.root.app.settings.getAllSettings().survivalMod;
+        this.sandboxMod = this.root.app.settings.getAllSettings().sandboxMod;
         
         this.costDisplayParent = makeDiv(parent, "ingame_HUD_BuildingCost", [], ``);
     }
@@ -369,7 +369,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
         const extracted = getBuildingDataFromCode(buildingCode);
 
         // Disable pipetting the hub
-        if (extracted.metaInstance.getId() === gMetaBuildingRegistry.findByClass(MetaHubBuilding).getId() && !this.survivalMode) {
+        if (extracted.metaInstance.getId() === gMetaBuildingRegistry.findByClass(MetaHubBuilding).getId() && !this.survivalMod) {
             this.currentMetaBuilding.set(null);
             return;
         }
@@ -445,7 +445,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
         if (entity && this.canAfford(metaBuilding.id)) {
             // Succesfully placed, find which entity we actually placed
             this.root.signals.entityManuallyPlaced.dispatch(entity);
-            if (this.survivalMode) {
+            if (this.survivalMod) {
                 this.root.hubGoals.takeShapeByKey(enumBuildingToShapeKey[metaBuilding.id], enumBuildingToCost[metaBuilding.id]);
             }
 
@@ -464,7 +464,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
                 (!metaBuilding.getStayInPlacementMode() &&
                 !this.root.keyMapper.getBinding(KEYMAPPINGS.placementModifiers.placeMultiple).pressed &&
                 !this.root.app.settings.getAllSettings().alwaysMultiplace) ||
-                (!this.canAfford(metaBuilding.id) && this.survivalMode)
+                (!this.canAfford(metaBuilding.id) && this.survivalMod)
             ) {
                 // Stop placement
                 this.currentMetaBuilding.set(null);
@@ -563,7 +563,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
      * @param {number} count
      */
     generateCostDisplay(building, count = 1) {
-        if (this.sandboxMode) {
+        if (this.sandboxMod) {
             enumBuildingToCost[building] = 0;
         }
 
@@ -592,7 +592,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
      * Tests can you afford the building or not
      */
     canAfford(building) {
-        if (!this.survivalMode) {
+        if (!this.survivalMod) {
             return true;
         }
         return this.root.hubGoals.getShapesStoredByKey(enumBuildingToShapeKey[building]) >= enumBuildingToCost[building];
@@ -778,7 +778,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
      * @param {Vector} pos
      */
     onMouseMove(pos) {
-        if (!this.root.camera.getIsMapOverlayActive() && this.lastDragTile && this.currentlyDragging && this.isDirectionLockActive && this.survivalMode) {
+        if (!this.root.camera.getIsMapOverlayActive() && this.lastDragTile && this.currentlyDragging && this.isDirectionLockActive && this.survivalMod) {
             this.computeAutoWay();
         }
 

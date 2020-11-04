@@ -20,6 +20,8 @@ import { MetaHubBuilding } from "../../buildings/hub";
 
 export class HUDBuildingsToolbar extends HUDBaseToolbar {
     constructor(root) {
+        const survivalMod = root.app.settings.getAllSettings().survivalMod;
+        const sandboxMod = root.app.settings.getAllSettings().sandboxMod;
         super(root, {
             primaryBuildings: [
                 MetaBeltBuilding,
@@ -32,8 +34,8 @@ export class HUDBuildingsToolbar extends HUDBaseToolbar {
                 MetaMixerBuilding,
                 MetaPainterBuilding,
                 MetaTrashBuilding,
-                MetaHubBuilding,
-                ...(queryParamOptions.sandboxMode || G_IS_DEV ? [MetaItemProducerBuilding] : []),
+                ...(survivalMod || sandboxMod ? [MetaHubBuilding] : []),
+                ...(sandboxMod ? [MetaItemProducerBuilding] : []),
             ],
             secondaryBuildings: [
                 MetaStorageBuilding,
