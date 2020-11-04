@@ -149,7 +149,7 @@ export class Application {
             MobileWarningState,
             MainMenuState,
             InGameState,
-            SettingsState,
+            // SettingsState,
             KeybindingsState,
             AboutState,
             ChangelogState,
