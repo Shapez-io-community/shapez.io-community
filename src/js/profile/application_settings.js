@@ -266,6 +266,7 @@ export const allApplicationSettings = [
     new BoolSetting("compactBuildingInfo", enumCategories.userInterface, (app, value) => {}),
     new BoolSetting("sandboxMod", enumCategories.modBrowser, (app, value) => {}),
     new BoolSetting("survivalMod", enumCategories.modBrowser, (app, value) => {}),
+    new BoolSetting("visibleDisplayMod", enumCategories.modBrowser, (app, value) => {}),
     new BoolSetting("disableCutDeleteWarnings", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("rotationByBuilding", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("displayChunkBorders", enumCategories.advanced, (app, value) => {}),
@@ -314,8 +315,6 @@ class SettingsStorage {
         this.enableTunnelSmartplace = true;
         this.vignette = true;
         this.compactBuildingInfo = false;
-        this.sandboxMod = false;
-        this.survivalMod = false;
         this.disableCutDeleteWarnings = false;
         this.rotationByBuilding = true;
         this.clearCursorOnDeleteWhilePlacing = true;
@@ -331,6 +330,11 @@ class SettingsStorage {
         this.simplifiedBelts = false;
         this.zoomToCursor = true;
         this.mapResourcesScale = 0.5;
+
+        // Mods
+        this.sandboxMod = false;
+        this.survivalMod = false;
+        this.visibleDisplayMod = false;
 
         /**
          * @type {Object.<string, number>}

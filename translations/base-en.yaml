@@ -1032,6 +1032,11 @@ settings:
             description: >-
                 Every build now has building cost and there is more hubs available.
 
+        visibleDisplayMod:
+            title: Opens Visible Display Mod
+            description: >-
+                Makes display more clear.
+
         disableCutDeleteWarnings:
             title: Disable Cut/Delete Warnings
             description: >-

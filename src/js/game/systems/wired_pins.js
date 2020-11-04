@@ -189,9 +189,14 @@ export class WiredPinsSystem extends GameSystemWithFilter {
                 );
 
                 if (staticComp.getMetaBuilding().getRenderPins()) {
+                    this.sprite = this.pinSprites[slot.type];
+                    this.visibleDisplayMod = this.root.app.settings.getAllSettings().visibleDisplayMod;
+                    if (staticComp.getMetaBuilding().id == "display" && this.visibleDisplayMod) {
+                        this.sprite = Loader.getSprite("sprites/wires/display_logical_acceptor.png");
+                    }
                     drawRotatedSprite({
                         parameters,
-                        sprite: this.pinSprites[slot.type],
+                        sprite: this.sprite,
                         x: worldPos.x,
                         y: worldPos.y,
                         angle: effectiveRotation,
