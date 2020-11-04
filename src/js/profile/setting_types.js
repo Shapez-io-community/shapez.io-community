@@ -37,6 +37,8 @@ export class BaseSetting {
 
         this.element = null;
         this.dialogs = null;
+
+        this.default = null;
     }
 
     /**

@@ -9,6 +9,7 @@ import { ExplainedResult } from "../core/explained_result";
 import { THEMES, applyGameTheme } from "../game/theme";
 import { T } from "../translations";
 import { LANGUAGES } from "../languages";
+import { globalConfig, IS_DEBUG } from "../core/config";
 
 const logger = createLogger("application_settings");
 
@@ -20,6 +21,7 @@ export const enumCategories = {
     userInterface: "userInterface",
     performance: "performance",
     advanced: "advanced",
+    debug: "debug",
     keybindings: "keybindings",
 };
 
@@ -123,16 +125,21 @@ export const autosaveIntervals = [
     },
 ];
 
-const refreshRateOptions = ["30", "60", "120", "180", "240"];
-
-if (G_IS_DEV) {
-    refreshRateOptions.unshift("10");
-    refreshRateOptions.unshift("5");
-    refreshRateOptions.push("1000");
-    refreshRateOptions.push("2000");
-    refreshRateOptions.push("5000");
-    refreshRateOptions.push("10000");
-}
+const refreshRateOptions = [
+    "1",
+    "5",
+    "10",
+    "30",
+    "60",
+    "120",
+    "180",
+    "240",
+    "500",
+    "1000",
+    "2000",
+    "5000",
+    "10000",
+];
 
 /** @type {Array<BaseSetting>} */
 export const allApplicationSettings = [
@@ -288,6 +295,23 @@ export const allApplicationSettings = [
     new BoolSetting("simplifiedBelts", enumCategories.performance, (app, value) => {}),
 ];
 
+for (let k in globalConfig.debug) {
+    if (k.startsWith("_")) {
+        continue;
+    }
+    const setting = new BoolSetting(`debug_${k}`, enumCategories.debug, (app, value) => {
+        globalConfig.debug[k] = value;
+    });
+    // setting.validate = () => true;
+    const defaultValue = globalConfig.debug[k];
+    setting.default = () => defaultValue;
+    T.settings.labels[`debug_${k}`] = {
+        title: k.replace(/(?!^)([A-Z])/g, " $1"),
+        description: globalConfig.debug[`_${k}`],
+    };
+    allApplicationSettings.push(setting);
+}
+
 export function getApplicationSettingById(id) {
     return allApplicationSettings.find(setting => setting.id === id);
 }
@@ -348,6 +372,10 @@ export class ApplicationSettings extends ReadWriteProxy {
                 const settings = this.getAllSettings();
                 for (let i = 0; i < allApplicationSettings.length; ++i) {
                     const handle = allApplicationSettings[i];
+                    if (!settings.hasOwnProperty(handle.id)) {
+                        assertAlways(handle.default, "Unset settings should have default value!");
+                        settings[handle.id] = handle.default();
+                    }
                     handle.apply(this.app, settings[handle.id]);
                 }
             })

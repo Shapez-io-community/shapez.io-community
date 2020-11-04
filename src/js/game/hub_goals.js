@@ -108,7 +108,7 @@ export class HubGoals extends BasicSerializableObject {
         this.computeNextGoal();
 
         // Allow quickly switching goals in dev mode
-        if (G_IS_DEV) {
+        if (globalConfig.debug.debugKeybindings) {
             window.addEventListener("keydown", ev => {
                 if (ev.key === "b") {
                     // root is not guaranteed to exist within ~0.5s after loading in
@@ -192,7 +192,7 @@ export class HubGoals extends BasicSerializableObject {
      * @param {enumHubGoalRewards} reward
      */
     isRewardUnlocked(reward) {
-        if (G_IS_DEV && globalConfig.debug.allBuildingsUnlocked) {
+        if (globalConfig.debug.allBuildingsUnlocked) {
             return true;
         }
         return !!this.gainedRewards[reward];
@@ -212,7 +212,7 @@ export class HubGoals extends BasicSerializableObject {
         // Check if we have enough for the next level
         if (
             this.getCurrentGoalDelivered() >= this.currentGoal.required ||
-            (G_IS_DEV && globalConfig.debug.rewardsInstant)
+            globalConfig.debug.rewardsInstant
         ) {
             if (!this.isEndOfDemoReached()) {
                 this.onGoalCompleted();
@@ -238,8 +238,7 @@ export class HubGoals extends BasicSerializableObject {
             return;
         }
 
-        //Floor Required amount to remove confusion
-        const required = Math.min(200, Math.floor(4 + (this.level - 27) * 0.25));
+        const required = Math.min(200, 4 + (this.level - 27) * 0.25);
         this.currentGoal = {
             definition: this.computeFreeplayShape(this.level),
             required,
@@ -282,7 +281,7 @@ export class HubGoals extends BasicSerializableObject {
             return false;
         }
 
-        if (G_IS_DEV && globalConfig.debug.upgradesNoCost) {
+        if (globalConfig.debug.upgradesNoCost) {
             return true;
         }
 
@@ -329,7 +328,7 @@ export class HubGoals extends BasicSerializableObject {
             return false;
         }
 
-        if (G_IS_DEV && globalConfig.debug.upgradesNoCost) {
+        if (globalConfig.debug.upgradesNoCost) {
             // Dont take resources
         } else {
             for (let i = 0; i < tierData.required.length; ++i) {

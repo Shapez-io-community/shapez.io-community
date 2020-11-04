@@ -126,7 +126,7 @@ if (globalConfig.debug.disableMapOverview) {
 }
 
 // Stuff for making the trailer
-if (G_IS_DEV && globalConfig.debug.renderForTrailer) {
+if (globalConfig.debug.renderForTrailer) {
     globalConfig.debug.framePausesBetweenTicks = 32;
     // globalConfig.mapChunkOverviewMinZoom = 0.0;
     // globalConfig.debug.instantBelts = true;
@@ -140,7 +140,7 @@ if (globalConfig.debug.fastGameEnter) {
     globalConfig.debug.noArtificialDelays = true;
 }
 
-if (G_IS_DEV && globalConfig.debug.noArtificialDelays) {
+if (globalConfig.debug.noArtificialDelays) {
     globalConfig.warmupTimeSecondsFast = 0;
     globalConfig.warmupTimeSecondsRegular = 0;
 }

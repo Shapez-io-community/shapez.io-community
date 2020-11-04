@@ -901,6 +901,7 @@ settings:
         advanced: Advanced
         performance: Performance
         keybindings: Keybindings
+        debug: Debug
 
     versionBadges:
         dev: Development
