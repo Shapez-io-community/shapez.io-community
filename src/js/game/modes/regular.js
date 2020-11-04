@@ -391,7 +391,7 @@ export function generateBuildingCosts() {
 
         // Producer
         {
-            building: "producer",
+            building: "item_producer",
             shape: "CuCuCuCu",
             cost: 0,
         },
