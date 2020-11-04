@@ -72,11 +72,6 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
                 const buildingCost = enumBuildingList[i].cost;
                 enumBuildingToCost[enumBuildingList[i].building] = buildingCost;
             }
-    
-            // Turns Shape Codes To Shape Canvas
-            for (const building in enumBuildingToShapeKey) {
-                enumBuildingToShape[building] = this.root.shapeDefinitionMgr.getShapeFromShortKey(enumBuildingToShapeKey[building]).generateAsCanvas(80);
-            }
         }
     }
 
@@ -222,11 +217,22 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
             if (this.sandboxMod) {
                 enumBuildingToCost[metaBuilding.id] = 0;
             }
+
+            if (!enumBuildingToShapeKey[metaBuilding.id]) {
+                enumBuildingToShapeKey[metaBuilding.id] = "CuCuCuCu";
+            }
+
+            if (!enumBuildingToShape[metaBuilding.id]) {
+                enumBuildingToShape[metaBuilding.id] = this.root.shapeDefinitionMgr.getShapeFromShortKey(enumBuildingToShapeKey[metaBuilding.id]).generateAsCanvas(80);
+            }
+
+            if (!enumBuildingToCost[metaBuilding.id]) {
+                enumBuildingToCost[metaBuilding.id] = 0;
+            }
     
             this.shapeKey = enumBuildingToShapeKey[metaBuilding.id];
             this.shape = enumBuildingToShape[metaBuilding.id];
-            this.cost = 0;
-            this.cost += enumBuildingToCost[metaBuilding.id];
+            this.cost = enumBuildingToCost[metaBuilding.id];
     
             this.costDraw = makeDiv(this.costDisplayParent, null, ["draw"], "");
             if (!this.costLabel || !this.costLabel.parentElement) {

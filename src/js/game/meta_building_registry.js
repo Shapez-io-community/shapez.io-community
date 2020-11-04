@@ -8,6 +8,7 @@ import { MetaComparatorBuilding } from "./buildings/comparator";
 import { MetaConstantSignalBuilding } from "./buildings/constant_signal";
 import { enumCutterVariants, MetaCutterBuilding } from "./buildings/cutter";
 import { MetaDisplayBuilding } from "./buildings/display";
+import { enumWirelessDisplayVariants, MetaWirelessDisplayBuilding } from "./buildings/wireless_display";
 import { MetaFilterBuilding } from "./buildings/filter";
 import { MetaHubBuilding } from "./buildings/hub";
 import { MetaItemProducerBuilding } from "./buildings/item_producer";
@@ -25,7 +26,7 @@ import { MetaTrashBuilding } from "./buildings/trash";
 import { enumUndergroundBeltVariants, MetaUndergroundBeltBuilding } from "./buildings/underground_belt";
 import { enumVirtualProcessorVariants, MetaVirtualProcessorBuilding } from "./buildings/virtual_processor";
 import { MetaWireBuilding } from "./buildings/wire";
-import { MetaWireTunnelBuilding } from "./buildings/wire_tunnel";
+import { MetaWireTunnelBuilding, enumWireTunnelVariants } from "./buildings/wire_tunnel";
 import { buildBuildingCodeCache, gBuildingVariants, registerBuildingVariant } from "./building_codes";
 import { enumWireVariant } from "./components/wire";
 import { KEYMAPPINGS } from "./key_action_mapper";
@@ -53,6 +54,7 @@ export function initMetaBuildingRegistry() {
     gMetaBuildingRegistry.register(MetaFilterBuilding);
     gMetaBuildingRegistry.register(MetaWireTunnelBuilding);
     gMetaBuildingRegistry.register(MetaDisplayBuilding);
+    gMetaBuildingRegistry.register(MetaWirelessDisplayBuilding);
     gMetaBuildingRegistry.register(MetaVirtualProcessorBuilding);
     gMetaBuildingRegistry.register(MetaReaderBuilding);
     gMetaBuildingRegistry.register(MetaTransistorBuilding);
@@ -121,7 +123,13 @@ export function initMetaBuildingRegistry() {
     registerBuildingVariant(52, MetaWireBuilding, enumWireVariant.second, 0);
     registerBuildingVariant(53, MetaWireBuilding, enumWireVariant.second, 1);
     registerBuildingVariant(54, MetaWireBuilding, enumWireVariant.second, 2);
-    registerBuildingVariant(55, MetaWireBuilding, enumWireVariant.second, 3);
+	registerBuildingVariant(55, MetaWireBuilding, enumWireVariant.second, 3);
+	
+	//TODO: CHANGE BEFORE RELEASE
+    registerBuildingVariant(10000002, MetaWireBuilding, enumWireVariant.third, 0); //Temporary ID to avoid id collisions in development.
+    registerBuildingVariant(10000003, MetaWireBuilding, enumWireVariant.third, 1);
+    registerBuildingVariant(10000004, MetaWireBuilding, enumWireVariant.third, 2);
+    registerBuildingVariant(10000005, MetaWireBuilding, enumWireVariant.third, 3);
 
     // Constant signal
     registerBuildingVariant(31, MetaConstantSignalBuilding);
@@ -144,6 +152,9 @@ export function initMetaBuildingRegistry() {
 
     // Wire tunnel
     registerBuildingVariant(39, MetaWireTunnelBuilding);
+    registerBuildingVariant(10000006, MetaWireTunnelBuilding, enumWireTunnelVariants.Elbow);
+    registerBuildingVariant(10000007, MetaWireTunnelBuilding, enumWireTunnelVariants.Straight);
+    registerBuildingVariant(10000008, MetaWireTunnelBuilding, enumWireTunnelVariants.DoubleElbow);
 
     // Display
     registerBuildingVariant(40, MetaDisplayBuilding);
@@ -164,6 +175,10 @@ export function initMetaBuildingRegistry() {
 
     // Item producer
     registerBuildingVariant(61, MetaItemProducerBuilding);
+
+    // Wireless Display
+    registerBuildingVariant(62, MetaWirelessDisplayBuilding);
+    registerBuildingVariant(63, MetaWirelessDisplayBuilding, enumWirelessDisplayVariants.remote_control);
 
     // Propagate instances
     for (const key in gBuildingVariants) {

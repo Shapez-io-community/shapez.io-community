@@ -264,15 +264,11 @@ export const allApplicationSettings = [
     new BoolSetting("enableTunnelSmartplace", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("vignette", enumCategories.userInterface, (app, value) => {}),
     new BoolSetting("compactBuildingInfo", enumCategories.userInterface, (app, value) => {}),
-    new BoolSetting("sandboxMod", enumCategories.modBrowser, (app, value) => {}),
-    new BoolSetting("survivalMod", enumCategories.modBrowser, (app, value) => {}),
-    new BoolSetting("visibleDisplayMod", enumCategories.modBrowser, (app, value) => {}),
     new BoolSetting("disableCutDeleteWarnings", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("rotationByBuilding", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("displayChunkBorders", enumCategories.advanced, (app, value) => {}),
     new BoolSetting("pickMinerOnPatch", enumCategories.advanced, (app, value) => {}),
     new RangeSetting("mapResourcesScale", enumCategories.advanced, () => null),
-
     new EnumSetting("refreshRate", {
         options: refreshRateOptions,
         valueGetter: rate => rate,
@@ -284,11 +280,17 @@ export const allApplicationSettings = [
          * @param {Application} app
          */ app => app.restrictionMgr.getHasExtendedSettings(),
     }),
-
     new BoolSetting("lowQualityMapResources", enumCategories.performance, (app, value) => {}),
     new BoolSetting("disableTileGrid", enumCategories.performance, (app, value) => {}),
     new BoolSetting("lowQualityTextures", enumCategories.performance, (app, value) => {}),
     new BoolSetting("simplifiedBelts", enumCategories.performance, (app, value) => {}),
+
+    // ModZ
+    new BoolSetting("sandboxMod", enumCategories.modBrowser, (app, value) => {}),
+    new BoolSetting("survivalMod", enumCategories.modBrowser, (app, value) => {}),
+    new BoolSetting("visibleDisplayMod", enumCategories.modBrowser, (app, value) => {}),
+    new BoolSetting("wiresMod", enumCategories.modBrowser, (app, value) => {}),
+    new BoolSetting("wirelessDisplayMod", enumCategories.modBrowser, (app, value) => {}),
 ];
 
 export function getApplicationSettingById(id) {
@@ -331,10 +333,12 @@ class SettingsStorage {
         this.zoomToCursor = true;
         this.mapResourcesScale = 0.5;
 
-        // Mods
+        // ModZ
         this.sandboxMod = false;
         this.survivalMod = false;
         this.visibleDisplayMod = false;
+        this.wiresMod = false;
+        this.wirelessDisplayMod = false;
 
         /**
          * @type {Object.<string, number>}
@@ -691,17 +695,6 @@ export class ApplicationSettings extends ReadWriteProxy {
 
             data.version = 30;
         }
-
-        if (data.version < 31) {
-            data.settings.sandboxMod = false;
-            data.version = 31;
-        }
-
-        if (data.version < 32) {
-            data.settings.survivalMod = false;
-            data.version = 32;
-        }
-
         return ExplainedResult.good();
     }
 }

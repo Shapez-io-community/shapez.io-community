@@ -255,6 +255,12 @@ dialogs:
         titleEdit: Edit Marker
         desc: Give it a meaningful name, you can also include a <strong>short key</strong> of a shape (Which you can generate <link>here</link>)
 
+    editChannel:
+        title: Set Channel
+        descItems: >-
+            Enter used <strong>channel name</strong>
+        descShortKey: or enter new <strong>channel name</strong>
+
     editSignal:
         title: Set Signal
         descItems: >-
@@ -639,10 +645,23 @@ buildings:
             name: *wire
             description: *wire_desc
 
+        third:
+            name: *wire
+            description: *wire_desc
+
     wire_tunnel:
         default:
-            name: &wire_tunnel Wire Crossing
+            name: &wire_tunnel Wire Tunnel
             description: Allows two wires to cross without connecting to each other.
+        elbow:
+            name: Elbow Tunnel
+            description: Allows a wire to turn a corner without connecting to anything else
+        straight:
+            name: Straight tunnel
+            description: Allows a wire to go straight without connecting to anything else
+        double_elbow:
+            name: Double Elbow Tunnel
+            description: Allows two wires to turn corners without connecting to each other.
 
     constant_signal:
         default:
@@ -686,6 +705,14 @@ buildings:
         default:
             name: &display Display
             description: Connect a signal to show it on the display - It can be a shape, color or boolean.
+
+    wireless_display:
+        default:
+            name: &wireless_display Wireless Display
+            description: Connect to a channel and if channel connects, it receives the signal coming from Remote Control - Signal can be a shape, color or boolean.
+        remote_control:
+            name: Remote Control
+            description: Connect to a channel and if channel connects, it emits signal to Wireless Control - Signal can be a shape, color or boolean.
 
     reader:
         default:
@@ -1025,17 +1052,27 @@ settings:
         sandboxMod:
             title: Opens Sandbox Mod
             description: >-
-                Everything is configurable and if survival mode is opened, makes everything free.
+                Everything is configurable and if survival mode is opened, makes everything free (By Shrimp The Shrimp).
 
         survivalMod:
             title: Opens Survival Mod
             description: >-
-                Every build now has building cost and there is more hubs available.
+                Every build now has building cost and there is more hubs available (By Shrimp The Shrimp).
 
         visibleDisplayMod:
             title: Opens Visible Display Mod
             description: >-
-                Makes display more clear.
+                Makes display more clear (By Shrimp The Shrimp).
+
+        wiresMod:
+            title: Opens Wires Mod
+            description: >-
+                Adds new wire variant and adds new tunnel varians (By CEbbinghaus).
+
+        wirelessDisplayMod:
+            title: Opens Wireless Display Mod
+            description: >-
+                Adds wireless display to the game (By Shrimp The Shrimp).
 
         disableCutDeleteWarnings:
             title: Disable Cut/Delete Warnings
@@ -1153,6 +1190,7 @@ keybindings:
         hub: *hub
         wire_tunnel: *wire_tunnel
         display: *display
+        wireless_display: *wireless_display
         reader: *reader
         virtual_processor: *virtual_processor
         transistor: *transistor
