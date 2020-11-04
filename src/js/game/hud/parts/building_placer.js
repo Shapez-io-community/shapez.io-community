@@ -323,7 +323,7 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
             return;
         }
 
-        if (this.costDisplayText && metaBuilding.id != "belt" && this.survivalMode) {
+        if (this.costDisplayText && metaBuilding.id != "belt" && metaBuilding.id != "wire" && this.survivalMode) {
             this.costDisplayParent.classList.toggle("canAfford", this.canAfford(metaBuilding.id));
         }
 

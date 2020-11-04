@@ -550,8 +550,11 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
             return;
         }
 
-        // Get path to place
-        return this.computeDirectionLockPath().length;
+        // Get path
+        return {
+            length: this.computeDirectionLockPath().length,
+            build: metaBuilding.id,
+        };
     }
 
     /**
@@ -598,9 +601,9 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
     /**
      * Compute Auto Belt Cost
      */
-    computeAutoBelts() {
-        const beltLength = this.getLengthOfBelt();
-        this.generateCostDisplay("belt", beltLength);
+    computeAutoWay() {
+        const buildWay = this.getLengthOfBelt();
+        this.generateCostDisplay(buildWay["build"], buildWay["length"]);
     }
 
     /**
@@ -776,7 +779,7 @@ export class HUDBuildingPlacerLogic extends BaseHUDPart {
      */
     onMouseMove(pos) {
         if (!this.root.camera.getIsMapOverlayActive() && this.lastDragTile && this.currentlyDragging && this.isDirectionLockActive && this.survivalMode) {
-            this.computeAutoBelts();
+            this.computeAutoWay();
         }
 
         if (this.root.camera.getIsMapOverlayActive()) {
