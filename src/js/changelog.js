@@ -1,5 +1,16 @@
 export const CHANGELOG = [
     {
+        version: "Mod Browser 0.1",
+        date: "04.11.2020",
+        entries: [
+            "All my mods merged with just 1 mod (except Colorz)",
+            "You can access mods with mod browser in settings",
+            "I don't suggest changing mods in game",
+            "Please backup your file on you pc everytime you want to refresh page. This version isn't stable at all!",
+            "If you find any bug or want to suggest something, please ping me on shapez.io server (@Shrimp The Shrimp#9776)",
+        ],
+    },
+    {
         version: "1.2.1",
         date: "unreleased",
         entries: [
