@@ -26,8 +26,7 @@ export const THIRDPARTY_URLS = {
     },
 };
 
-// export const A_B_TESTING_LINK_TYPE = Math.random() > 0.95 ? "steam_1_pr" : "steam_2_npr";
-export const A_B_TESTING_LINK_TYPE = "steam_2_npr";
+export const A_B_TESTING_LINK_TYPE = Math.random() > 0.5 ? "steam_1_pr" : "steam_2_npr";
 
 export const globalConfig = {
     // Size of a single tile in Pixels.
@@ -102,6 +101,8 @@ export const globalConfig = {
 
     // Secret vars
     info: {
+        fork: "SHAPEST",
+
         // Binary file salt
         file: "Ec'])@^+*9zMevK3uMV4432x9%iK'=",
 

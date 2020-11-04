@@ -71,6 +71,10 @@ export class StorageComponent extends Component {
                 /** @type {ShapeItem} */ (item).definition.getHash()
             );
         }
+
+        if (itemType === "shapest") {
+            return this.storedItem.getHash() === item.getHash();
+        }
         return false;
     }
 

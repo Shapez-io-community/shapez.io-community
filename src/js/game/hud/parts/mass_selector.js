@@ -18,7 +18,7 @@ import { Blueprint } from "../../blueprint";
 const logger = createLogger("hud/mass_selector");
 
 export class HUDMassSelector extends BaseHUDPart {
-    createElements(parent) {}
+    createElements(parent) { }
 
     initialize() {
         this.currentSelectionStartWorld = null;
@@ -247,6 +247,13 @@ export class HUDMassSelector extends BaseHUDPart {
                     if (contents && this.root.logic.canDeleteBuilding(contents)) {
                         this.selectedUids.add(contents.uid);
                     }
+                    if (this.root.keyMapper.getBinding(KEYMAPPINGS.placementModifiers.placeInverse).pressed) {
+                        let otherLayer = this.root.currentLayer == "regular" ? "wires" : "regular";
+                        const contents = this.root.map.getLayerContentXY(x, y, otherLayer);
+                        if (contents && this.root.logic.canDeleteBuilding(contents)) {
+                            this.selectedUids.add(contents.uid);
+                        }
+                    }
                 }
             }
 
@@ -291,6 +298,8 @@ export class HUDMassSelector extends BaseHUDPart {
             parameters.context.fillStyle = THEME.map.selectionOverlay;
 
             const renderedUids = new Set();
+            const otherLayer = this.root.currentLayer == "regular" ? "wires" : "regular";
+            const multilayer = this.root.keyMapper.getBinding(KEYMAPPINGS.placementModifiers.placeInverse).pressed;
 
             for (let x = realTileStart.x; x <= realTileEnd.x; ++x) {
                 for (let y = realTileStart.y; y <= realTileEnd.y; ++y) {
@@ -313,6 +322,27 @@ export class HUDMassSelector extends BaseHUDPart {
                             2
                         );
                         parameters.context.fill();
+                    }
+                    if (multilayer) {
+                        const contents = this.root.map.getLayerContentXY(x, y, otherLayer);
+                        if (contents && this.root.logic.canDeleteBuilding(contents)) {
+                            const uid = contents.uid;
+                            if (renderedUids.has(uid)) {
+                                continue;
+                            }
+                            renderedUids.add(uid);
+
+                            const staticComp = contents.components.StaticMapEntity;
+                            const bounds = staticComp.getTileSpaceBounds();
+                            parameters.context.beginRoundedRect(
+                                bounds.x * globalConfig.tileSize + boundsBorder,
+                                bounds.y * globalConfig.tileSize + boundsBorder,
+                                bounds.w * globalConfig.tileSize - 2 * boundsBorder,
+                                bounds.h * globalConfig.tileSize - 2 * boundsBorder,
+                                2
+                            );
+                            parameters.context.fill();
+                        }
                     }
                 }
             }

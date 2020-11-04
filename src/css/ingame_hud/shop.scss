@@ -313,6 +313,9 @@
             }
 
             &.maxLevel {
+                @include S(height, 20px);
+                overflow: hidden;
+
                 button.buy {
                     opacity: 0 !important;
                 }

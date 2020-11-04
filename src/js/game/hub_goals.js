@@ -52,7 +52,7 @@ export class HubGoals extends BasicSerializableObject {
         const upgrades = this.root.gameMode.getUpgrades();
         for (const upgradeId in upgrades) {
             const tiers = upgrades[upgradeId];
-            const level = this.upgradeLevels[upgradeId] || 0;
+            const level = Math.min(this.upgradeLevels[upgradeId] || 0, tiers.length);
             let totalImprovement = 1;
             for (let i = 0; i < level; ++i) {
                 totalImprovement += tiers[i].improvement;
@@ -108,7 +108,7 @@ export class HubGoals extends BasicSerializableObject {
         this.computeNextGoal();
 
         // Allow quickly switching goals in dev mode
-        if (globalConfig.debug.debugKeybindings) {
+        if (G_IS_DEV) {
             window.addEventListener("keydown", ev => {
                 if (ev.key === "b") {
                     // root is not guaranteed to exist within ~0.5s after loading in
@@ -212,7 +212,7 @@ export class HubGoals extends BasicSerializableObject {
         // Check if we have enough for the next level
         if (
             this.getCurrentGoalDelivered() >= this.currentGoal.required ||
-            globalConfig.debug.rewardsInstant
+            (globalConfig.debug.rewardsInstant)
         ) {
             if (!this.isEndOfDemoReached()) {
                 this.onGoalCompleted();
@@ -237,6 +237,9 @@ export class HubGoals extends BasicSerializableObject {
             };
             return;
         }
+
+        this.currentGoal = this.root.gameMode.generateFreeplayLevel(this.level);
+        return;
 
         const required = Math.min(200, 4 + (this.level - 27) * 0.25);
         this.currentGoal = {
@@ -471,7 +474,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getBeltBaseSpeed() {
-        return globalConfig.beltSpeedItemsPerSecond * this.upgradeImprovements.belt;
+        return globalConfig.beltSpeedItemsPerSecond * this.upgradeImprovements.belt * this.upgradeImprovements.global;
     }
 
     /**
@@ -479,7 +482,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getUndergroundBeltBaseSpeed() {
-        return globalConfig.beltSpeedItemsPerSecond * this.upgradeImprovements.belt;
+        return globalConfig.beltSpeedItemsPerSecond * this.upgradeImprovements.belt * this.upgradeImprovements.global;
     }
 
     /**
@@ -487,7 +490,7 @@ export class HubGoals extends BasicSerializableObject {
      * @returns {number} items / sec
      */
     getMinerBaseSpeed() {
-        return globalConfig.minerSpeedItemsPerSecond * this.upgradeImprovements.miner;
+        return globalConfig.minerSpeedItemsPerSecond * this.upgradeImprovements.miner * this.upgradeImprovements.global;
     }
 
     /**

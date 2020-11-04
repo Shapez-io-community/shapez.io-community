@@ -26,8 +26,9 @@
  *   lastUpdate: number,
  *   version: number,
  *   internalId: string,
- *   level: number
- *   name: string|null
+ *   level: number,
+ *   name: string|null,
+ *   fork: string|null,
  * }} SavegameMetadata
  *
  * @typedef {{

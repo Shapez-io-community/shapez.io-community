@@ -27,6 +27,10 @@ export class ShapeItem extends BaseItem {
         return "shape";
     }
 
+    getHash() {
+        return this.definition.getHash();
+    }
+
     /**
      * @returns {string}
      */

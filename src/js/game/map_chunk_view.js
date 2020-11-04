@@ -138,8 +138,10 @@ export class MapChunkView extends MapChunk {
 
         if (this.root.app.settings.getAllSettings().displayChunkBorders) {
             context.fillStyle = THEME.map.chunkBorders;
-            context.fillRect(0, 0, w, 1);
-            context.fillRect(0, 1, 1, h);
+            context.fillRect(0, 0, w, 0.5);
+            context.fillRect(0, 1, 0.5, h);
+            context.fillRect(0, 0, w, 0.5);
+            context.fillRect(0, 1, 0.5, h);
         }
 
         for (let x = 0; x < globalConfig.mapChunkSize; ++x) {

@@ -3,6 +3,7 @@ import { SOUNDS } from "../platform/sound";
 import { T } from "../translations";
 import { KEYMAPPINGS, getStringForKeyCode } from "../game/key_action_mapper";
 import { Dialog } from "../core/modal_dialog_elements";
+import { IS_DEMO } from "../core/config";
 import { SettingsState } from "./settings";
 
 export class KeybindingsState extends SettingsState {
@@ -44,7 +45,7 @@ export class KeybindingsState extends SettingsState {
     }
 
     onEnter() {
-        super.onEnter(null);
+        super.onEnter();
 
         const keybindingsElem = this.htmlElement.querySelector(".keybindings");
 

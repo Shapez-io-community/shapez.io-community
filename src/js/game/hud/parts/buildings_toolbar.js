@@ -32,9 +32,7 @@ export class HUDBuildingsToolbar extends HUDBaseToolbar {
                 MetaMixerBuilding,
                 MetaPainterBuilding,
                 MetaTrashBuilding,
-                ...(queryParamOptions.sandboxMode || globalConfig.debug.sandboxMode
-                    ? [MetaItemProducerBuilding]
-                    : []),
+                ...(queryParamOptions.sandboxMode || globalConfig.debug.sandboxMode || G_IS_DEV ? [MetaItemProducerBuilding] : []),
             ],
             secondaryBuildings: [
                 MetaStorageBuilding,

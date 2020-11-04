@@ -2,6 +2,8 @@ import { createLogger } from "../core/logging";
 import { BasicSerializableObject } from "../savegame/serialization";
 import { enumColors } from "./colors";
 import { ShapeItem } from "./items/shape_item";
+import { ShapestItem } from "./items/shapest_item";
+import "./custom/shapes";
 import { GameRoot } from "./root";
 import { enumSubShape, ShapeDefinition } from "./shape_definition";
 
@@ -31,7 +33,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
          */
         this.shapeKeyToItem = {};
 
-        // Caches operations in the form of 'operation/def1[/def2]'
+        // Caches operations in the form of 'operation:def1[:def2]'
         /** @type {Object.<string, Array<ShapeDefinition>|ShapeDefinition>} */
         this.operationCache = {};
     }
@@ -46,7 +48,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
         if (cached) {
             return cached;
         }
-        return (this.shapeKeyToDefinition[hash] = ShapeDefinition.fromShortKey(hash));
+        return (this.shapeKeyToDefinition[hash] = new ShapestItem(hash));
     }
 
     /**
@@ -59,8 +61,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
         if (cached) {
             return cached;
         }
-        const definition = this.getShapeFromShortKey(hash);
-        return (this.shapeKeyToItem[hash] = new ShapeItem(definition));
+        return (this.shapeKeyToItem[hash] = new ShapestItem(hash));
     }
 
     /**
@@ -89,7 +90,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @returns {[ShapeDefinition, ShapeDefinition]}
      */
     shapeActionCutHalf(definition) {
-        const key = "cut/" + definition.getHash();
+        const key = "cut:" + definition.getHash();
         if (this.operationCache[key]) {
             return /** @type {[ShapeDefinition, ShapeDefinition]} */ (this.operationCache[key]);
         }
@@ -108,7 +109,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @returns {[ShapeDefinition, ShapeDefinition, ShapeDefinition, ShapeDefinition]}
      */
     shapeActionCutQuad(definition) {
-        const key = "cut-quad/" + definition.getHash();
+        const key = "cut-quad:" + definition.getHash();
         if (this.operationCache[key]) {
             return /** @type {[ShapeDefinition, ShapeDefinition, ShapeDefinition, ShapeDefinition]} */ (this
                 .operationCache[key]);
@@ -130,7 +131,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @returns {ShapeDefinition}
      */
     shapeActionRotateCW(definition) {
-        const key = "rotate-cw/" + definition.getHash();
+        const key = "rotate-cw:" + definition.getHash();
         if (this.operationCache[key]) {
             return /** @type {ShapeDefinition} */ (this.operationCache[key]);
         }
@@ -148,7 +149,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @returns {ShapeDefinition}
      */
     shapeActionRotateCCW(definition) {
-        const key = "rotate-ccw/" + definition.getHash();
+        const key = "rotate-ccw:" + definition.getHash();
         if (this.operationCache[key]) {
             return /** @type {ShapeDefinition} */ (this.operationCache[key]);
         }
@@ -166,7 +167,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @returns {ShapeDefinition}
      */
     shapeActionRotate180(definition) {
-        const key = "rotate-fl/" + definition.getHash();
+        const key = "rotate-fl:" + definition.getHash();
         if (this.operationCache[key]) {
             return /** @type {ShapeDefinition} */ (this.operationCache[key]);
         }
@@ -185,7 +186,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @returns {ShapeDefinition}
      */
     shapeActionStack(lowerDefinition, upperDefinition) {
-        const key = "stack/" + lowerDefinition.getHash() + "/" + upperDefinition.getHash();
+        const key = "stack:" + lowerDefinition.getHash() + ":" + upperDefinition.getHash();
         if (this.operationCache[key]) {
             return /** @type {ShapeDefinition} */ (this.operationCache[key]);
         }
@@ -202,7 +203,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @returns {ShapeDefinition}
      */
     shapeActionPaintWith(definition, color) {
-        const key = "paint/" + definition.getHash() + "/" + color;
+        const key = "paint:" + definition.getHash() + ":" + color;
         if (this.operationCache[key]) {
             return /** @type {ShapeDefinition} */ (this.operationCache[key]);
         }
@@ -219,7 +220,7 @@ export class ShapeDefinitionManager extends BasicSerializableObject {
      * @returns {ShapeDefinition}
      */
     shapeActionPaintWith4Colors(definition, colors) {
-        const key = "paint4/" + definition.getHash() + "/" + colors.join(",");
+        const key = "paint4:" + definition.getHash() + ":" + colors.join(",");
         if (this.operationCache[key]) {
             return /** @type {ShapeDefinition} */ (this.operationCache[key]);
         }

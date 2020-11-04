@@ -48,6 +48,13 @@ export class HUDBlueprintPlacer extends BaseHUDPart {
 
         this.domAttach = new DynamicDomAttach(this.root, this.costDisplayParent);
         this.trackedCanAfford = new TrackedState(this.onCanAffordChanged, this);
+
+        // SHAPEST-TODO
+        globalThis.BPP = this;
+
+        document.oncopy = () => this.copyToClipboard();
+        document.onpaste = () => this.pasteFromClipboard();
+
     }
 
     abortPlacement() {
@@ -200,4 +207,98 @@ export class HUDBlueprintPlacer extends BaseHUDPart {
         const tile = worldPos.toTileSpace();
         blueprint.draw(parameters, tile);
     }
+
+    async copyToClipboard() {
+        if (!this.currentBlueprint.get()) {
+            alert("Can't copy, no blueprint selected!");
+            return false;
+        }
+        let bpJson = this.currentBlueprint.get().serializeToString();
+        console.log({bpJson});
+        let buffer = new TextEncoder().encode(bpJson);
+        let compressedBuffer = await compressArrayBuffer(buffer);
+        let base64String = bufferToBase64(compressedBuffer);
+        let bpString = `ShapezBP<<<${base64String}>>>`;
+        await navigator.clipboard.writeText(bpString);
+        alert("bp copied");
+        return true;
+    }
+
+    async pasteFromClipboard() {
+        let bpString = await navigator.clipboard.readText();
+        if (!bpString.startsWith("ShapezBP<<<") || !bpString.endsWith(">>>")) {
+            alert("Can't paste, not a blueprint!");
+            return false;
+        }
+        let base64String = bpString.slice(11, -3);
+        let compressedBuffer = base64ToBuffer(base64String);
+        let buffer = await decompressArrayBuffer(compressedBuffer);
+        let bpJson = new TextDecoder().decode(buffer);
+        console.log({bpJson});
+        let blueprint = Blueprint.deserializeFromString(this.root, bpJson);
+        if (!blueprint) {
+            return false;
+        }
+        this.currentBlueprint.set(blueprint);
+        alert("bp pasted")
+        return true;
+    }
+}
+
+
+
+async function compressArrayBuffer(input) {
+    const cs = new CompressionStream('deflate');
+    const writer = cs.writable.getWriter();
+    writer.write(input);
+    writer.close();
+    const output = [];
+    const reader = cs.readable.getReader();
+    let totalSize = 0;
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done)
+            break;
+        output.push(value);
+        totalSize += value.byteLength;
+    }
+    const concatenated = new Uint8Array(totalSize);
+    let offset = 0;
+    for (const array of output) {
+        concatenated.set(array, offset);
+        offset += array.byteLength;
+    }
+    return concatenated;
+}
+
+async function decompressArrayBuffer(input) {
+    const cs = new DecompressionStream('deflate');
+    const writer = cs.writable.getWriter();
+    writer.write(input);
+    writer.close();
+    const output = [];
+    const reader = cs.readable.getReader();
+    let totalSize = 0;
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done)
+            break;
+        output.push(value);
+        totalSize += value.byteLength;
+    }
+    const concatenated = new Uint8Array(totalSize);
+    let offset = 0;
+    for (const array of output) {
+        concatenated.set(array, offset);
+        offset += array.byteLength;
+    }
+    return concatenated;
+}
+
+function bufferToBase64(b) {
+    return btoa(String.fromCharCode(...b));
+}
+
+function base64ToBuffer(base64String) {
+    return Uint8Array.from(atob(base64String), c => c.charCodeAt(0))
 }

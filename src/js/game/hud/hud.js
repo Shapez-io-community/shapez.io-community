@@ -140,7 +140,7 @@ export class GameHUD {
             this.parts.colorBlindHelper = new HUDColorBlindHelper(this.root);
         }
 
-        if (queryParamOptions.sandboxMode || globalConfig.debug.sandboxMode) {
+        if (queryParamOptions.sandboxMode || globalConfig.debug.sandboxMode || G_IS_DEV) {
             this.parts.sandboxController = new HUDSandboxController(this.root);
         }
 

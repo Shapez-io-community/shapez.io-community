@@ -60,7 +60,7 @@ export class MapView extends BaseMap {
      * @param {DrawParameters} drawParameters
      */
     drawStaticEntityDebugOverlays(drawParameters) {
-        if (globalConfig.debug.showAcceptorEjectors || globalConfig.debug.showEntityBounds) {
+        if ((globalConfig.debug.showAcceptorEjectors || globalConfig.debug.showEntityBounds)) {
             const cullRange = drawParameters.visibleRect.toTileCullRectangle();
             const top = cullRange.top();
             const right = cullRange.right();

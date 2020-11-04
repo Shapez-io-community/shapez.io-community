@@ -147,6 +147,8 @@ export class SavegameManager extends ReadWriteProxy {
             lastUpdate: Date.now(),
             version: Savegame.getCurrentVersion(),
             internalId: id,
+            fork: globalConfig.info.fork,
+            name: `${globalConfig.info.fork} ${id.slice(0, 6)}`,
         });
 
         this.currentData.savegames.push(metaData);

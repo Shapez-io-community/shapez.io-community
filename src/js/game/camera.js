@@ -92,7 +92,7 @@ export class Camera extends BasicSerializableObject {
         this.internalInitEvents();
         this.clampZoomLevel();
         this.bindKeys();
-        if (globalConfig.debug.debugKeybindings) {
+        if (G_IS_DEV) {
             window.addEventListener("keydown", ev => {
                 if (ev.key === "i") {
                     this.zoomLevel = 3;

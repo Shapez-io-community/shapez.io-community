@@ -28,11 +28,15 @@ export class SerializerInternal {
      *
      * @param {GameRoot} root
      * @param {Array<Entity>} array
-     * @returns {string|void}
+     * @returns {string|void|Array<Entity>}
      */
-    deserializeEntityArray(root, array) {
-        for (let i = 0; i < array.length; ++i) {
-            this.deserializeEntity(root, array[i]);
+    deserializeEntityArray(root, array, register = true) {
+        if (register) {
+            for (let i = 0; i < array.length; ++i) {
+                this.deserializeEntity(root, array[i], register);
+            }
+        } else {
+            return array.map(e => this.deserializeEntity(root, e, register));
         }
     }
 
@@ -41,7 +45,7 @@ export class SerializerInternal {
      * @param {GameRoot} root
      * @param {Entity} payload
      */
-    deserializeEntity(root, payload) {
+    deserializeEntity(root, payload, register = true) {
         const staticData = payload.components.StaticMapEntity;
         assert(staticData, "entity has no static data");
 
@@ -63,8 +67,12 @@ export class SerializerInternal {
 
         this.deserializeComponents(root, entity, payload.components);
 
-        root.entityMgr.registerEntity(entity, payload.uid);
-        root.map.placeStaticEntity(entity);
+        if (register) {
+            root.entityMgr.registerEntity(entity, payload.uid);
+            root.map.placeStaticEntity(entity);
+        }
+
+        return entity;
     }
 
     /////// COMPONENTS ////

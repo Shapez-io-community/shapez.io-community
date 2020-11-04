@@ -32,6 +32,8 @@ import { GameLogic } from "./logic";
 import { MapView } from "./map_view";
 import { defaultBuildingVariant } from "./meta_building";
 import { RegularGameMode } from "./modes/regular";
+import { RegularModifiedGameMode } from "./modes/regular-modified";
+import { HexagonalGameMode } from "./modes/hexagonal";
 import { ProductionAnalytics } from "./production_analytics";
 import { GameRoot } from "./root";
 import { ShapeDefinitionManager } from "./shape_definition_manager";
@@ -103,7 +105,10 @@ export class GameCore {
         root.dynamicTickrate = new DynamicTickrate(root);
 
         // Init game mode
-        root.gameMode = new RegularGameMode(root);
+        // SHAPEST-TODO
+        // root.gameMode = new RegularGameMode(root);
+        // root.gameMode = new RegularModifiedGameMode(root);
+        root.gameMode = new HexagonalGameMode(root);
 
         // Init classes
         root.camera = new Camera(root);
@@ -131,7 +136,8 @@ export class GameCore {
         this.resize(this.app.screenWidth, this.app.screenHeight);
 
         if (G_IS_DEV) {
-            globalThis.globalRoot = root;
+            // @ts-ignore
+            window.globalRoot = root;
         }
 
         // @todo Find better place
@@ -267,7 +273,7 @@ export class GameCore {
         // Camera is always updated, no matter what
         root.camera.update(deltaMs);
 
-        if (!globalConfig.debug.manualTickOnly) {
+        if (!(globalConfig.debug.manualTickOnly)) {
             // Perform logic ticks
             this.root.time.performTicks(deltaMs, this.boundInternalTick);
 
@@ -453,7 +459,9 @@ export class GameCore {
             context.globalAlpha = 1;
         }
 
-        root.map.drawStaticEntityDebugOverlays(params);
+        if (G_IS_DEV) {
+            root.map.drawStaticEntityDebugOverlays(params);
+        }
 
         if (globalConfig.debug.renderBeltPaths) {
             systems.belt.drawBeltPathDebug(params);

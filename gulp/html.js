@@ -17,7 +17,7 @@ function gulptasksHTML($, gulp, buildFolder) {
     ) {
         function cachebust(url) {
             if (enableCachebust) {
-                return buildUtils.cachebust(url, commitHash);
+                // return buildUtils.cachebust(url, commitHash);
             }
             return url;
         }

@@ -10,6 +10,7 @@ import { THEMES, applyGameTheme } from "../game/theme";
 import { T } from "../translations";
 import { LANGUAGES } from "../languages";
 import { globalConfig, IS_DEBUG } from "../core/config";
+import { ColorItem } from "../game/items/color_item";
 
 const logger = createLogger("application_settings");
 
@@ -166,6 +167,17 @@ export const allApplicationSettings = [
             (app, id) => app.updateAfterUiScaleChanged(),
     }),
 
+    new BoolSetting(
+        "colorwheel",
+        enumCategories.general,
+        /**
+         * @param {Application} app
+         */
+        (app, value) => {
+            ColorItem.initializeCustomColors(value);
+        },
+    ),
+
     new RangeSetting(
         "soundVolume",
         enumCategories.general,
@@ -312,6 +324,8 @@ for (let k in globalConfig.debug) {
     allApplicationSettings.push(setting);
 }
 
+allApplicationSettings.find(e=>e.id=='colorwheel').validate = () => true;
+
 export function getApplicationSettingById(id) {
     return allApplicationSettings.find(setting => setting.id === id);
 }
@@ -361,7 +375,7 @@ class SettingsStorage {
 
 export class ApplicationSettings extends ReadWriteProxy {
     constructor(app) {
-        super(app, "app_settings.bin");
+        super(app, `app_settings_${globalConfig.info.fork}.bin`);
     }
 
     initialize() {
@@ -400,7 +414,10 @@ export class ApplicationSettings extends ReadWriteProxy {
      * @param {string} key
      */
     getSetting(key) {
-        assert(this.getAllSettings().hasOwnProperty(key), "Setting not known: " + key);
+        if (!key.startsWith('debug_')) {
+            // SHAPEST-TODO
+            // assert(this.getAllSettings().hasOwnProperty(key), "Setting not known: " + key);
+        }
         return this.getAllSettings()[key];
     }
 

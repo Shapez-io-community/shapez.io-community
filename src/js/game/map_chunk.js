@@ -10,6 +10,7 @@ import { COLOR_ITEM_SINGLETONS } from "./items/color_item";
 import { GameRoot } from "./root";
 import { enumSubShape } from "./shape_definition";
 import { Rectangle } from "../core/rectangle";
+import { ShapestItem, TextLayer, NumberLayer } from "./items/shapest_item";
 
 const logger = createLogger("map_chunk");
 
@@ -93,8 +94,9 @@ export class MapChunk {
      * @param {BaseItem} item
      * @param {number=} overrideX Override the X position of the patch
      * @param {number=} overrideY Override the Y position of the patch
+     * @param {BaseItem[]} itemList
      */
-    internalGeneratePatch(rng, patchSize, item, overrideX = null, overrideY = null) {
+    internalGeneratePatch(rng, patchSize, item, overrideX = null, overrideY = null, itemList = null) {
         const border = Math.ceil(patchSize / 2 + 3);
 
         // Find a position within the chunk which is not blocked
@@ -137,7 +139,7 @@ export class MapChunk {
                         const originalDy = dy / circleScaleY;
                         if (originalDx * originalDx + originalDy * originalDy <= circleRadiusSquare) {
                             if (!this.lowerLayer[x][y]) {
-                                this.lowerLayer[x][y] = item;
+                                this.lowerLayer[x][y] = itemList ? rng.choice(itemList) : item;
                                 ++patchesDrawn;
                                 avgPos.x += x;
                                 avgPos.y += y;
@@ -179,6 +181,9 @@ export class MapChunk {
      * @param {number} distanceToOriginInChunks
      */
     internalGenerateShapePatch(rng, shapePatchSize, distanceToOriginInChunks) {
+        if (this.hex) {
+            return this.internalGenerateHexagonalPatch(rng, shapePatchSize, distanceToOriginInChunks);
+        }
         /** @type {[enumSubShape, enumSubShape, enumSubShape, enumSubShape]} */
         let subShapes = null;
 
@@ -237,6 +242,78 @@ export class MapChunk {
         );
     }
 
+    internalGenerateNumberPatch(rng, colorPatchSize, distanceToOriginInChunks) {
+        let itemDisplay = NumberLayer.mapPatchItemDisplay;
+        let itemList = NumberLayer.mapPatchItemList;
+        this.internalGeneratePatch(rng, colorPatchSize, itemDisplay, null, null, itemList);
+           }
+
+    internalGenerateLetterPatch(rng, colorPatchSize, distanceToOriginInChunks) {
+        let itemDisplay = TextLayer.mapPatchItemDisplay;
+        let itemList = TextLayer.mapPatchItemList;
+        this.internalGeneratePatch(rng, colorPatchSize, itemDisplay, null, null, itemList);
+    }
+
+
+    /**
+     * Generates a shape patch
+     * @param {RandomNumberGenerator} rng
+     * @param {number} shapePatchSize
+     * @param {number} distanceToOriginInChunks
+     */
+    internalGenerateHexagonalPatch(rng, shapePatchSize, distanceToOriginInChunks) {
+        let weights = {};
+
+        // Later there is a mix of everything
+        weights = {
+            Ru: 100,
+            Cu: Math.round(50 + clamp(distanceToOriginInChunks * 2, 0, 50)),
+            Su: Math.round(20 + clamp(distanceToOriginInChunks, 0, 30)),
+            Wu: Math.round(6 + clamp(distanceToOriginInChunks / 2, 0, 20)),
+        };
+
+        if (distanceToOriginInChunks < 7) {
+            // Initial chunks can not spawn the good stuff
+            weights.Su = 0;
+            weights.Wu = 0;
+        }
+
+        let key = ''
+
+        if (distanceToOriginInChunks < 10) {
+            // Initial chunk patches always have the same shape
+            let subShape = this.internalGenerateRandomSubShape(rng, weights);
+            if (subShape == 'Wu') {
+                subShape = 'Ru';
+            }
+            key = subShape.repeat(6);
+        } else if (distanceToOriginInChunks < 15) {
+            // Later patches can also have mixed ones
+            let subShapeA = this.internalGenerateRandomSubShape(rng, weights);
+            let subShapeB = this.internalGenerateRandomSubShape(rng, weights);
+            if (subShapeA == 'Wu') {
+                subShapeB = 'Ru';
+            }
+            key = subShapeA.repeat(3) + subShapeB.repeat(3);
+        } else {
+            // Finally there is a mix of everything
+            let subShapes = [
+                this.internalGenerateRandomSubShape(rng, weights),
+                this.internalGenerateRandomSubShape(rng, weights),
+                this.internalGenerateRandomSubShape(rng, weights),
+            ];
+            if (subShapes.filter(e=>e=='Wu').length > 1)
+                subShapes[1] = 'Ru';
+            key = subShapes.map(e=>e.repeat(2)).join('');
+        }
+
+        this.internalGeneratePatch(
+            rng,
+            shapePatchSize,
+            new ShapestItem('6'+key),
+        );
+    }
+
     /**
      * Chooses a random shape with the given weights
      * @param {RandomNumberGenerator} rng
@@ -259,6 +336,9 @@ export class MapChunk {
 
         logger.error("Failed to find matching shape in chunk generation");
         return enumSubShape.circle;
+    }
+    get hex() {
+        return this.root.gameMode.getName() == "Hexagonal";
     }
 
     /**
@@ -288,6 +368,20 @@ export class MapChunk {
             const shapePatchSize = Math.max(2, Math.round(1 + clamp(distanceToOriginInChunks / 8, 0, 4)));
             this.internalGenerateShapePatch(rng, shapePatchSize, distanceToOriginInChunks);
         }
+        if (!this.hex) {
+            return;
+        }
+
+        const digitPatchChance = clamp((distanceToOriginInChunks - 15) / 25, 0, 1) * 0.5;
+        if (rng.next() < digitPatchChance / 8) {
+            const shapePatchSize = Math.max(2, Math.round(1 + clamp(distanceToOriginInChunks / 8, 0, 4)));
+            this.internalGenerateNumberPatch(rng, shapePatchSize, distanceToOriginInChunks);
+        }
+        const letterPatchChance = clamp((distanceToOriginInChunks - 15) / 25, 0, 1) * 0.5;
+        if (rng.next() < letterPatchChance / 8) {
+            const shapePatchSize = Math.max(2, Math.round(1 + clamp(distanceToOriginInChunks / 8, 0, 4)));
+            this.internalGenerateLetterPatch(rng, shapePatchSize, distanceToOriginInChunks);
+        }
     }
 
     /**
@@ -302,12 +396,14 @@ export class MapChunk {
             return true;
         }
         if (this.x === -1 && this.y === 0) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("CuCuCuCu");
+            const item = this.hex ? new ShapestItem('6CuCuCuCuCuCu') :
+                 this.root.shapeDefinitionMgr.getShapeItemFromShortKey("CuCuCuCu");
             this.internalGeneratePatch(rng, 2, item, globalConfig.mapChunkSize - 9, 7);
             return true;
         }
         if (this.x === 0 && this.y === -1) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("RuRuRuRu");
+            const item = this.hex ? new ShapestItem('6RuRuRuRuRuRu') :
+                this.root.shapeDefinitionMgr.getShapeItemFromShortKey("RuRuRuRu");
             this.internalGeneratePatch(rng, 2, item, 5, globalConfig.mapChunkSize - 7);
             return true;
         }
@@ -318,7 +414,8 @@ export class MapChunk {
         }
 
         if (this.x === 5 && this.y === -2) {
-            const item = this.root.shapeDefinitionMgr.getShapeItemFromShortKey("SuSuSuSu");
+            const item = this.hex ? new ShapestItem('6SuSuSuSuSuSu') :
+                this.root.shapeDefinitionMgr.getShapeItemFromShortKey("SuSuSuSu");
             this.internalGeneratePatch(rng, 2, item, 5, globalConfig.mapChunkSize - 7);
             return true;
         }

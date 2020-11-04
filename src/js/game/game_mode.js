@@ -33,6 +33,10 @@ export class GameMode {
         this.root = root;
     }
 
+    getName() {
+        return "";
+    }
+
     /**
      * Should return all available upgrades
      * @returns {Object<string, UpgradeTiers>}
@@ -67,5 +71,10 @@ export class GameMode {
      */
     getIsFreeplayAvailable() {
         return true;
+    }
+    
+    generateFreeplayLevel(level) {
+        abstract;
+        return null;
     }
 }

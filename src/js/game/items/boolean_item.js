@@ -26,6 +26,10 @@ export class BooleanItem extends BaseItem {
         return "boolean";
     }
 
+    getHash() {
+        return this.value ? "1" : "0";
+    }
+
     /**
      * @returns {string}
      */
